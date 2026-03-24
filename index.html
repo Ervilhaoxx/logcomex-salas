@@ -421,22 +421,16 @@ function tick() {
 }
 setInterval(tick,1000); tick();
 
-// ── CALENDAR API (FreeBusy) ──
+// ── CALENDAR API (Apps Script Backend) ──
+const BACKEND_URL = 'https://script.google.com/a/macros/logcomex.com/s/AKfycbwwnLoAG8wBsrRLhenp8fIYx7XQuuGi_exQqm5wnjqruCYZ3OfA9qh3xw0jFLxGEbzM/exec';
+
 async function fetchCal(email) {
-  if (!cfg.apiKey || !email) return null;
-  const now  = new Date();
-  const tmin = new Date(now.getFullYear(),now.getMonth(),now.getDate()).toISOString();
-  const tmax = new Date(now.getFullYear(),now.getMonth(),now.getDate(),23,59,59).toISOString();
+  if (!email) return null;
   try {
-    const r = await fetch(`https://www.googleapis.com/calendar/v3/freeBusy?key=${cfg.apiKey}`, {
-      method: 'POST',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({timeMin: tmin, timeMax: tmax, items: [{id: email}]})
-    });
+    const r = await fetch(`${BACKEND_URL}?email=${encodeURIComponent(email)}`);
     const d = await r.json();
-    if (d.error) return null;
-    const busy = d.calendars?.[email]?.busy || [];
-    return busy.map(b => ({
+    if (d.error || !d.busy) return null;
+    return d.busy.map(b => ({
       start: {dateTime: b.start},
       end:   {dateTime: b.end},
       summary: 'Ocupada',
