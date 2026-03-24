@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Salas · Logcomex</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --purple-dark:#0a0118; --purple-mid:#150328; --purple-card:#1c0438; --purple-border:#3a0d5e;
+  --orange:#ff6b2b; --orange-light:#ff8c57;
+  --white:#fff; --white-70:rgba(255,255,255,.7); --white-40:rgba(255,255,255,.4); --white-15:rgba(255,255,255,.08);
+  --green:#16db6a; --green-bg:rgba(22,219,106,.1); --green-border:rgba(22,219,106,.28);
+  --yellow:#f59e0b; --yellow-bg:rgba(245,158,11,.1); --yellow-border:rgba(245,158,11,.28);
+  --red:#ff1f1f; --red-bg:rgba(255,31,31,.1); --red-border:rgba(255,31,31,.3);
+  --font:'Sora',sans-serif; --radius:20px; --radius-sm:12px;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{font-family:var(--font);background:var(--purple-dark);color:var(--white);height:100%;width:100%;overflow:hidden}
+
+/* ── LAYOUT ── */
+#app{display:grid;grid-template-columns:1fr 300px;grid-template-rows:auto 1fr auto;height:100vh;width:100vw}
+
+/* ── TOP BAR ── */
+#top-bar{grid-column:1/-1;display:flex;align-items:center;justify-content:space-between;padding:14px 24px;background:var(--purple-mid);border-bottom:1px solid var(--purple-border)}
+.logo-img{height:32px;width:auto}
+.top-center{display:flex;flex-direction:column;align-items:center;gap:1px}
+#top-clock{font-size:22px;font-weight:700;letter-spacing:2px;font-variant-numeric:tabular-nums;color:var(--white);line-height:1}
+#top-date{font-size:11px;color:var(--white-40);letter-spacing:.3px}
+.sync-pill{display:flex;align-items:center;gap:7px;background:var(--white-15);border:1px solid var(--purple-border);border-radius:20px;padding:5px 13px;font-size:12px;color:var(--white-40)}
+.sync-dot{width:7px;height:7px;border-radius:50%;background:var(--green);animation:blink 2.5s ease-in-out infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
+#btn-open-cfg{background:transparent;border:none;cursor:pointer;padding:10px;border-radius:var(--radius-sm);color:var(--white-40);transition:color .2s;display:flex;align-items:center;justify-content:center}
+#btn-open-cfg:hover{color:var(--orange-light)}
+#btn-open-cfg svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+
+/* ── MAIN PANEL ── */
+#main-panel{grid-column:1;grid-row:2;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;overflow:hidden;padding:24px;transition:background .6s}
+#main-panel.free{background:linear-gradient(160deg,#0a0118 0%,#051a0e 100%)}
+#main-panel.soon{background:linear-gradient(160deg,#0a0118 0%,#1c1200 100%)}
+#main-panel.busy{background:linear-gradient(160deg,#0a0118 0%,#200000 100%)}
+#bg-glow{position:absolute;width:500px;height:500px;border-radius:50%;top:50%;left:50%;transform:translate(-50%,-50%);pointer-events:none;filter:blur(100px);opacity:.2;transition:background .6s}
+#main-panel.free #bg-glow{background:var(--green)}
+#main-panel.soon #bg-glow{background:var(--yellow)}
+#main-panel.busy #bg-glow{background:var(--red)}
+
+.status-badge{display:flex;align-items:center;gap:8px;padding:7px 20px;border-radius:30px;font-size:12px;font-weight:700;letter-spacing:1px;text-transform:uppercase;border:1px solid;margin-bottom:16px;transition:all .4s}
+.status-badge.free{background:var(--green-bg);border-color:var(--green-border);color:var(--green)}
+.status-badge.soon{background:var(--yellow-bg);border-color:var(--yellow-border);color:var(--yellow)}
+.status-badge.busy{background:var(--red-bg);border-color:var(--red-border);color:var(--red)}
+.st-dot{width:8px;height:8px;border-radius:50%;transition:background .4s}
+.status-badge.free .st-dot{background:var(--green);animation:blink 2s ease-in-out infinite}
+.status-badge.soon .st-dot{background:var(--yellow);animation:blink 1.4s ease-in-out infinite}
+.status-badge.busy .st-dot{background:var(--red)}
+
+#room-name{font-size:clamp(40px,7vw,76px);font-weight:800;letter-spacing:-2px;line-height:1;text-align:center;color:var(--white);margin-bottom:8px;position:relative;z-index:1}
+#room-type{font-size:13px;color:var(--white-40);text-transform:uppercase;letter-spacing:1px;text-align:center;margin-bottom:22px;position:relative;z-index:1}
+#status-info{font-size:clamp(15px,2.2vw,20px);font-weight:400;color:var(--white-70);text-align:center;line-height:1.4;margin-bottom:12px;position:relative;z-index:1;min-height:28px}
+#status-info .hl{font-weight:700}
+#main-panel.free #status-info .hl{color:var(--green)}
+#main-panel.soon #status-info .hl{color:var(--yellow)}
+#main-panel.busy #status-info .hl{color:var(--red)}
+#countdown{font-size:clamp(52px,9vw,100px);font-weight:800;letter-spacing:-3px;line-height:1;font-variant-numeric:tabular-nums;text-align:center;min-height:1em;position:relative;z-index:1;transition:color .4s}
+#main-panel.free #countdown{color:var(--green);opacity:.1}
+#main-panel.soon #countdown{color:var(--yellow)}
+#main-panel.busy #countdown{color:var(--red)}
+#prog-wrap{width:min(400px,75%);margin-top:16px;position:relative;z-index:1}
+.prog-track{height:5px;background:var(--white-15);border-radius:5px;overflow:hidden}
+#prog-fill{height:100%;border-radius:5px;transition:width 1s ease,background .4s}
+#main-panel.busy #prog-fill{background:var(--red)}
+#main-panel.soon #prog-fill{background:var(--yellow)}
+#main-panel.free #prog-fill{background:var(--green);width:0!important}
+.prog-labels{display:flex;justify-content:space-between;font-size:10px;color:var(--white-40);margin-top:5px}
+
+/* ── BOTTOM STRIP ── */
+#bottom-strip{grid-column:1/-1;display:flex;align-items:center;justify-content:center;gap:28px;padding:12px 24px 14px;background:var(--purple-mid);border-top:1px solid var(--purple-border);flex-wrap:wrap}
+.info-chip{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--white-70)}
+.info-chip svg{width:15px;height:15px;stroke:var(--white-40);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
+.info-chip strong{color:var(--white);font-weight:600}
+.chip-sep{width:1px;height:18px;background:var(--purple-border)}
+
+/* ── AVAILABLE PANEL ── */
+#avail-panel{grid-column:2;grid-row:2;background:var(--purple-mid);border-left:1px solid var(--purple-border);display:flex;flex-direction:column;overflow:hidden}
+.avail-header{padding:14px 14px 10px;border-bottom:1px solid var(--purple-border);flex-shrink:0}
+.avail-title{font-size:10px;font-weight:700;color:var(--white-40);text-transform:uppercase;letter-spacing:.8px;display:flex;align-items:center;gap:6px}
+.avail-title svg{width:12px;height:12px;stroke:var(--green);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.avail-count{font-size:20px;font-weight:800;color:var(--green);line-height:1;margin-top:4px;letter-spacing:-.5px}
+.avail-count span{font-size:12px;font-weight:400;color:var(--white-40);letter-spacing:0;margin-left:4px}
+.avail-hint{font-size:10px;color:var(--white-40);margin-top:3px}
+#avail-list{flex:1;overflow-y:auto;padding:6px;scrollbar-width:thin;scrollbar-color:var(--purple-border) transparent}
+.avail-item{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:var(--radius-sm);margin-bottom:4px;cursor:pointer;transition:all .18s;border:1px solid transparent}
+.avail-item:hover{background:var(--orange);border-color:var(--orange-light)}
+.avail-item:hover .avail-name,.avail-item:hover .avail-floor{color:var(--white)}
+.avail-item:hover .avail-sub{color:rgba(255,255,255,.7)}
+.avail-item:hover .avail-floor{background:rgba(255,255,255,.2)}
+.avail-item.is-this{opacity:.4;pointer-events:none}
+.avail-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;background:var(--green);animation:blink 2s ease-in-out infinite}
+.avail-dot.soon{background:var(--yellow)}
+.avail-info{display:flex;flex-direction:column;gap:2px;flex:1;min-width:0}
+.avail-name{font-size:13px;font-weight:600;color:var(--white);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.avail-sub{font-size:10px;color:var(--white-40);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.avail-floor{font-size:10px;font-weight:600;color:var(--white-40);background:var(--white-15);border-radius:6px;padding:2px 7px;flex-shrink:0;transition:all .18s}
+.avail-empty{text-align:center;padding:30px 12px;font-size:12px;color:var(--white-40);line-height:1.6}
+
+/* ══ MODAIS ══ */
+.modal-overlay{display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.75);align-items:center;justify-content:center;padding:20px}
+.modal-overlay.open{display:flex!important}
+.modal{background:var(--purple-card);border:1px solid var(--purple-border);border-radius:var(--radius);padding:28px;width:100%;max-width:440px;max-height:90vh;overflow-y:auto}
+.modal h2{font-size:18px;font-weight:700;margin-bottom:4px}
+.modal .sub{font-size:13px;color:var(--white-40);margin-bottom:20px;line-height:1.5}
+.field{margin-bottom:15px}
+.field label{display:block;font-size:11px;font-weight:600;color:var(--white-40);margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px}
+.field input,.field select{width:100%;background:var(--purple-mid);border:1px solid var(--purple-border);border-radius:var(--radius-sm);color:var(--white);font-family:var(--font);font-size:14px;padding:12px 14px;outline:none;transition:border-color .2s;-webkit-appearance:none}
+.field input:focus,.field select:focus{border-color:var(--orange)}
+.field input::placeholder{color:var(--white-40)}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.modal-btns{display:flex;gap:10px;margin-top:20px}
+.btn-primary{flex:1;padding:13px;background:var(--orange);border:none;border-radius:var(--radius-sm);color:var(--white);font-family:var(--font);font-size:14px;font-weight:600;cursor:pointer;transition:background .2s}
+.btn-primary:hover{background:var(--orange-light)}
+.btn-secondary{padding:13px 20px;background:transparent;border:1px solid var(--purple-border);border-radius:var(--radius-sm);color:var(--white-70);font-family:var(--font);font-size:14px;cursor:pointer;transition:all .2s}
+.btn-secondary:hover{border-color:var(--white-40);color:var(--white)}
+.alert{padding:10px 14px;border-radius:var(--radius-sm);font-size:12px;line-height:1.5;margin-bottom:12px}
+.alert.success{background:var(--green-bg);border:1px solid var(--green-border);color:var(--green)}
+.alert.error{background:var(--red-bg);border:1px solid var(--red-border);color:var(--red)}
+.alert.info{background:var(--yellow-bg);border:1px solid var(--yellow-border);color:var(--yellow)}
+.sec-sep{height:1px;background:var(--purple-border);margin:16px 0}
+.sec-lbl{font-size:11px;font-weight:700;color:var(--orange);text-transform:uppercase;letter-spacing:.6px;display:block;margin-bottom:10px}
+
+/* PIN */
+#pin-display{display:flex;gap:10px;justify-content:center;margin:20px 0}
+.pin-digit{width:52px;height:64px;background:var(--purple-mid);border:2px solid var(--purple-border);border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:700;color:var(--white);transition:border-color .2s}
+.pin-digit.active{border-color:var(--orange)}
+.pin-digit.filled{border-color:var(--purple-border)}
+#pin-keypad{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;max-width:260px;margin:0 auto}
+.key-btn{padding:16px;background:var(--purple-mid);border:1px solid var(--purple-border);border-radius:var(--radius-sm);color:var(--white);font-family:var(--font);font-size:20px;font-weight:600;cursor:pointer;transition:all .15s;text-align:center}
+.key-btn:hover{background:var(--purple-border)}
+.key-btn:active{transform:scale(.95)}
+.key-btn.del{font-size:16px;color:var(--white-40)}
+.key-btn.empty{background:transparent;border:none;cursor:default}
+#pin-error{text-align:center;font-size:13px;color:var(--red);min-height:20px;margin-top:8px}
+
+/* Agendar */
+.booking-room-tag{display:inline-flex;align-items:center;gap:7px;background:var(--orange);border-radius:30px;padding:5px 14px;font-size:13px;font-weight:600;color:var(--white);margin-bottom:16px}
+
+/* Config lista salas */
+.room-list-edit{display:flex;flex-direction:column;gap:6px;max-height:240px;overflow-y:auto;padding-right:4px;scrollbar-width:thin;scrollbar-color:var(--purple-border) transparent}
+.room-row{display:grid;grid-template-columns:1fr 1fr 80px 36px;gap:6px;align-items:center}
+.room-row input{font-size:12px;padding:8px 10px;width:100%;background:var(--purple-mid);border:1px solid var(--purple-border);border-radius:var(--radius-sm);color:var(--white);font-family:var(--font);outline:none}
+.room-row input:focus{border-color:var(--orange)}
+.room-row input::placeholder{color:var(--white-40)}
+.room-row select{font-size:12px;padding:8px 10px;width:100%;background:var(--purple-mid);border:1px solid var(--purple-border);border-radius:var(--radius-sm);color:var(--white);font-family:var(--font);outline:none;-webkit-appearance:none}
+.btn-del-room{width:32px;height:32px;background:var(--red-bg);border:1px solid var(--red-border);border-radius:8px;color:var(--red);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;transition:background .2s}
+.btn-del-room:hover{background:rgba(255,31,31,.25)}
+.btn-add-room{display:flex;align-items:center;gap:7px;background:var(--white-15);border:1px dashed var(--purple-border);border-radius:var(--radius-sm);padding:9px 14px;color:var(--white-40);font-family:var(--font);font-size:12px;cursor:pointer;width:100%;margin-top:6px;transition:all .2s;justify-content:center}
+.btn-add-room:hover{border-color:var(--orange);color:var(--orange-light)}
+.room-row-header{display:grid;grid-template-columns:1fr 1fr 80px 36px;gap:6px;padding:0 0 4px}
+.room-row-header span{font-size:10px;color:var(--white-40);text-transform:uppercase;letter-spacing:.4px}
+.this-room-select{margin-bottom:12px}
+.this-room-select label{font-size:11px;font-weight:600;color:var(--white-40);text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:6px}
+.this-room-select select{width:100%}
+.badge-global{display:inline-block;background:rgba(255,107,43,.12);border:1px solid rgba(255,107,43,.3);color:var(--orange-light);font-size:9px;font-weight:700;padding:1px 6px;border-radius:8px;letter-spacing:.4px;text-transform:uppercase;margin-left:6px;vertical-align:middle}
+.badge-local{display:inline-block;background:rgba(22,219,106,.1);border:1px solid rgba(22,219,106,.25);color:var(--green);font-size:9px;font-weight:700;padding:1px 6px;border-radius:8px;letter-spacing:.4px;text-transform:uppercase;margin-left:6px;vertical-align:middle}
+
+/* First Access */
+#first-access{display:none;position:fixed;inset:0;z-index:200;background:var(--purple-dark);flex-direction:column;align-items:center;justify-content:center;gap:16px;padding:32px 24px;text-align:center}
+#first-access.show{display:flex}
+.fa-logo{height:40px;margin-bottom:4px}
+.fa-title{font-size:22px;font-weight:800;letter-spacing:-.5px}
+.fa-sub{font-size:13px;color:var(--white-40);line-height:1.6;max-width:340px}
+.fa-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:8px;width:100%;max-width:580px;max-height:46vh;overflow-y:auto;padding:2px;scrollbar-width:thin;scrollbar-color:var(--purple-border) transparent}
+.fa-btn{display:flex;flex-direction:column;align-items:center;gap:4px;background:var(--purple-card);border:1px solid var(--purple-border);border-radius:var(--radius-sm);padding:14px 10px;cursor:pointer;transition:all .2s}
+.fa-btn:hover{background:var(--orange);border-color:var(--orange-light)}
+.fa-btn:hover .fa-rn{color:var(--white)}
+.fa-btn:hover .fa-rf{color:rgba(255,255,255,.65)}
+.fa-rn{font-size:13px;font-weight:700;color:var(--white)}
+.fa-rf{font-size:10px;color:var(--white-40)}
+.fa-note{font-size:11px;color:var(--white-40);max-width:340px;line-height:1.5}
+.fa-cfg{font-size:12px;color:var(--orange-light);cursor:pointer;text-decoration:underline}
+
+.spinner{width:18px;height:18px;border:2px solid rgba(255,255,255,.2);border-top-color:var(--orange);border-radius:50%;animation:spin .7s linear infinite;display:inline-block}
+@keyframes spin{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+
+<!-- FIRST ACCESS -->
+<div id="first-access">
+  <img class="fa-logo" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADkAAABQCAYAAACj490XAAABCGlDQ1BJQ0MgUHJvZmlsZQAAeJxjYGA8wQAELAYMDLl5JUVB7k4KEZFRCuwPGBiBEAwSk4sLGHADoKpv1yBqL+viUYcLcKakFicD6Q9ArFIEtBxopAiQLZIOYWuA2EkQtg2IXV5SUAJkB4DYRSFBzkB2CpCtkY7ETkJiJxcUgdT3ANk2uTmlyQh3M/Ck5oUGA2kOIJZhKGYIYnBncAL5H6IkfxEDg8VXBgbmCQixpJkMDNtbGRgkbiHEVBYwMPC3MDBsO48QQ4RJQWJRIliIBYiZ0tIYGD4tZ2DgjWRgEL7AwMAVDQsIHG5TALvNnSEfCNMZchhSgSKeDHkMyQx6QJYRgwGDIYMZAKbWPz9HbOBQAAAGBElEQVR42u2ZXWwc1RXH/+fMXe/6O7HT1HYIhKpOmrjBqSpVrlLkdetWjiBP7a4IavohVWoVVVRFqlQQ0mTSh35CKVR9qdSWIFXKbhHQRhBIm3gbUgKloVWMRSKjgGM7kWMc7MS73vXMOX3YDQGiTdbGuzZwf9Jo5+HO3P3POfO/59wBLBaLxWKxWCwWi8VisXx0oeXyR1wXvBvdvNDrdyMlngdZtk/adcEf6kgedrtNj5fy92y7YfPOreGvNRp/1hcuWTRDhKur+Pk3+JnbHjz5krpgek9EzdIKhOnxUv7Ptq/t2NnlPNvWErRgTgGaR9aJAnUBbp7EFICXgG4GUstD5NsR3L624+ufdw62rQxaZEpyoPmlLkN9EIzRULrYGLOUEfxl342b7uzig21NQWswIwEzVS3wrTMC5eIPYkkEwnf7bty041bn73mBGjCTU645KxrJgin4e3pXtX/nVnq6deVci6Q16zAcAP51Xz8Q0wICUzGRbrdrkoMd+vtv/njrtnb5R+saCmMG4DqEoSW+f75AczrvNaFCIl32Up4PAA/Eb944PCm//d/rMstOafMTiGdFZX2z9G1c63RKToRAvGxEdsM1KXh+R823b68LNa+/O/GrBxZ6rxfuXlOLKu5ETmQ+fmIqIXBj7Vc7tlTHH5+aG9mXiMH52Lgbikb7/XlmnH88PVQNAaDzK2NMuQXeVL29qzPyrSdbaYuZwNCFeBKBiyj1FNK3NMPqBnkp/z8/umFBtakpp8D1tXfc8pnIjgNN1N6Y1mklmCVZl7lcAj8R6fvCZyM7D67GxsaszGSZHEKpNrq810mXU/D89pp455bIjqeaqL0+rdNC5DhYQsxiCgR266aG05/rDMWeXIVP1Wd0OmA4jqLcfZ5KiIunCS9emkYZIG1zOu9YzZtbMnpxjsBlj6CoCozhiRyFAKC/EsbjUCQ7h5wSUdl7VVX1uTZUNXjaH3jsv9n9qiAgFcAre4GuRCi/QMkLNAPD+sp3901+8RcHRkdAANHVacv4oEEKVfhOrTEDw8Hgrkcnvnx06NL5RAxF7fuDJzKAODUmMjgsg7sefbP3ueH02X0xOPEkgmXTT76/DSnNod7wwBkd+N5jb/YeKUFgxftJIrCLwwaAcXG45Ov6X+83QFSIHmkZGqKxH+wN9/3zzMy5u9rvCieTD/ku+g3QLx48qZBI0mJx8CWb8dDjl9IgvxPvkfz44+dW/HXw4lu7Do1gvGDeWeDhyteuBN+5fHbFB5QDyaLOae3b1vy7P5IYUla9qkRgvKtsYABK4ldzc81rwbP7f7P3lpF1TWt+clvzREgk34cQSBwyofN64s/HLvz6QL4o8cq7WxeITINV32l0BGIfs2hxOjc4VLXhbSfga7uEqo8aWolheXFCBPdtaG7avc5EvzEjk+DC1qxCEKZ6zOTGJwAc6EaUU+USuRrnFQCmgjdezplpIoTo3aEizGlG5nRWrp8NeYVVXBc5LUcHnsrc85V0+tWzn1zRk03TW35OZ3xATeEB+kpqoJgpu7smEReF0osX/3Logpx5rYpqSCHBe7cxCDDXO6CKam6IjMsrJw+lf96XSZ86e1k75QNzZeyV84psSWocSQZGMiP+c/fmaJoNalTgz6s4V6gf4UZzVk6cfD7z8JcmM8dGv4/9YbyPPm1R18kk4kEMCefY9P2JV3NP/FQobarRxAALQL4C1zygmquhBnNOTpz6V+bB3pHModEYEk4TqgsZQaJ5Z75yTeGXrtHpLLrxJBEPXCh7U3RvrjH49zqna08tf/zTYVrBrIyrytrCfo2qIsRhjAbHTx1N3987NntkJIaEk7/fYZOvioP6CDcY1cBwIT6qYsLcACGprWgx4IEkhoSTnIo/fgz4W9eKH25dhc0dSrm24tM66lAo+3LmT38Ymz0ydllgoRwQALgQjO4dwsHTc7gkhLy9iqhWmVq6hLFnACBVGFsxYkg4tKCvg7qoXUwlvk9SDDEexy6KlpQF0aBY1eTCZSBaxEeKl3UWi8VisVgsFovFYrFYLBaLxWKxWC6y/B+vjKI1O1UrRwAAAABJRU5ErkJggg==" alt="Logcomex">
+  <div class="fa-title">Qual sala é esta?</div>
+  <div class="fa-sub">Selecione a sala que este tablet representa. A escolha fica salva neste dispositivo.</div>
+  <div class="fa-grid" id="fa-grid"></div>
+  <div class="fa-note">Cada tablet escolhe sua própria sala. Salas e API são configuradas uma única vez.</div>
+  <span class="fa-cfg" id="fa-cfg-link">Configurar API e salas primeiro</span>
+</div>
+
+<div id="app">
+  <!-- TOP BAR -->
+  <div id="top-bar">
+    <img class="logo-img" src="data:image/png;base64,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" alt="Logcomex">
+    <div class="top-center">
+      <div id="top-clock">--:--</div>
+      <div id="top-date">--</div>
+    </div>
+    <div style="display:flex;align-items:center;gap:12px">
+      <div class="sync-pill"><div class="sync-dot"></div><span id="sync-label">Sincronizando...</span></div>
+      <button id="btn-open-cfg" title="Configurações" onclick="resetPin();showModal('modal-pin');">
+        <svg viewBox="0 0 24 24"><path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- MAIN PANEL -->
+  <div id="main-panel" class="free">
+    <div id="bg-glow"></div>
+    <div class="status-badge free" id="status-badge"><div class="st-dot"></div><span id="status-text">Disponível</span></div>
+    <div id="room-name">—</div>
+    <div id="room-type">—</div>
+    <div id="status-info"><span class="hl">Carregando...</span></div>
+    <div id="countdown"></div>
+    <div id="prog-wrap">
+      <div class="prog-track"><div id="prog-fill" style="width:0%"></div></div>
+      <div class="prog-labels"><span id="pl-left"></span><span id="pl-right"></span></div>
+    </div>
+  </div>
+
+  <!-- AVAILABLE PANEL -->
+  <div id="avail-panel">
+    <div class="avail-header">
+      <div class="avail-title">
+        <svg viewBox="0 0 24 24"><polyline points="9,11 12,14 22,4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+        Salas disponíveis
+      </div>
+      <div class="avail-count" id="avail-count">— <span>livres agora</span></div>
+      <div class="avail-hint">Toque para agendar</div>
+    </div>
+    <div id="avail-list"><div class="avail-empty">Carregando...</div></div>
+  </div>
+
+  <!-- BOTTOM STRIP -->
+  <div id="bottom-strip">
+    <div class="info-chip">
+      <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      <span>Responsável: <strong id="responsible-chip">—</strong></span>
+    </div>
+    <div class="chip-sep"></div>
+    <div class="info-chip">
+      <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+      <span id="next-chip">—</span>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL PIN -->
+<div class="modal-overlay" id="modal-pin">
+  <div class="modal" style="max-width:320px;text-align:center">
+    <h2>Configurações</h2>
+    <p class="sub">Digite o código de acesso para continuar.</p>
+    <div id="pin-display">
+      <div class="pin-digit active" id="pd0">·</div>
+      <div class="pin-digit" id="pd1">·</div>
+      <div class="pin-digit" id="pd2">·</div>
+      <div class="pin-digit" id="pd3">·</div>
+    </div>
+    <div id="pin-keypad">
+      <button class="key-btn" data-k="1">1</button><button class="key-btn" data-k="2">2</button><button class="key-btn" data-k="3">3</button>
+      <button class="key-btn" data-k="4">4</button><button class="key-btn" data-k="5">5</button><button class="key-btn" data-k="6">6</button>
+      <button class="key-btn" data-k="7">7</button><button class="key-btn" data-k="8">8</button><button class="key-btn" data-k="9">9</button>
+      <button class="key-btn empty"></button><button class="key-btn" data-k="0">0</button><button class="key-btn del" data-k="del">⌫</button>
+    </div>
+    <div id="pin-error"></div>
+    <div class="modal-btns" style="margin-top:16px"><button class="btn-secondary" id="btn-pin-cancel">Cancelar</button></div>
+  </div>
+</div>
+
+<!-- MODAL CONFIG -->
+<div class="modal-overlay" id="modal-cfg">
+  <div class="modal" style="max-width:560px">
+    <h2>Configurações</h2>
+    <p class="sub">
+      <span class="badge-local">Este tablet</span> salvo só aqui.
+      <span class="badge-global">Global</span> salvo para todos via Apps Script.
+    </p>
+
+    <span class="sec-lbl">Sala deste tablet <span class="badge-local">Este tablet</span></span>
+    <div class="this-room-select">
+      <label>Qual sala este tablet representa</label>
+      <select id="cfg-this-room"><option value="">— selecione —</option></select>
+    </div>
+
+    <div class="sec-sep"></div>
+    <span class="sec-lbl">Todas as salas <span class="badge-global">Global</span></span>
+    <p style="font-size:11px;color:var(--white-40);margin-bottom:10px;line-height:1.5">
+      Configure uma vez, vale para todos os tablets. O e-mail do recurso está no Admin do Workspace em <em>Edifícios e recursos</em>.
+    </p>
+    <div class="room-row-header">
+      <span>Nome</span><span>E-mail do recurso</span><span>Andar</span><span></span>
+    </div>
+    <div class="room-list-edit" id="room-list-edit"></div>
+    <button class="btn-add-room" id="btn-add-room">+ Adicionar sala</button>
+
+    <div class="sec-sep"></div>
+    <span class="sec-lbl">API Key Google Calendar <span class="badge-global">Global</span></span>
+    <p style="font-size:11px;color:var(--white-40);margin-bottom:10px;line-height:1.5">
+      Crie em <strong style="color:var(--white)">console.cloud.google.com</strong> → APIs e Serviços → Credenciais → Chave de API. Restrinja à Calendar API.
+    </p>
+    <div class="field"><label>Chave de API</label><input type="text" id="cfg-apikey" placeholder="AIzaSy..."></div>
+
+    <div class="sec-sep"></div>
+    <span class="sec-lbl">Código PIN <span class="badge-global">Global</span></span>
+    <div class="field-row">
+      <div class="field"><label>PIN atual</label><input type="password" id="cfg-pin-current" placeholder="••••" maxlength="4"></div>
+      <div class="field"><label>Novo PIN (opcional)</label><input type="password" id="cfg-pin-new" placeholder="••••" maxlength="4"></div>
+    </div>
+
+    <div class="modal-btns">
+      <button class="btn-primary" id="btn-save-cfg">Salvar</button>
+      <button class="btn-secondary" id="btn-close-cfg">Cancelar</button>
+    </div>
+    <div id="cfg-alert" style="margin-top:10px"></div>
+  </div>
+</div>
+
+<!-- MODAL AGENDAR -->
+<div class="modal-overlay" id="modal-booking">
+  <div class="modal">
+    <h2>Agendar sala</h2>
+    <div id="booking-room-tag" class="booking-room-tag">—</div>
+    <div id="booking-alert"></div>
+    <div class="field"><label>Seu e-mail corporativo</label><input type="email" id="bk-email" placeholder="nome@logcomex.com"></div>
+    <div class="field"><label>Título da reunião</label><input type="text" id="bk-title" placeholder="ex: Reunião de alinhamento"></div>
+    <div class="field-row">
+      <div class="field"><label>Data</label><input type="date" id="bk-date"></div>
+      <div class="field"><label>Duração</label>
+        <select id="bk-duration">
+          <option value="30">30 min</option><option value="60" selected>1 hora</option>
+          <option value="90">1h30</option><option value="120">2 horas</option>
+          <option value="180">3 horas</option><option value="240">4 horas</option>
+          <option value="480">Dia inteiro</option>
+        </select>
+      </div>
+    </div>
+    <div class="field"><label>Horário de início</label><input type="time" id="bk-time" value="09:00"></div>
+    <div class="modal-btns">
+      <button class="btn-primary" id="btn-confirm-booking">Confirmar agendamento</button>
+      <button class="btn-secondary" id="btn-close-booking">Voltar</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ══════════════════════════════════════════════════════
+// STORAGE
+// No Apps Script o localStorage funciona normalmente no
+// browser do tablet. Configurações GLOBAIS (salas, API,
+// PIN) ficam no localStorage com chave 'lcx_g'.
+// A sala DESTE TABLET fica com chave 'lcx_l' — única
+// por dispositivo, independente dos outros tablets.
+// ══════════════════════════════════════════════════════
+const DEFAULT_PIN = '1234';
+
+let cfg = {
+  thisRoom: '',
+  apiKey: '',
+  pin: DEFAULT_PIN,
+  rooms: [
+    {name:'1. PHP',        email:'', floor:'Andar 1'},
+    {name:'2. Javascript', email:'', floor:'Andar 1'},
+    {name:'4. Container',  email:'', floor:'Andar 1'},
+    {name:'7. Cloud',      email:'', floor:'Andar 1'},
+    {name:'8. HTML',       email:'', floor:'Andar 1'},
+    {name:'9. Cron',       email:'', floor:'Andar 1'},
+    {name:'11. Bot',       email:'', floor:'Andar 1'},
+    {name:'12. Git',       email:'', floor:'Andar 1'},
+    {name:'14. Fullstack', email:'', floor:'Andar 1'},
+    {name:'15. War Room',  email:'', floor:'Andar 2'},
+    {name:'16. XGH',       email:'', floor:'Andar 2'},
+    {name:'23. Sofá Ext.', email:'', floor:'Andar 2'},
+  ]
+};
+
+let state = {events:[], allRoomData:[], refreshTimer:null, bookingTarget:null};
+
+function saveCfg() {
+  try {
+    localStorage.setItem('lcx_g', JSON.stringify({
+      apiKey: cfg.apiKey, pin: cfg.pin, rooms: cfg.rooms
+    }));
+    localStorage.setItem('lcx_l', JSON.stringify({thisRoom: cfg.thisRoom}));
+  } catch(e) {}
+}
+
+function loadCfg() {
+  try {
+    const g = localStorage.getItem('lcx_g');
+    if (g) { const p = JSON.parse(g); cfg.apiKey = p.apiKey||''; cfg.pin = p.pin||DEFAULT_PIN; cfg.rooms = p.rooms||cfg.rooms; }
+    const l = localStorage.getItem('lcx_l');
+    if (l) { const p = JSON.parse(l); cfg.thisRoom = p.thisRoom||''; }
+  } catch(e) {}
+}
+
+// ── HELPERS ──
+const fmt = d => d ? d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}) : '';
+function fmtDur(ms) {
+  const m = Math.ceil(ms/60000);
+  return m >= 60 ? `${Math.floor(m/60)}h${m%60?' '+m%60+'min':''}` : `${m} min`;
+}
+function roomByEmail(e) { return cfg.rooms.find(r => r.email.toLowerCase() === (e||'').toLowerCase()); }
+
+// ── CLOCK ──
+function tick() {
+  const n = new Date();
+  document.getElementById('top-clock').textContent = n.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
+  document.getElementById('top-date').textContent  = n.toLocaleDateString('pt-BR',{weekday:'short',day:'2-digit',month:'short',year:'numeric'});
+}
+setInterval(tick,1000); tick();
+
+// ── CALENDAR API ──
+async function fetchCal(email) {
+  if (!cfg.apiKey || !email) return null;
+  const now = new Date();
+  const tmin = encodeURIComponent(new Date(now.getFullYear(),now.getMonth(),now.getDate()).toISOString());
+  const tmax = encodeURIComponent(new Date(now.getFullYear(),now.getMonth(),now.getDate(),23,59,59).toISOString());
+  try {
+    const r = await fetch(`https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(email)}/events?key=${cfg.apiKey}&timeMin=${tmin}&timeMax=${tmax}&singleEvents=true&orderBy=startTime&maxResults=20`);
+    const d = await r.json();
+    return d.error ? null : (d.items||[]);
+  } catch(e) { return null; }
+}
+
+function classify(events) {
+  const now = new Date();
+  if (!events) return {status:'free',progress:0,responsible:null};
+  const cur = events.find(e => {
+    const s = new Date(e.start.dateTime||e.start.date), en = new Date(e.end.dateTime||e.end.date);
+    return s <= now && en > now;
+  });
+  if (cur) {
+    const s = new Date(cur.start.dateTime), en = new Date(cur.end.dateTime);
+    return {status:'busy', current:cur, progress:Math.min(100,Math.round(((now-s)/(en-s))*100)),
+            countdown:en-now, endsAt:en, responsible:cur.organizer?.email||null, next:null};
+  }
+  const nxt = events.find(e => new Date(e.start.dateTime||e.start.date) > now);
+  if (nxt) {
+    const st = new Date(nxt.start.dateTime||nxt.start.date), mins = Math.round((st-now)/60000);
+    if (mins <= 30) return {status:'soon', next:nxt, progress:Math.max(0,100-(mins/30)*100),
+                            countdown:st-now, nextAt:st, responsible:nxt.organizer?.email||null};
+    return {status:'free', next:nxt, progress:0, nextAt:st, responsible:nxt.organizer?.email||null};
+  }
+  return {status:'free', progress:0, responsible:null};
+}
+
+// ── RENDER MAIN ──
+function renderMain(cl) {
+  const {status,current,next,progress,countdown,endsAt,nextAt,responsible} = cl;
+  const mp = document.getElementById('main-panel');
+  const bd = document.getElementById('status-badge');
+  mp.className = status; bd.className = `status-badge ${status}`;
+  document.getElementById('status-text').textContent = {free:'Disponível',soon:'Em breve',busy:'Ocupada'}[status];
+
+  const info = document.getElementById('status-info');
+  const cd   = document.getElementById('countdown');
+  const pf   = document.getElementById('prog-fill');
+  const pl   = document.getElementById('pl-left');
+  const pr   = document.getElementById('pl-right');
+  const nc   = document.getElementById('next-chip');
+  const rc   = document.getElementById('responsible-chip');
+
+  if (status === 'busy') {
+    info.innerHTML = `Termina às <span class="hl">${fmt(endsAt)}</span>`;
+    cd.textContent = countdown ? fmtDur(countdown) : '';
+    pf.style.width = `${progress}%`;
+    pl.textContent = `${progress}% concluído`; pr.textContent = `Libera ${fmt(endsAt)}`;
+    nc.innerHTML   = next ? `Próxima às <strong>${fmt(new Date(next.start.dateTime))}</strong>` : 'Última do dia';
+  } else if (status === 'soon') {
+    info.innerHTML = `Ocupada em <span class="hl">${fmtDur(countdown)}</span>`;
+    cd.textContent = fmtDur(countdown); pf.style.width = `${progress}%`;
+    pl.textContent = 'Livre agora'; pr.textContent = `Reunião às ${fmt(nextAt)}`;
+    nc.innerHTML   = `Próxima às <strong>${fmt(nextAt)}</strong>`;
+  } else {
+    info.innerHTML = next ? `Próxima reunião às <span class="hl">${fmt(nextAt)}</span>` : '<span class="hl">Livre o dia todo</span>';
+    cd.textContent = ''; pf.style.width = '0%'; pl.textContent = ''; pr.textContent = '';
+    nc.innerHTML   = next ? `Próxima às <strong>${fmt(nextAt)}</strong>` : 'Sem reservas hoje';
+  }
+  rc.textContent = responsible ? responsible.replace(/@.*$/,'') : '—';
+}
+
+// ── RENDER AVAILABLE ──
+function renderAvail(rooms) {
+  const avail = rooms.filter(r => r.cl && (r.cl.status === 'free' || r.cl.status === 'soon'));
+  const free  = avail.filter(r => r.cl.status === 'free');
+  document.getElementById('avail-count').innerHTML = `${free.length} <span>livre${free.length!==1?'s':''} agora</span>`;
+  const list = document.getElementById('avail-list');
+  if (!avail.length) { list.innerHTML = '<div class="avail-empty">Nenhuma sala disponível agora.</div>'; return; }
+  const sorted = [...avail].sort((a,b) => a.cl.status==='free' && b.cl.status!=='free' ? -1 : 1);
+  list.innerHTML = sorted.map(r => {
+    const isThis = r.email.toLowerCase() === cfg.thisRoom.toLowerCase();
+    const isSoon = r.cl.status === 'soon';
+    const sub    = isSoon ? `Ocupada em ${fmtDur(r.cl.countdown)}` : (r.cl.nextAt ? `Próxima às ${fmt(r.cl.nextAt)}` : 'Livre o dia todo');
+    return `<div class="avail-item${isThis?' is-this':''}" data-email="${r.email}" data-name="${r.name}" data-floor="${r.floor}">
+      <div class="avail-dot${isSoon?' soon':''}"></div>
+      <div class="avail-info"><div class="avail-name">${r.name}</div><div class="avail-sub">${sub}</div></div>
+      <div class="avail-floor">${r.floor}</div>
+    </div>`;
+  }).join('');
+  list.querySelectorAll('.avail-item:not(.is-this)').forEach(item => {
+    item.addEventListener('click', () => openBooking({email:item.dataset.email, name:item.dataset.name, floor:item.dataset.floor}));
+  });
+}
+
+// ── REFRESH ──
+async function refresh() {
+  document.getElementById('sync-label').textContent = 'Atualizando...';
+  if (cfg.thisRoom && cfg.apiKey) {
+    const ev = await fetchCal(cfg.thisRoom);
+    if (ev !== null) { state.events = ev; renderMain(classify(ev)); }
+  }
+  const roomsWithEmail = cfg.rooms.filter(r => r.email);
+  if (roomsWithEmail.length && cfg.apiKey) {
+    const results = await Promise.all(roomsWithEmail.map(async r => ({...r, cl: classify(await fetchCal(r.email))})));
+    state.allRoomData = results;
+    renderAvail(results);
+  }
+  document.getElementById('sync-label').textContent = new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
+}
+
+function startRefresh() {
+  clearInterval(state.refreshTimer);
+  refresh();
+  state.refreshTimer = setInterval(refresh, 30000);
+}
+
+setInterval(() => { if(state.events.length) renderMain(classify(state.events)); }, 10000);
+
+// ── APPLY ROOM INFO ──
+function applyRoomInfo() {
+  const tr = roomByEmail(cfg.thisRoom);
+  if (tr) {
+    document.getElementById('room-name').textContent = tr.name;
+    document.getElementById('room-type').textContent = tr.floor;
+  }
+}
+
+// ── FIRST ACCESS ──
+function buildFirstAccess() {
+  const grid = document.getElementById('fa-grid');
+  if (!cfg.rooms.filter(r=>r.name).length) {
+    grid.innerHTML = '<p style="color:var(--white-40);font-size:13px;grid-column:1/-1;text-align:center">Nenhuma sala cadastrada ainda.<br>Use "Configurar API e salas primeiro".</p>';
+    return;
+  }
+  grid.innerHTML = cfg.rooms.map(r => `
+    <div class="fa-btn" data-email="${r.email}" data-name="${r.name}" data-floor="${r.floor}">
+      <div class="fa-rn">${r.name}</div>
+      <div class="fa-rf">${r.floor}</div>
+    </div>`).join('');
+  grid.querySelectorAll('.fa-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      cfg.thisRoom = btn.dataset.email;
+      saveCfg();
+      document.getElementById('first-access').classList.remove('show');
+      applyRoomInfo();
+      startRefresh();
+    });
+  });
+}
+
+function showFirstAccess() {
+  buildFirstAccess();
+  document.getElementById('first-access').classList.add('show');
+}
+
+document.getElementById('fa-cfg-link').addEventListener('click', () => {
+  document.getElementById('first-access').classList.remove('show');
+  resetPin();
+  showModal('modal-pin');
+});
+
+// listener do btn-open-cfg já está no onclick inline do HTML
+
+// ── MODAL HELPERS (compatível com Apps Script iframe) ──
+function showModal(id) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.style.display = 'flex';
+  el.classList.add('open');
+}
+function hideModal(id) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.style.display = 'none';
+  el.classList.remove('open');
+}
+
+// ── PIN ──
+let pinBuffer = '';
+
+function resetPin(err='') {
+  pinBuffer = '';
+  for(let i=0;i<4;i++){
+    const el = document.getElementById(`pd${i}`);
+    el.textContent = '·'; el.className = 'pin-digit'+(i===0?' active':'');
+  }
+  document.getElementById('pin-error').textContent = err;
+}
+
+function updatePinDisplay() {
+  for(let i=0;i<4;i++){
+    const el = document.getElementById(`pd${i}`);
+    el.textContent = i < pinBuffer.length ? '●' : '·';
+    el.className = 'pin-digit'+(i===pinBuffer.length?' active':i<pinBuffer.length?' filled':'');
+  }
+}
+
+// btn-open-cfg usa onclick inline no HTML
+document.getElementById('btn-pin-cancel').addEventListener('click', () => {
+  hideModal('modal-pin'); resetPin();
+});
+
+document.querySelectorAll('#pin-keypad .key-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const k = btn.dataset.k;
+    if (k === 'del') { pinBuffer = pinBuffer.slice(0,-1); updatePinDisplay(); return; }
+    if (pinBuffer.length >= 4) return;
+    pinBuffer += k; updatePinDisplay();
+    if (pinBuffer.length === 4) {
+      if (pinBuffer === cfg.pin) {
+        hideModal('modal-pin');
+        resetPin(); openCfg();
+      } else {
+        setTimeout(() => resetPin('Código incorreto. Tente novamente.'), 300);
+      }
+    }
+  });
+});
+
+// ── CONFIG ──
+function buildRoomList() {
+  const wrap = document.getElementById('room-list-edit');
+  wrap.innerHTML = cfg.rooms.map((r,i) => `
+    <div class="room-row" data-idx="${i}">
+      <input type="text" class="rn" value="${r.name}" placeholder="Nome da sala">
+      <input type="text" class="re" value="${r.email}" placeholder="c_xxx@resource..." style="font-size:11px">
+      <select class="rf">
+        <option value="Andar 1"${r.floor==='Andar 1'?' selected':''}>Andar 1</option>
+        <option value="Andar 2"${r.floor==='Andar 2'?' selected':''}>Andar 2</option>
+        <option value="Andar 3"${r.floor==='Andar 3'?' selected':''}>Andar 3</option>
+      </select>
+      <button class="btn-del-room" data-idx="${i}">×</button>
+    </div>`).join('');
+  wrap.querySelectorAll('.btn-del-room').forEach(b => {
+    b.addEventListener('click', () => {
+      cfg.rooms.splice(parseInt(b.dataset.idx), 1);
+      buildRoomList(); buildThisRoomSelect();
+    });
+  });
+}
+
+function buildThisRoomSelect() {
+  const sel = document.getElementById('cfg-this-room');
+  sel.innerHTML = '<option value="">— selecione —</option>' +
+    cfg.rooms.map(r => `<option value="${r.email}"${r.email===cfg.thisRoom?' selected':''}>${r.name} · ${r.floor}</option>`).join('');
+}
+
+function openCfg() {
+  document.getElementById('cfg-apikey').value     = cfg.apiKey;
+  document.getElementById('cfg-pin-current').value = '';
+  document.getElementById('cfg-pin-new').value     = '';
+  document.getElementById('cfg-alert').innerHTML   = '';
+  buildRoomList(); buildThisRoomSelect();
+  showModal('modal-cfg');
+}
+
+document.getElementById('btn-add-room').addEventListener('click', () => {
+  cfg.rooms.push({name:'Nova sala', email:'', floor:'Andar 1'});
+  buildRoomList(); buildThisRoomSelect();
+});
+
+document.getElementById('btn-close-cfg').addEventListener('click', () => hideModal('modal-cfg'));
+
+document.getElementById('btn-save-cfg').addEventListener('click', () => {
+  const al = document.getElementById('cfg-alert');
+  document.querySelectorAll('#room-list-edit .room-row').forEach((row,i) => {
+    if (cfg.rooms[i]) {
+      cfg.rooms[i].name  = row.querySelector('.rn').value.trim();
+      cfg.rooms[i].email = row.querySelector('.re').value.trim();
+      cfg.rooms[i].floor = row.querySelector('.rf').value;
+    }
+  });
+  cfg.apiKey   = document.getElementById('cfg-apikey').value.trim();
+  cfg.thisRoom = document.getElementById('cfg-this-room').value;
+  const pinCur = document.getElementById('cfg-pin-current').value;
+  const pinNew = document.getElementById('cfg-pin-new').value;
+  if (pinNew) {
+    if (pinCur !== cfg.pin) { al.innerHTML = '<div class="alert error">PIN atual incorreto.</div>'; return; }
+    if (!/^\d{4}$/.test(pinNew)) { al.innerHTML = '<div class="alert error">Novo PIN deve ter 4 dígitos.</div>'; return; }
+    cfg.pin = pinNew;
+  }
+  saveCfg();
+  applyRoomInfo();
+  al.innerHTML = '<div class="alert success">Salvo! Reconectando...</div>';
+  setTimeout(() => { hideModal('modal-cfg'); startRefresh(); }, 1000);
+});
+
+// ── AGENDAR ──
+function openBooking(room) {
+  state.bookingTarget = room;
+  const t = new Date().toISOString().split('T')[0];
+  document.getElementById('bk-date').value = t;
+  document.getElementById('bk-date').min   = t;
+  document.getElementById('bk-email').value = '';
+  document.getElementById('bk-title').value = '';
+  document.getElementById('booking-alert').innerHTML = '';
+  document.getElementById('booking-room-tag').textContent = `${room.name} · ${room.floor}`;
+  showModal('modal-booking');
+}
+document.getElementById('btn-close-booking').addEventListener('click', () => hideModal('modal-booking'));
+
+document.getElementById('btn-confirm-booking').addEventListener('click', async () => {
+  const room  = state.bookingTarget;
+  const email = document.getElementById('bk-email').value.trim();
+  const title = document.getElementById('bk-title').value.trim();
+  const date  = document.getElementById('bk-date').value;
+  const time  = document.getElementById('bk-time').value;
+  const dur   = parseInt(document.getElementById('bk-duration').value);
+  const al    = document.getElementById('booking-alert');
+  if (!email||!title||!date||!time) { al.innerHTML='<div class="alert error">Preencha todos os campos.</div>'; return; }
+  if (!email.includes('@')) { al.innerHTML='<div class="alert error">E-mail inválido.</div>'; return; }
+  const btn = document.getElementById('btn-confirm-booking');
+  btn.disabled = true; btn.innerHTML = '<span class="spinner"></span>';
+  const start = new Date(`${date}T${time}:00`);
+  const end   = new Date(start.getTime() + dur * 60000);
+  const fdt   = d => d.toISOString().replace(/[-:]/g,'').replace(/\.\d{3}/,'');
+  const guests = room.email ? `${email},${room.email}` : email;
+  const url = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(title)}&dates=${fdt(start)}/${fdt(end)}&add=${encodeURIComponent(guests)}&details=${encodeURIComponent('Sala: '+room.name)}&sf=true&output=xml`;
+  al.innerHTML = '<div class="alert success">Abrindo Google Calendar com os dados preenchidos...</div>';
+  setTimeout(() => window.open(url, '_blank'), 700);
+  btn.disabled = false; btn.textContent = 'Confirmar agendamento';
+  setTimeout(() => { hideModal('modal-booking'); refresh(); }, 3000);
+});
+
+// Fechar modal ao clicar fora
+['modal-pin','modal-cfg','modal-booking'].forEach(id => {
+  document.getElementById(id).addEventListener('click', e => {
+    if (e.target.id === id) hideModal(id);
+  });
+});
+
+// ── DEMO ──
+function loadDemo() {
+  const now = new Date(), plus = m => new Date(now.getTime()+m*60000), minus = m => new Date(now.getTime()-m*60000);
+  state.events = [{
+    id:'d1', summary:'Reunião interna',
+    start:{dateTime:minus(20).toISOString()}, end:{dateTime:plus(40).toISOString()},
+    organizer:{email:'henrique@logcomex.com'}, htmlLink:'#'
+  }];
+  renderMain(classify(state.events));
+  const demoData = [
+    {email:'d1',name:'1. PHP',       floor:'Andar 1',cl:{status:'free',  nextAt:null,countdown:null}},
+    {email:'d2',name:'2. Javascript',floor:'Andar 1',cl:{status:'soon',  countdown:18*60000, nextAt:plus(18)}},
+    {email:'d3',name:'4. Container', floor:'Andar 1',cl:{status:'free',  nextAt:null,countdown:null}},
+    {email:'d4',name:'7. Cloud',     floor:'Andar 1',cl:{status:'free',  nextAt:null,countdown:null}},
+    {email:'d5',name:'11. Bot',      floor:'Andar 1',cl:{status:'free',  nextAt:null,countdown:null}},
+    {email:'d6',name:'16. XGH',      floor:'Andar 2',cl:{status:'free',  nextAt:null,countdown:null}},
+  ];
+  state.allRoomData = demoData;
+  renderAvail(demoData);
+  document.getElementById('sync-label').textContent = 'Modo demo';
+  document.getElementById('room-name').textContent  = 'War Room';
+  document.getElementById('room-type').textContent  = 'Andar 2';
+}
+
+// ── INIT ──
+loadCfg();
+applyRoomInfo();
+
+if (!cfg.thisRoom) {
+  showFirstAccess();
+} else if (cfg.apiKey) {
+  startRefresh();
+} else {
+  loadDemo();
+}
+</script>
+</body>
+</html>
