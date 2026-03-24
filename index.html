@@ -421,16 +421,27 @@ function tick() {
 }
 setInterval(tick,1000); tick();
 
-// ── CALENDAR API ──
+// ── CALENDAR API (FreeBusy) ──
 async function fetchCal(email) {
   if (!cfg.apiKey || !email) return null;
-  const now = new Date();
-  const tmin = encodeURIComponent(new Date(now.getFullYear(),now.getMonth(),now.getDate()).toISOString());
-  const tmax = encodeURIComponent(new Date(now.getFullYear(),now.getMonth(),now.getDate(),23,59,59).toISOString());
+  const now  = new Date();
+  const tmin = new Date(now.getFullYear(),now.getMonth(),now.getDate()).toISOString();
+  const tmax = new Date(now.getFullYear(),now.getMonth(),now.getDate(),23,59,59).toISOString();
   try {
-    const r = await fetch(`https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(email)}/events?key=${cfg.apiKey}&timeMin=${tmin}&timeMax=${tmax}&singleEvents=true&orderBy=startTime&maxResults=20`);
+    const r = await fetch(`https://www.googleapis.com/calendar/v3/freeBusy?key=${cfg.apiKey}`, {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({timeMin: tmin, timeMax: tmax, items: [{id: email}]})
+    });
     const d = await r.json();
-    return d.error ? null : (d.items||[]);
+    if (d.error) return null;
+    const busy = d.calendars?.[email]?.busy || [];
+    return busy.map(b => ({
+      start: {dateTime: b.start},
+      end:   {dateTime: b.end},
+      summary: 'Ocupada',
+      organizer: {email: ''},
+    }));
   } catch(e) { return null; }
 }
 
