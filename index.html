@@ -237,7 +237,7 @@ html,body{font-family:var(--font);background:var(--purple-dark);color:var(--whit
       <div class="prog-track"><div id="prog-fill" style="width:0%"></div></div>
       <div class="prog-labels"><span id="pl-left"></span><span id="pl-right"></span></div>
     </div>
-    <button id="btn-show-schedule" onclick="openScheduleModal()" style="display:none;margin-top:20px;padding:10px 28px;background:transparent;border:1px solid var(--white-40);border-radius:30px;color:var(--white-70);font-family:var(--font);font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;letter-spacing:.3px">
+    <button id="btn-show-schedule" onclick="openScheduleModal()" style="display:none;margin-top:20px;padding:10px 28px;background:var(--green-bg);border:1px solid var(--green-border);border-radius:30px;color:var(--green);font-family:var(--font);font-size:13px;font-weight:700;cursor:pointer;transition:all .2s;letter-spacing:.3px">
       🗓 Ver horários disponíveis
     </button>
   </div>
@@ -606,7 +606,10 @@ async function refresh() {
   }
   const roomsWithEmail = cfg.rooms.filter(r => r.email);
   if (roomsWithEmail.length) {
-    const results = await Promise.all(roomsWithEmail.map(async r => ({...r, cl: classify(await fetchCal(r.email))})));
+    const results = await Promise.all(roomsWithEmail.map(async r => {
+      const ev = await fetchCal(r.email);
+      return {...r, _events: ev || [], cl: classify(ev)};
+    }));
     state.allRoomData = results;
     renderAvail(results);
   }
@@ -833,8 +836,8 @@ function pickSlot(startISO, endISO, durMin) {
 // ── AGENDAR ──
 // ── POPULAR SELECT DE HORÁRIOS NO MODAL AGENDAR ──
 function populateBkTime(durMin, presetTime) {
-  const sel    = document.getElementById('bk-time');
-  const slots  = buildSlots(state.events, durMin);
+  const sel   = document.getElementById('bk-time');
+  const slots = buildSlots(state._bookingEvents || state.events, durMin);
   sel.innerHTML = '';
   if (!slots.length) {
     sel.innerHTML = '<option value="">Nenhum horário disponível</option>';
@@ -856,13 +859,21 @@ function openBooking(room) {
   state.bookingTarget = room;
   const t   = new Date().toISOString().split('T')[0];
   const dur = room.presetDur || parseInt(document.getElementById('bk-duration').value) || 60;
+
+  // Descobre os eventos corretos para a sala sendo agendada
+  // Se for a sala deste tablet usa state.events, senão busca em allRoomData
+  let eventsForRoom = state.events;
+  if (room.email && room.email.toLowerCase() !== cfg.thisRoom.toLowerCase()) {
+    const found = state.allRoomData.find(r => r.email.toLowerCase() === room.email.toLowerCase());
+    eventsForRoom = found?._events || [];
+  }
+  state._bookingEvents = eventsForRoom;
+
   document.getElementById('bk-date').value  = room.presetDate || t;
   document.getElementById('bk-date').min    = t;
   document.getElementById('bk-email').value = '';
   document.getElementById('bk-title').value = '';
-  // Seta duração
   document.getElementById('bk-duration').value = dur;
-  // Popula horários disponíveis
   populateBkTime(dur, room.presetTime || null);
   document.getElementById('booking-alert').innerHTML = '';
   document.getElementById('booking-room-tag').textContent = `${room.name} · ${room.floor}`;
