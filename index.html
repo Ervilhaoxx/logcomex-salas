@@ -566,9 +566,9 @@ function renderMain(cl) {
     nc.parentElement.dataset.nextStart = '';
   }
 
-  // Botão "Ver horários disponíveis" — só aparece quando busy ou soon
+  // Botão "Ver horários disponíveis" — sempre visível
   const schedBtn = document.getElementById('btn-show-schedule');
-  if (schedBtn) schedBtn.style.display = (status === 'busy' || status === 'soon') ? 'inline-block' : 'none';
+  if (schedBtn) schedBtn.style.display = 'inline-block';
 
   // ── Responsável: exibe e-mail completo ──
   rc.textContent = responsible || '—';
