@@ -237,6 +237,9 @@ html,body{font-family:var(--font);background:var(--purple-dark);color:var(--whit
       <div class="prog-track"><div id="prog-fill" style="width:0%"></div></div>
       <div class="prog-labels"><span id="pl-left"></span><span id="pl-right"></span></div>
     </div>
+    <button id="btn-show-schedule" onclick="openScheduleModal()" style="display:none;margin-top:20px;padding:10px 28px;background:transparent;border:1px solid var(--white-40);border-radius:30px;color:var(--white-70);font-family:var(--font);font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;letter-spacing:.3px">
+      🗓 Ver horários disponíveis
+    </button>
   </div>
 
   <!-- AVAILABLE PANEL -->
@@ -336,6 +339,19 @@ html,body{font-family:var(--font);background:var(--purple-dark);color:var(--whit
   </div>
 </div>
 
+<!-- MODAL HORÁRIOS DA SALA -->
+<div class="modal-overlay" id="modal-schedule">
+  <div class="modal" style="max-width:420px">
+    <h2>Horários disponíveis</h2>
+    <div id="schedule-room-tag" class="booking-room-tag">—</div>
+    <p class="sub" style="margin-bottom:12px">Selecione um horário para agendar.</p>
+    <div id="schedule-list" style="display:flex;flex-direction:column;gap:8px;max-height:380px;overflow-y:auto"></div>
+    <div class="modal-btns" style="margin-top:16px">
+      <button class="btn-secondary" id="btn-close-schedule">Fechar</button>
+    </div>
+  </div>
+</div>
+
 <!-- MODAL AGENDAR -->
 <div class="modal-overlay" id="modal-booking">
   <div class="modal">
@@ -348,14 +364,19 @@ html,body{font-family:var(--font);background:var(--purple-dark);color:var(--whit
       <div class="field"><label>Data</label><input type="date" id="bk-date"></div>
       <div class="field"><label>Duração</label>
         <select id="bk-duration">
-          <option value="30">30 min</option><option value="60" selected>1 hora</option>
-          <option value="90">1h30</option><option value="120">2 horas</option>
-          <option value="180">3 horas</option><option value="240">4 horas</option>
+          <option value="15">15 min</option>
+          <option value="30">30 min</option>
+          <option value="45">45 min</option>
+          <option value="60" selected>1 hora</option>
+          <option value="90">1h30</option>
+          <option value="120">2 horas</option>
+          <option value="180">3 horas</option>
+          <option value="240">4 horas</option>
           <option value="480">Dia inteiro</option>
         </select>
       </div>
     </div>
-    <div class="field"><label>Horário de início</label><input type="time" id="bk-time" value="09:00"></div>
+    <div class="field"><label>Horário de início</label><select id="bk-time"></select></div>
     <div class="modal-btns">
       <button class="btn-primary" id="btn-confirm-booking">Confirmar agendamento</button>
       <button class="btn-secondary" id="btn-close-booking">Voltar</button>
@@ -544,6 +565,10 @@ function renderMain(cl) {
     nc.innerHTML   = next ? `Próxima às <strong>${fmt(nextAt)}</strong>` : 'Livre o dia todo';
     nc.parentElement.dataset.nextStart = '';
   }
+
+  // Botão "Ver horários disponíveis" — só aparece quando busy ou soon
+  const schedBtn = document.getElementById('btn-show-schedule');
+  if (schedBtn) schedBtn.style.display = (status === 'busy' || status === 'soon') ? 'inline-block' : 'none';
 
   // ── Responsável: exibe e-mail completo ──
   rc.textContent = responsible || '—';
@@ -738,23 +763,116 @@ document.getElementById('btn-save-cfg').addEventListener('click', () => {
   setTimeout(() => { hideModal('modal-cfg'); startRefresh(); }, 1000);
 });
 
+document.getElementById('btn-close-schedule').addEventListener('click', () => hideModal('modal-schedule'));
+
+// ── GERA SLOTS DISPONÍVEIS ──
+// Retorna array de {start, end} com janelas livres de `dur` minutos
+function buildSlots(events, durMin) {
+  const now      = new Date();
+  const endOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 22, 0, 0);
+  const dur      = durMin * 60000;
+
+  // Blocos ocupados hoje, ordenados
+  const busy = (events || [])
+    .map(e => ({s: new Date(e.start.dateTime), en: new Date(e.end.dateTime)}))
+    .filter(e => e.en > now)
+    .sort((a,b) => a.s - b.s);
+
+  // Gera slots de `durMin` em `durMin` a partir do próximo quarto de hora
+  const slots = [];
+  // Arredonda "agora" para o próximo múltiplo de durMin
+  const startBase = new Date(Math.ceil(now.getTime() / dur) * dur);
+
+  for (let t = startBase; t.getTime() + dur <= endOfDay.getTime(); t = new Date(t.getTime() + dur)) {
+    const slotEnd = new Date(t.getTime() + dur);
+    // Verifica se o slot conflita com algum evento ocupado
+    const conflict = busy.some(b => t < b.en && slotEnd > b.s);
+    if (!conflict) slots.push({start: new Date(t), end: slotEnd});
+  }
+  return slots;
+}
+
+function openScheduleModal() {
+  const room = roomByEmail(cfg.thisRoom) || {name:'Esta sala', floor:''};
+  document.getElementById('schedule-room-tag').textContent = `${room.name} · ${room.floor}`;
+  renderScheduleList(15); // padrão inicial 15 min
+  showModal('modal-schedule');
+}
+
+function renderScheduleList(durMin) {
+  const slots = buildSlots(state.events, durMin);
+  const list  = document.getElementById('schedule-list');
+  if (!slots.length) {
+    list.innerHTML = '<div style="text-align:center;padding:24px;font-size:13px;color:var(--white-40)">Nenhum horário disponível hoje.</div>';
+    return;
+  }
+  list.innerHTML = slots.map(sl => `
+    <div onclick="pickSlot('${sl.start.toISOString()}','${sl.end.toISOString()}',${durMin})"
+         style="display:flex;align-items:center;justify-content:space-between;padding:12px 14px;background:var(--purple-mid);border:1px solid var(--purple-border);border-radius:var(--radius-sm);cursor:pointer;transition:all .18s"
+         onmouseover="this.style.borderColor='var(--orange)';this.style.background='rgba(255,107,43,.1)'"
+         onmouseout="this.style.borderColor='var(--purple-border)';this.style.background='var(--purple-mid)'">
+      <span style="font-size:15px;font-weight:700;color:var(--white)">${fmt(sl.start)} – ${fmt(sl.end)}</span>
+      <span style="font-size:11px;color:var(--orange);font-weight:600;background:rgba(255,107,43,.12);border:1px solid rgba(255,107,43,.3);border-radius:20px;padding:3px 10px">${durMin} min →</span>
+    </div>`).join('');
+}
+
+function pickSlot(startISO, endISO, durMin) {
+  hideModal('modal-schedule');
+  const room = roomByEmail(cfg.thisRoom) || {name:'Esta sala', floor:''};
+  const d    = new Date(startISO);
+  openBooking({
+    email:      cfg.thisRoom,
+    name:       room.name,
+    floor:      room.floor,
+    presetDate: startISO.split('T')[0],
+    presetTime: `${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`,
+    presetDur:  durMin
+  });
+}
+
 // ── AGENDAR ──
+// ── POPULAR SELECT DE HORÁRIOS NO MODAL AGENDAR ──
+function populateBkTime(durMin, presetTime) {
+  const sel    = document.getElementById('bk-time');
+  const slots  = buildSlots(state.events, durMin);
+  sel.innerHTML = '';
+  if (!slots.length) {
+    sel.innerHTML = '<option value="">Nenhum horário disponível</option>';
+    return;
+  }
+  slots.forEach(sl => {
+    const hh  = String(sl.start.getHours()).padStart(2,'0');
+    const mm  = String(sl.start.getMinutes()).padStart(2,'0');
+    const val = `${hh}:${mm}`;
+    const opt = document.createElement('option');
+    opt.value = val;
+    opt.textContent = `${fmt(sl.start)} – ${fmt(sl.end)}`;
+    if (presetTime && val === presetTime) opt.selected = true;
+    sel.appendChild(opt);
+  });
+}
+
 function openBooking(room) {
   state.bookingTarget = room;
-  const t = new Date().toISOString().split('T')[0];
+  const t   = new Date().toISOString().split('T')[0];
+  const dur = room.presetDur || parseInt(document.getElementById('bk-duration').value) || 60;
   document.getElementById('bk-date').value  = room.presetDate || t;
   document.getElementById('bk-date').min    = t;
   document.getElementById('bk-email').value = '';
   document.getElementById('bk-title').value = '';
-  if (room.presetTime) {
-    const [h,m] = room.presetTime.split(':').map(Number);
-    const rounded = new Date(); rounded.setHours(h,m,0,0);
-    document.getElementById('bk-time').value = `${String(rounded.getHours()).padStart(2,'0')}:${String(rounded.getMinutes()).padStart(2,'0')}`;
-  }
+  // Seta duração
+  document.getElementById('bk-duration').value = dur;
+  // Popula horários disponíveis
+  populateBkTime(dur, room.presetTime || null);
   document.getElementById('booking-alert').innerHTML = '';
   document.getElementById('booking-room-tag').textContent = `${room.name} · ${room.floor}`;
   showModal('modal-booking');
 }
+
+// Quando muda duração, repopula horários
+document.getElementById('bk-duration').addEventListener('change', function() {
+  populateBkTime(parseInt(this.value), null);
+});
 
 document.getElementById('btn-close-booking').addEventListener('click', () => hideModal('modal-booking'));
 
@@ -763,8 +881,7 @@ document.getElementById('btn-confirm-booking').addEventListener('click', async (
   const email = document.getElementById('bk-email').value.trim();
   const title = document.getElementById('bk-title').value.trim();
   const date  = document.getElementById('bk-date').value;
-  const time  = document.getElementById('bk-time').value;
-  const dur   = parseInt(document.getElementById('bk-duration').value);
+  const time  = document.getElementById('bk-time').value;  const dur   = parseInt(document.getElementById('bk-duration').value);
   const al    = document.getElementById('booking-alert');
   if (!email||!title||!date||!time) { al.innerHTML='<div class="alert error">Preencha todos os campos.</div>'; return; }
   if (!email.includes('@'))         { al.innerHTML='<div class="alert error">E-mail inválido.</div>'; return; }
