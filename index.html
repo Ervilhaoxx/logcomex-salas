@@ -202,6 +202,7 @@ html,body{font-family:var(--font);background:var(--purple-dark);color:var(--whit
       <div id="top-date">--</div>
     </div>
     <div style="display:flex;align-items:center;gap:12px">
+      <div id="company-name" style="font-size:13px;font-weight:600;color:var(--white-40);letter-spacing:.3px">Logcomex</div>
       <div class="sync-pill"><div class="sync-dot"></div><span id="sync-label">Sincronizando...</span></div>
       <button id="btn-open-cfg" title="Configurações" onclick="resetPin();showModal('modal-pin');">
         <svg viewBox="0 0 24 24"><path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
@@ -243,8 +244,8 @@ html,body{font-family:var(--font);background:var(--purple-dark);color:var(--whit
       <span>Responsável: <strong id="responsible-chip">—</strong></span>
     </div>
     <div class="chip-sep"></div>
-    <div class="info-chip">
-      <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+    <div class="info-chip" id="next-avail-chip" style="cursor:pointer" onclick="openNextAvail()" title="Clique para agendar neste horário">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12,6 12,12 16,14"/></svg>
       <span id="next-chip">—</span>
     </div>
   </div>
@@ -482,17 +483,28 @@ function renderMain(cl) {
     cd.textContent = countdown ? fmtDur(countdown) : '';
     pf.style.width = `${progress}%`;
     pl.textContent = `${progress}% concluído`; pr.textContent = `Libera ${fmt(endsAt)}`;
-    nc.innerHTML   = next ? `Próxima às <strong>${fmt(new Date(next.start.dateTime))}</strong>` : 'Última do dia';
+    // Próximo horário disponível
+    const nextAvail = findNextAvailable(state.events);
+    if (nextAvail) {
+      nc.innerHTML = `Próx. disponível: <strong>${fmt(nextAvail.start)}</strong> – <strong>${fmt(nextAvail.end)}</strong>`;
+      nc.parentElement.dataset.nextStart = nextAvail.start.toISOString();
+      nc.parentElement.dataset.nextEnd   = nextAvail.end.toISOString();
+    } else {
+      nc.innerHTML = 'Sem horário livre hoje';
+    }
   } else if (status === 'soon') {
     info.innerHTML = `Ocupada em <span class="hl">${fmtDur(countdown)}</span>`;
     cd.textContent = fmtDur(countdown); pf.style.width = `${progress}%`;
     pl.textContent = 'Livre agora'; pr.textContent = `Reunião às ${fmt(nextAt)}`;
     nc.innerHTML   = `Próxima às <strong>${fmt(nextAt)}</strong>`;
+    nc.parentElement.dataset.nextStart = '';
   } else {
     info.innerHTML = next ? `Próxima reunião às <span class="hl">${fmt(nextAt)}</span>` : '<span class="hl">Livre o dia todo</span>';
     cd.textContent = ''; pf.style.width = '0%'; pl.textContent = ''; pr.textContent = '';
-    nc.innerHTML   = next ? `Próxima às <strong>${fmt(nextAt)}</strong>` : 'Sem reservas hoje';
+    nc.innerHTML   = next ? `Próxima às <strong>${fmt(nextAt)}</strong>` : 'Livre o dia todo';
+    nc.parentElement.dataset.nextStart = '';
   }
+  // Responsável: mostra só o nome antes do @
   rc.textContent = responsible ? responsible.replace(/@.*$/,'') : '—';
 }
 
@@ -716,10 +728,18 @@ document.getElementById('btn-save-cfg').addEventListener('click', () => {
 function openBooking(room) {
   state.bookingTarget = room;
   const t = new Date().toISOString().split('T')[0];
-  document.getElementById('bk-date').value = t;
+  document.getElementById('bk-date').value = room.presetDate || t;
   document.getElementById('bk-date').min   = t;
   document.getElementById('bk-email').value = '';
   document.getElementById('bk-title').value = '';
+  if (room.presetTime) {
+    // Arredonda para o próximo quarto de hora
+    const [h,m] = room.presetTime.split(':').map(Number);
+    const rounded = new Date(); rounded.setHours(h,m,0,0);
+    const hh = String(rounded.getHours()).padStart(2,'0');
+    const mm = String(rounded.getMinutes()).padStart(2,'0');
+    document.getElementById('bk-time').value = `${hh}:${mm}`;
+  }
   document.getElementById('booking-alert').innerHTML = '';
   document.getElementById('booking-room-tag').textContent = `${room.name} · ${room.floor}`;
   showModal('modal-booking');
@@ -778,6 +798,44 @@ function loadDemo() {
   document.getElementById('sync-label').textContent = 'Modo demo';
   document.getElementById('room-name').textContent  = 'War Room';
   document.getElementById('room-type').textContent  = 'Andar 2';
+}
+
+// ── PRÓXIMO HORÁRIO DISPONÍVEL ──
+function findNextAvailable(events) {
+  if (!events || !events.length) return null;
+  const now = new Date();
+  const endOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59);
+  // Ordena eventos por horário de início
+  const sorted = [...events]
+    .map(e => ({s: new Date(e.start.dateTime), en: new Date(e.end.dateTime)}))
+    .filter(e => e.en > now)
+    .sort((a,b) => a.s - b.s);
+  if (!sorted.length) return null;
+  // Encontra janela livre entre eventos
+  let freeStart = now > sorted[0].s ? sorted[0].en : now;
+  for (let i = 0; i < sorted.length; i++) {
+    if (sorted[i].s > freeStart && (sorted[i].s - freeStart) >= 15*60000) {
+      return {start: freeStart, end: sorted[i].s};
+    }
+    if (sorted[i].en > freeStart) freeStart = sorted[i].en;
+  }
+  // Após o último evento
+  if (freeStart < endOfDay) return {start: freeStart, end: endOfDay};
+  return null;
+}
+
+function openNextAvail() {
+  const chip = document.getElementById('next-avail-chip');
+  const nextStart = chip?.dataset?.nextStart;
+  if (!nextStart) return;
+  const room = roomByEmail(cfg.thisRoom) || {name:'Esta sala', floor:''};
+  openBooking({
+    email: cfg.thisRoom,
+    name:  room.name,
+    floor: room.floor,
+    presetDate: nextStart.split('T')[0],
+    presetTime: nextStart.split('T')[1]?.substring(0,5)
+  });
 }
 
 // ── INIT ──
