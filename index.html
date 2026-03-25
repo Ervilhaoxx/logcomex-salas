@@ -545,8 +545,8 @@ function renderMain(cl) {
     nc.parentElement.dataset.nextStart = '';
   }
 
-  // ── Responsável: extrai primeiro nome do e-mail ──
-  rc.textContent = responsible ? firstNameFromEmail(responsible) : '—';
+  // ── Responsável: exibe e-mail completo ──
+  rc.textContent = responsible || '—';
 }
 
 // ── RENDER AVAILABLE ──
