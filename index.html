@@ -17,11 +17,9 @@
 }
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{font-family:var(--font);background:var(--purple-dark);color:var(--white);height:100%;width:100%;overflow:hidden}
-
 #app{display:grid;grid-template-columns:1fr 300px;grid-template-rows:auto 1fr auto;height:100vh;width:100vw}
-
 #top-bar{grid-column:1/-1;display:flex;align-items:center;justify-content:space-between;padding:14px 24px;background:var(--purple-mid);border-bottom:1px solid var(--purple-border)}
-.logo-area{display:flex;align-items:center;gap:10px}
+.logo-area{display:flex;align-items:center;gap:10px;cursor:pointer;user-select:none;-webkit-user-select:none}
 .company-name{font-size:13px;font-weight:600;color:var(--white-40);letter-spacing:.3px;white-space:nowrap}
 .logo-img{height:32px;width:auto}
 .top-center{display:flex;flex-direction:column;align-items:center;gap:1px}
@@ -33,7 +31,6 @@ html,body{font-family:var(--font);background:var(--purple-dark);color:var(--whit
 #btn-open-cfg{background:transparent;border:none;cursor:pointer;padding:10px;border-radius:var(--radius-sm);color:var(--white-40);transition:color .2s;display:flex;align-items:center;justify-content:center}
 #btn-open-cfg:hover{color:var(--orange-light)}
 #btn-open-cfg svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
-
 #main-panel{grid-column:1;grid-row:2;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;overflow:hidden;padding:24px;transition:background .6s}
 #main-panel.free{background:linear-gradient(160deg,#0a0118 0%,#051a0e 100%)}
 #main-panel.soon{background:linear-gradient(160deg,#0a0118 0%,#1c1200 100%)}
@@ -42,7 +39,6 @@ html,body{font-family:var(--font);background:var(--purple-dark);color:var(--whit
 #main-panel.free #bg-glow{background:var(--green)}
 #main-panel.soon #bg-glow{background:var(--yellow)}
 #main-panel.busy #bg-glow{background:var(--red)}
-
 .status-badge{display:flex;align-items:center;gap:8px;padding:7px 20px;border-radius:30px;font-size:12px;font-weight:700;letter-spacing:1px;text-transform:uppercase;border:1px solid;margin-bottom:16px;transition:all .4s}
 .status-badge.free{background:var(--green-bg);border-color:var(--green-border);color:var(--green)}
 .status-badge.soon{background:var(--yellow-bg);border-color:var(--yellow-border);color:var(--yellow)}
@@ -51,7 +47,6 @@ html,body{font-family:var(--font);background:var(--purple-dark);color:var(--whit
 .status-badge.free .st-dot{background:var(--green);animation:blink 2s ease-in-out infinite}
 .status-badge.soon .st-dot{background:var(--yellow);animation:blink 1.4s ease-in-out infinite}
 .status-badge.busy .st-dot{background:var(--red)}
-
 #room-name{font-size:clamp(40px,7vw,76px);font-weight:800;letter-spacing:-2px;line-height:1;text-align:center;color:var(--white);margin-bottom:8px;position:relative;z-index:1}
 #room-type{font-size:13px;color:var(--white-40);text-transform:uppercase;letter-spacing:1px;text-align:center;margin-bottom:22px;position:relative;z-index:1}
 #status-info{font-size:clamp(15px,2.2vw,20px);font-weight:400;color:var(--white-70);text-align:center;line-height:1.4;margin-bottom:12px;position:relative;z-index:1;min-height:28px}
@@ -70,17 +65,13 @@ html,body{font-family:var(--font);background:var(--purple-dark);color:var(--whit
 #main-panel.soon #prog-fill{background:var(--yellow)}
 #main-panel.free #prog-fill{background:var(--green);width:0!important}
 .prog-labels{display:flex;justify-content:space-between;font-size:10px;color:var(--white-40);margin-top:5px}
-
 #bottom-strip{grid-column:1/-1;display:flex;align-items:center;justify-content:center;gap:28px;padding:12px 24px 14px;background:var(--purple-mid);border-top:1px solid var(--purple-border);flex-wrap:wrap}
 .info-chip{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--white-70)}
 .info-chip svg{width:15px;height:15px;stroke:var(--white-40);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
 .info-chip strong{color:var(--white);font-weight:600}
 .chip-sep{width:1px;height:18px;background:var(--purple-border)}
-#next-avail-chip{cursor:pointer;border-radius:20px;padding:4px 10px;transition:background .2s,color .2s}
+#next-avail-chip{cursor:pointer;border-radius:20px;padding:4px 10px;transition:background .2s}
 #next-avail-chip:hover{background:rgba(255,107,43,.15)}
-#next-avail-chip:hover svg{stroke:var(--orange)}
-#next-avail-chip:hover strong{color:var(--orange-light)}
-
 #avail-panel{grid-column:2;grid-row:2;background:var(--purple-mid);border-left:1px solid var(--purple-border);display:flex;flex-direction:column;overflow:hidden}
 .avail-header{padding:14px 14px 10px;border-bottom:1px solid var(--purple-border);flex-shrink:0}
 .avail-title{font-size:10px;font-weight:700;color:var(--white-40);text-transform:uppercase;letter-spacing:.8px;display:flex;align-items:center;gap:6px}
@@ -102,7 +93,6 @@ html,body{font-family:var(--font);background:var(--purple-dark);color:var(--whit
 .avail-sub{font-size:10px;color:var(--white-40);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .avail-floor{font-size:10px;font-weight:600;color:var(--white-40);background:var(--white-15);border-radius:6px;padding:2px 7px;flex-shrink:0;transition:all .18s}
 .avail-empty{text-align:center;padding:30px 12px;font-size:12px;color:var(--white-40);line-height:1.6}
-
 .modal-overlay{display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.75);align-items:center;justify-content:center;padding:20px}
 .modal-overlay.open{display:flex!important}
 .modal{background:var(--purple-card);border:1px solid var(--purple-border);border-radius:var(--radius);padding:28px;width:100%;max-width:440px;max-height:90vh;overflow-y:auto}
@@ -122,10 +112,8 @@ html,body{font-family:var(--font);background:var(--purple-dark);color:var(--whit
 .alert{padding:10px 14px;border-radius:var(--radius-sm);font-size:12px;line-height:1.5;margin-bottom:12px}
 .alert.success{background:var(--green-bg);border:1px solid var(--green-border);color:var(--green)}
 .alert.error{background:var(--red-bg);border:1px solid var(--red-border);color:var(--red)}
-.alert.info{background:var(--yellow-bg);border:1px solid var(--yellow-border);color:var(--yellow)}
 .sec-sep{height:1px;background:var(--purple-border);margin:16px 0}
 .sec-lbl{font-size:11px;font-weight:700;color:var(--orange);text-transform:uppercase;letter-spacing:.6px;display:block;margin-bottom:10px}
-
 #pin-display{display:flex;gap:10px;justify-content:center;margin:20px 0}
 .pin-digit{width:52px;height:64px;background:var(--purple-mid);border:2px solid var(--purple-border);border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:700;color:var(--white);transition:border-color .2s}
 .pin-digit.active{border-color:var(--orange)}
@@ -137,7 +125,6 @@ html,body{font-family:var(--font);background:var(--purple-dark);color:var(--whit
 .key-btn.del{font-size:16px;color:var(--white-40)}
 .key-btn.empty{background:transparent;border:none;cursor:default}
 #pin-error{text-align:center;font-size:13px;color:var(--red);min-height:20px;margin-top:8px}
-
 .booking-room-tag{display:inline-flex;align-items:center;gap:7px;background:var(--orange);border-radius:30px;padding:5px 14px;font-size:13px;font-weight:600;color:var(--white);margin-bottom:16px}
 .room-list-edit{display:flex;flex-direction:column;gap:6px;max-height:240px;overflow-y:auto;padding-right:4px;scrollbar-width:thin;scrollbar-color:var(--purple-border) transparent}
 .room-row{display:grid;grid-template-columns:1fr 1fr 80px 36px;gap:6px;align-items:center}
@@ -156,7 +143,6 @@ html,body{font-family:var(--font);background:var(--purple-dark);color:var(--whit
 .this-room-select select{width:100%}
 .badge-global{display:inline-block;background:rgba(255,107,43,.12);border:1px solid rgba(255,107,43,.3);color:var(--orange-light);font-size:9px;font-weight:700;padding:1px 6px;border-radius:8px;letter-spacing:.4px;text-transform:uppercase;margin-left:6px;vertical-align:middle}
 .badge-local{display:inline-block;background:rgba(22,219,106,.1);border:1px solid rgba(22,219,106,.25);color:var(--green);font-size:9px;font-weight:700;padding:1px 6px;border-radius:8px;letter-spacing:.4px;text-transform:uppercase;margin-left:6px;vertical-align:middle}
-
 #first-access{display:none;position:fixed;inset:0;z-index:200;background:var(--purple-dark);flex-direction:column;align-items:center;justify-content:center;gap:16px;padding:32px 24px;text-align:center}
 #first-access.show{display:flex}
 .fa-logo{height:40px;margin-bottom:4px}
@@ -171,26 +157,23 @@ html,body{font-family:var(--font);background:var(--purple-dark);color:var(--whit
 .fa-rf{font-size:10px;color:var(--white-40)}
 .fa-note{font-size:11px;color:var(--white-40);max-width:340px;line-height:1.5}
 .fa-cfg{font-size:12px;color:var(--orange-light);cursor:pointer;text-decoration:underline}
-
 .spinner{width:18px;height:18px;border:2px solid rgba(255,255,255,.2);border-top-color:var(--orange);border-radius:50%;animation:spin .7s linear infinite;display:inline-block}
 @keyframes spin{to{transform:rotate(360deg)}}
+@keyframes popIn{from{transform:scale(.7);opacity:0}to{transform:scale(1);opacity:1}}
 </style>
 </head>
 <body>
 
-<!-- POPUP CHECK-IN -->
-<div id="checkin-popup" style="display:none;position:fixed;inset:0;z-index:99999;background:rgba(0,0,0,.6);align-items:center;justify-content:center">
-  <div style="background:var(--purple-card);border:2px solid var(--green-border);border-radius:var(--radius);padding:40px 56px;text-align:center;animation:popIn .3s ease">
-    <div style="font-size:64px;margin-bottom:12px">✅</div>
-    <div style="font-size:24px;font-weight:800;color:var(--green);letter-spacing:-.5px">Check-in Confirmado!</div>
-    <div style="font-size:13px;color:var(--white-40);margin-top:8px">Boa reunião! 🚀</div>
+<!-- ── POPUP CHECK-IN ── -->
+<div id="checkin-popup" style="display:none;position:fixed;inset:0;z-index:99999;background:rgba(0,0,0,.7);align-items:center;justify-content:center">
+  <div style="background:var(--purple-card);border:2px solid var(--green-border);border-radius:var(--radius);padding:48px 64px;text-align:center;animation:popIn .35s cubic-bezier(.34,1.56,.64,1)">
+    <div style="font-size:72px;margin-bottom:16px;line-height:1">✅</div>
+    <div style="font-size:26px;font-weight:800;color:var(--green);letter-spacing:-.5px;margin-bottom:8px">Check-in Confirmado!</div>
+    <div style="font-size:14px;color:var(--white-40)">Boa reunião! 🚀</div>
   </div>
 </div>
-<style>
-@keyframes popIn{from{transform:scale(.8);opacity:0}to{transform:scale(1);opacity:1}}
-.logo-area{cursor:pointer;user-select:none}
-</style>
 
+<!-- ── FIRST ACCESS ── -->
 <div id="first-access">
   <img class="fa-logo" src="data:image/png;base64,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" alt="Logcomex">
   <div class="fa-title">Qual sala é esta?</div>
@@ -202,7 +185,7 @@ html,body{font-family:var(--font);background:var(--purple-dark);color:var(--whit
 
 <div id="app">
   <div id="top-bar">
-    <div class="logo-area">
+    <div class="logo-area" id="logo-area">
       <img class="logo-img" src="data:image/png;base64,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" alt="Logcomex">
       <span class="company-name">Meeting Rooms</span>
     </div>
@@ -223,7 +206,7 @@ html,body{font-family:var(--font);background:var(--purple-dark);color:var(--whit
     <div class="status-badge free" id="status-badge"><div class="st-dot"></div><span id="status-text">Disponível</span></div>
     <div id="room-name">—</div>
     <div id="room-type">—</div>
-    <div id="meeting-title" style="display:none;font-size:clamp(18px,2.5vw,26px);font-weight:600;color:var(--white-70);text-align:center;margin-bottom:4px;position:relative;z-index:1;letter-spacing:-.3px"></div>
+    <div id="meeting-title" style="display:none"></div>
     <div id="status-info"><span class="hl">Carregando...</span></div>
     <div id="countdown"></div>
     <div id="prog-wrap">
@@ -231,7 +214,7 @@ html,body{font-family:var(--font);background:var(--purple-dark);color:var(--whit
       <div class="prog-labels"><span id="pl-left"></span><span id="pl-right"></span></div>
     </div>
     <div style="display:flex;gap:12px;margin-top:20px;position:relative;z-index:1;flex-wrap:wrap;justify-content:center">
-      <button id="btn-checkin" style="display:none;padding:10px 28px;background:var(--green-bg);border:1px solid var(--green-border);border-radius:30px;color:var(--green);font-family:var(--font);font-size:13px;font-weight:700;cursor:pointer;transition:all .3s;letter-spacing:.3px" onclick="doCheckin()">✓ Check-in</button>
+      <button id="btn-checkin" style="display:none;padding:10px 28px;background:var(--green-bg);border:1px solid var(--green-border);border-radius:30px;color:var(--green);font-family:var(--font);font-size:13px;font-weight:700;cursor:pointer;transition:all .3s;letter-spacing:.3px">✓ Check-in</button>
       <button id="btn-show-schedule" onclick="openScheduleModal()" style="display:none;padding:10px 28px;background:var(--green-bg);border:1px solid var(--green-border);border-radius:30px;color:var(--green);font-family:var(--font);font-size:13px;font-weight:700;cursor:pointer;transition:all .2s;letter-spacing:.3px">🗓 Ver horários disponíveis</button>
     </div>
   </div>
@@ -254,23 +237,21 @@ html,body{font-family:var(--font);background:var(--purple-dark);color:var(--whit
       <span>Responsável: <strong id="responsible-chip">—</strong></span>
     </div>
     <div class="chip-sep"></div>
-    <div class="info-chip" id="next-avail-chip" onclick="openNextAvail()" title="Clique para agendar neste horário">
+    <div class="info-chip" id="next-avail-chip" onclick="openNextAvail()">
       <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12,6 12,12 16,14"/></svg>
       <span id="next-chip">—</span>
     </div>
   </div>
 </div>
 
-<!-- MODAL PIN -->
+<!-- MODAIS -->
 <div class="modal-overlay" id="modal-pin">
   <div class="modal" style="max-width:320px;text-align:center">
     <h2>Configurações</h2>
     <p class="sub">Digite o código de acesso para continuar.</p>
     <div id="pin-display">
-      <div class="pin-digit active" id="pd0">·</div>
-      <div class="pin-digit" id="pd1">·</div>
-      <div class="pin-digit" id="pd2">·</div>
-      <div class="pin-digit" id="pd3">·</div>
+      <div class="pin-digit active" id="pd0">·</div><div class="pin-digit" id="pd1">·</div>
+      <div class="pin-digit" id="pd2">·</div><div class="pin-digit" id="pd3">·</div>
     </div>
     <div id="pin-keypad">
       <button class="key-btn" data-k="1">1</button><button class="key-btn" data-k="2">2</button><button class="key-btn" data-k="3">3</button>
@@ -283,16 +264,12 @@ html,body{font-family:var(--font);background:var(--purple-dark);color:var(--whit
   </div>
 </div>
 
-<!-- MODAL CONFIG -->
 <div class="modal-overlay" id="modal-cfg">
   <div class="modal" style="max-width:560px">
     <h2>Configurações</h2>
     <p class="sub"><span class="badge-local">Este tablet</span> salvo só aqui. <span class="badge-global">Global</span> salvo para todos.</p>
     <span class="sec-lbl">Sala deste tablet <span class="badge-local">Este tablet</span></span>
-    <div class="this-room-select">
-      <label>Qual sala este tablet representa</label>
-      <select id="cfg-this-room"><option value="">— selecione —</option></select>
-    </div>
+    <div class="this-room-select"><label>Qual sala este tablet representa</label><select id="cfg-this-room"><option value="">— selecione —</option></select></div>
     <div class="sec-sep"></div>
     <span class="sec-lbl">Todas as salas <span class="badge-global">Global</span></span>
     <div class="room-row-header"><span>Nome</span><span>E-mail do recurso</span><span>Andar</span><span></span></div>
@@ -312,20 +289,16 @@ html,body{font-family:var(--font);background:var(--purple-dark);color:var(--whit
   </div>
 </div>
 
-<!-- MODAL HORÁRIOS -->
 <div class="modal-overlay" id="modal-schedule">
   <div class="modal" style="max-width:420px">
     <h2>Horários disponíveis</h2>
     <div id="schedule-room-tag" class="booking-room-tag">—</div>
     <p class="sub" style="margin-bottom:12px">Selecione um horário para agendar.</p>
     <div id="schedule-list" style="display:flex;flex-direction:column;gap:8px;max-height:380px;overflow-y:auto"></div>
-    <div class="modal-btns" style="margin-top:16px">
-      <button class="btn-secondary" id="btn-close-schedule">Fechar</button>
-    </div>
+    <div class="modal-btns" style="margin-top:16px"><button class="btn-secondary" id="btn-close-schedule">Fechar</button></div>
   </div>
 </div>
 
-<!-- MODAL AGENDAR -->
 <div class="modal-overlay" id="modal-booking">
   <div class="modal">
     <h2>Agendar sala</h2>
@@ -337,15 +310,10 @@ html,body{font-family:var(--font);background:var(--purple-dark);color:var(--whit
       <div class="field"><label>Data</label><input type="date" id="bk-date"></div>
       <div class="field"><label>Duração</label>
         <select id="bk-duration">
-          <option value="15">15 min</option>
-          <option value="30">30 min</option>
-          <option value="45">45 min</option>
-          <option value="60" selected>1 hora</option>
-          <option value="90">1h30</option>
-          <option value="120">2 horas</option>
-          <option value="180">3 horas</option>
-          <option value="240">4 horas</option>
-          <option value="480">Dia inteiro</option>
+          <option value="15">15 min</option><option value="30">30 min</option><option value="45">45 min</option>
+          <option value="60" selected>1 hora</option><option value="90">1h30</option>
+          <option value="120">2 horas</option><option value="180">3 horas</option>
+          <option value="240">4 horas</option><option value="480">Dia inteiro</option>
         </select>
       </div>
     </div>
@@ -353,11 +321,7 @@ html,body{font-family:var(--font);background:var(--purple-dark);color:var(--whit
     <div class="field">
       <label>Convidados</label>
       <div id="guests-list" style="display:flex;flex-direction:column;gap:6px;margin-bottom:6px"></div>
-      <button type="button" id="btn-add-guest" style="display:flex;align-items:center;gap:7px;background:var(--white-15);border:1px dashed var(--purple-border);border-radius:var(--radius-sm);padding:9px 14px;color:var(--white-40);font-family:var(--font);font-size:12px;cursor:pointer;width:100%;justify-content:center;transition:all .2s"
-        onmouseover="this.style.borderColor='var(--orange)';this.style.color='var(--orange-light)'"
-        onmouseout="this.style.borderColor='var(--purple-border)';this.style.color='var(--white-40)'">
-        + Adicionar convidado
-      </button>
+      <button type="button" id="btn-add-guest" style="display:flex;align-items:center;gap:7px;background:var(--white-15);border:1px dashed var(--purple-border);border-radius:var(--radius-sm);padding:9px 14px;color:var(--white-40);font-family:var(--font);font-size:12px;cursor:pointer;width:100%;justify-content:center;transition:all .2s" onmouseover="this.style.borderColor='var(--orange)';this.style.color='var(--orange-light)'" onmouseout="this.style.borderColor='var(--purple-border)';this.style.color='var(--white-40)'">+ Adicionar convidado</button>
     </div>
     <div class="modal-btns">
       <button class="btn-primary" id="btn-confirm-booking">Confirmar agendamento</button>
@@ -371,32 +335,31 @@ const DEFAULT_PIN = '1234';
 const BACKEND_URL = 'https://script.google.com/macros/s/AKfycbyDgucsB17Z1Al0_15ZJ1WaPvJHkapmyxITLDHE9WBGl3DHmXNnMJET9xRNLzn-aov7/exec';
 
 let cfg = {
-  thisRoom: '',
-  pin: DEFAULT_PIN,
-  rooms: [
-    {name:'1. PHP',               email:'c_1884rp7puo7gejdji3bfro291a05i@resource.calendar.google.com', floor:'Andar 1'},
-    {name:'2. Javascript',        email:'c_18846snhor0rghuijj2jq394chmhm@resource.calendar.google.com', floor:'Andar 1'},
-    {name:'3. Python',            email:'c_18861lda8ehrigurm6fjo5nbo1c5g@resource.calendar.google.com', floor:'Andar 1'},
-    {name:'4. Container',         email:'c_1885hqdo4dj4oi8rgski9h95qrg08@resource.calendar.google.com', floor:'Andar 1'},
-    {name:'5. API',               email:'c_1885ntl4m11isgpvjuc8fo1iv4qmo@resource.calendar.google.com', floor:'Andar 1'},
-    {name:'7. Cloud',             email:'c_1881ud60ske32hi6ijkhq4vqc82pk@resource.calendar.google.com', floor:'Andar 1'},
-    {name:'8. HTML',              email:'c_188fffg8bgsf2hc2n3akt767cul1c@resource.calendar.google.com', floor:'Andar 1'},
-    {name:'9. Cron',              email:'c_188etf42m0avah8cja6sc0hcg3o0u@resource.calendar.google.com', floor:'Andar 1'},
-    {name:'10. Linux',            email:'c_1881e936asq96go0jfpj5bjigjpck@resource.calendar.google.com', floor:'Andar 1'},
-    {name:'11. Bot',              email:'c_18838gojbu52mh82nle2pf8heg7h4@resource.calendar.google.com', floor:'Andar 1'},
-    {name:'12. Git',              email:'c_188bm0osiiqtkgishm26mbabaae30@resource.calendar.google.com', floor:'Andar 1'},
-    {name:'14. Fullstack',        email:'c_18864rq4tvokmh1cn3fju1d4nkauk@resource.calendar.google.com', floor:'Andar 1'},
-    {name:'15. War Room',         email:'c_188etao1p55mmit9nqqemnvfhlhuc@resource.calendar.google.com', floor:'Andar 2'},
-    {name:'16. XGH',              email:'c_1886tvmpocelmh5pjo46elcu1lkb6@resource.calendar.google.com', floor:'Andar 2'},
-    {name:'17. IA',               email:'c_1882utjqrvmj0hn8njjjtulf0e6j6@resource.calendar.google.com', floor:'Andar 2'},
-    {name:'18. Deploy',           email:'c_1887ki69uao2uj01mvhinb7rma7re@resource.calendar.google.com', floor:'Andar 2'},
-    {name:'19. Root',             email:'c_1881aq8cgkbfuhdpgdh4dn4oj0qjk@resource.calendar.google.com', floor:'Andar 2'},
-    {name:'23. Sofá Ext-Gemini',  email:'c_188cbbs1brgsshq6lo8fasg8lqn26@resource.calendar.google.com', floor:'Andar 2'},
-    {name:'24. Mesa Ext-Dataset', email:'c_1880d4ibnjevmg1qidnmi5lhn6m9m@resource.calendar.google.com', floor:'Andar 2'},
+  thisRoom:'',pin:DEFAULT_PIN,
+  rooms:[
+    {name:'1. PHP',               email:'c_1884rp7puo7gejdji3bfro291a05i@resource.calendar.google.com',floor:'Andar 1'},
+    {name:'2. Javascript',        email:'c_18846snhor0rghuijj2jq394chmhm@resource.calendar.google.com',floor:'Andar 1'},
+    {name:'3. Python',            email:'c_18861lda8ehrigurm6fjo5nbo1c5g@resource.calendar.google.com',floor:'Andar 1'},
+    {name:'4. Container',         email:'c_1885hqdo4dj4oi8rgski9h95qrg08@resource.calendar.google.com',floor:'Andar 1'},
+    {name:'5. API',               email:'c_1885ntl4m11isgpvjuc8fo1iv4qmo@resource.calendar.google.com',floor:'Andar 1'},
+    {name:'7. Cloud',             email:'c_1881ud60ske32hi6ijkhq4vqc82pk@resource.calendar.google.com',floor:'Andar 1'},
+    {name:'8. HTML',              email:'c_188fffg8bgsf2hc2n3akt767cul1c@resource.calendar.google.com',floor:'Andar 1'},
+    {name:'9. Cron',              email:'c_188etf42m0avah8cja6sc0hcg3o0u@resource.calendar.google.com',floor:'Andar 1'},
+    {name:'10. Linux',            email:'c_1881e936asq96go0jfpj5bjigjpck@resource.calendar.google.com',floor:'Andar 1'},
+    {name:'11. Bot',              email:'c_18838gojbu52mh82nle2pf8heg7h4@resource.calendar.google.com',floor:'Andar 1'},
+    {name:'12. Git',              email:'c_188bm0osiiqtkgishm26mbabaae30@resource.calendar.google.com',floor:'Andar 1'},
+    {name:'14. Fullstack',        email:'c_18864rq4tvokmh1cn3fju1d4nkauk@resource.calendar.google.com',floor:'Andar 1'},
+    {name:'15. War Room',         email:'c_188etao1p55mmit9nqqemnvfhlhuc@resource.calendar.google.com',floor:'Andar 2'},
+    {name:'16. XGH',              email:'c_1886tvmpocelmh5pjo46elcu1lkb6@resource.calendar.google.com',floor:'Andar 2'},
+    {name:'17. IA',               email:'c_1882utjqrvmj0hn8njjjtulf0e6j6@resource.calendar.google.com',floor:'Andar 2'},
+    {name:'18. Deploy',           email:'c_1887ki69uao2uj01mvhinb7rma7re@resource.calendar.google.com',floor:'Andar 2'},
+    {name:'19. Root',             email:'c_1881aq8cgkbfuhdpgdh4dn4oj0qjk@resource.calendar.google.com',floor:'Andar 2'},
+    {name:'23. Sofá Ext-Gemini',  email:'c_188cbbs1brgsshq6lo8fasg8lqn26@resource.calendar.google.com',floor:'Andar 2'},
+    {name:'24. Mesa Ext-Dataset', email:'c_1880d4ibnjevmg1qidnmi5lhn6m9m@resource.calendar.google.com',floor:'Andar 2'},
   ]
 };
 
-let state = {events:[], allRoomData:[], refreshTimer:null, bookingTarget:null, _bookingEvents:[]};
+let state={events:[],allRoomData:[],refreshTimer:null,bookingTarget:null,_bookingEvents:[]};
 
 function saveCfg(){try{localStorage.setItem('lcx_g',JSON.stringify({pin:cfg.pin,rooms:cfg.rooms}));localStorage.setItem('lcx_l',JSON.stringify({thisRoom:cfg.thisRoom}));}catch(e){}}
 function loadCfg(){try{const g=localStorage.getItem('lcx_g');if(g){const p=JSON.parse(g);cfg.pin=p.pin||DEFAULT_PIN;cfg.rooms=p.rooms||cfg.rooms;}const l=localStorage.getItem('lcx_l');if(l){const p=JSON.parse(l);cfg.thisRoom=p.thisRoom||'';}}catch(e){}}
@@ -422,7 +385,7 @@ function classify(events){
   const now=new Date();
   if(!events)return{status:'free',progress:0,responsible:null};
   const cur=events.find(e=>{const s=new Date(e.start.dateTime||e.start.date),en=new Date(e.end.dateTime||e.end.date);return s<=now&&en>now;});
-  if(cur){const s=new Date(cur.start.dateTime),en=new Date(cur.end.dateTime);return{status:'busy',current:cur,progress:Math.min(100,Math.round(((now-s)/(en-s))*100)),countdown:en-now,endsAt:en,responsible:cur.organizer?.email||null,next:null};}
+  if(cur){const s=new Date(cur.start.dateTime),en=new Date(cur.end.dateTime);return{status:'busy',current:cur,progress:Math.min(100,Math.round(((now-s)/(en-s))*100)),countdown:en-now,endsAt:en,responsible:cur.organizer?.email||null};}
   const nxt=events.find(e=>new Date(e.start.dateTime||e.start.date)>now);
   if(nxt){const st=new Date(nxt.start.dateTime||nxt.start.date),mins=Math.round((st-now)/60000);if(mins<=30)return{status:'soon',next:nxt,progress:Math.max(0,100-(mins/30)*100),countdown:st-now,nextAt:st,responsible:nxt.organizer?.email||null};return{status:'free',next:nxt,progress:0,nextAt:st,responsible:nxt.organizer?.email||null};}
   return{status:'free',progress:0,responsible:null};
@@ -438,29 +401,25 @@ function renderMain(cl){
   const nc=document.getElementById('next-chip'),rc=document.getElementById('responsible-chip');
   const schedBtn=document.getElementById('btn-show-schedule');
   const checkinBtn=document.getElementById('btn-checkin');
-  const mtitle=document.getElementById('meeting-title');
   if(schedBtn)schedBtn.style.display='inline-block';
   if(checkinBtn){
     const hasEvent=status==='busy'||status==='soon';
     if(hasEvent&&!checkinBtn.dataset.done){checkinBtn.style.display='inline-block';}
-    else if(!hasEvent){checkinBtn.style.display='none';delete checkinBtn.dataset.done;checkinBtn.textContent='✓ Check-in';checkinBtn.style.background='var(--green-bg)';checkinBtn.style.color='var(--green)';checkinBtn.style.borderColor='var(--green-border)';checkinBtn.style.cursor='pointer';checkinBtn.onclick=doCheckin;}
+    else if(!hasEvent){checkinBtn.style.display='none';delete checkinBtn.dataset.done;checkinBtn.textContent='✓ Check-in';checkinBtn.style.background='var(--green-bg)';checkinBtn.style.color='var(--green)';checkinBtn.style.borderColor='var(--green-border)';checkinBtn.style.cursor='pointer';}
   }
-      if(status==='busy'){
-    mtitle.style.display='none';
+  if(status==='busy'){
     info.innerHTML=`Termina às <span class="hl">${fmt(endsAt)}</span>`;
     cd.textContent=countdown?fmtDur(countdown):'';
     pf.style.width=`${progress}%`;pl.textContent=`${progress}% concluído`;pr.textContent=`Libera ${fmt(endsAt)}`;
     const na=findNextAvailable(state.events);
-    if(na){nc.innerHTML=`Próx. disponível: <strong>${fmt(na.start)}</strong> – <strong>${fmt(na.end)}</strong>`;nc.parentElement.dataset.nextStart=na.start.toISOString();nc.parentElement.dataset.nextEnd=na.end.toISOString();}
+    if(na){nc.innerHTML=`Próx. disponível: <strong>${fmt(na.start)}</strong> – <strong>${fmt(na.end)}</strong>`;nc.parentElement.dataset.nextStart=na.start.toISOString();}
     else{nc.innerHTML='Sem horário livre hoje';nc.parentElement.dataset.nextStart='';}
   }else if(status==='soon'){
-    mtitle.style.display='none';
     info.innerHTML=`Ocupada em <span class="hl">${fmtDur(countdown)}</span>`;
     cd.textContent=fmtDur(countdown);pf.style.width=`${progress}%`;
     pl.textContent='Livre agora';pr.textContent=`Reunião às ${fmt(nextAt)}`;
     nc.innerHTML=`Próxima às <strong>${fmt(nextAt)}</strong>`;nc.parentElement.dataset.nextStart='';
   }else{
-    mtitle.style.display='none';
     info.innerHTML=cl.next?`Próxima reunião às <span class="hl">${fmt(nextAt)}</span>`:'<span class="hl">Livre o dia todo</span>';
     cd.textContent='';pf.style.width='0%';pl.textContent='';pr.textContent='';
     nc.innerHTML=cl.next?`Próxima às <strong>${fmt(nextAt)}</strong>`:'Livre o dia todo';nc.parentElement.dataset.nextStart='';
@@ -537,18 +496,17 @@ function renderScheduleList(durMin){const slots=buildSlots(state.events,durMin),
 function pickSlot(startISO,endISO,durMin){hideModal('modal-schedule');const room=roomByEmail(cfg.thisRoom)||{name:'Esta sala',floor:''};const d=new Date(startISO);openBooking({email:cfg.thisRoom,name:room.name,floor:room.floor,presetDate:startISO.split('T')[0],presetTime:`${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`,presetDur:durMin});}
 document.getElementById('btn-close-schedule').addEventListener('click',()=>hideModal('modal-schedule'));
 
+// ── CHECK-IN ──
 function doCheckin(){
   const btn=document.getElementById('btn-checkin');
   if(!btn)return;
   btn.dataset.done='1';
   btn.style.display='none';
-  // Mostra popup central
   const popup=document.getElementById('checkin-popup');
   popup.style.display='flex';
-  setTimeout(()=>{
-    popup.style.display='none';
-  },2500);
+  setTimeout(()=>{popup.style.display='none';},2500);
 }
+document.getElementById('btn-checkin').addEventListener('click', doCheckin);
 
 function addGuestField(val){const wrap=document.getElementById('guests-list'),row=document.createElement('div');row.style.cssText='display:flex;gap:6px;align-items:center';row.innerHTML=`<input type="email" placeholder="convidado@logcomex.com" value="${val||''}" style="flex:1;background:var(--purple-mid);border:1px solid var(--purple-border);border-radius:var(--radius-sm);color:var(--white);font-family:var(--font);font-size:13px;padding:10px 12px;outline:none" onfocus="this.style.borderColor='var(--orange)'" onblur="this.style.borderColor='var(--purple-border)'"><button type="button" onclick="this.parentElement.remove()" style="width:32px;height:38px;background:var(--red-bg);border:1px solid var(--red-border);border-radius:8px;color:var(--red);cursor:pointer;font-size:16px;flex-shrink:0">×</button>`;wrap.appendChild(row);}
 document.getElementById('btn-add-guest').addEventListener('click',()=>addGuestField(''));
@@ -620,21 +578,15 @@ window.addEventListener('online',()=>{updateOnlineStatus();refresh();});
 window.addEventListener('offline',()=>updateOnlineStatus());
 updateOnlineStatus();
 
-// ── CLIQUE LONGO NA LOGO → seleção de sala ──
-let logoHoldTimer = null;
-const logoArea = document.querySelector('.logo-area');
-if (logoArea) {
-  logoArea.addEventListener('mousedown', () => {
-    logoHoldTimer = setTimeout(() => { showFirstAccess(); }, 2000);
-  });
-  logoArea.addEventListener('mouseup',   () => clearTimeout(logoHoldTimer));
-  logoArea.addEventListener('mouseleave',() => clearTimeout(logoHoldTimer));
-  // Touch para tablet
-  logoArea.addEventListener('touchstart', () => {
-    logoHoldTimer = setTimeout(() => { showFirstAccess(); }, 2000);
-  }, {passive:true});
-  logoArea.addEventListener('touchend',  () => clearTimeout(logoHoldTimer));
-}
+// ── CLIQUE LONGO NA LOGO (2s) → seleção de sala ──
+let logoTimer=null;
+const logoEl=document.getElementById('logo-area');
+logoEl.addEventListener('mousedown',()=>{logoTimer=setTimeout(()=>showFirstAccess(),2000);});
+logoEl.addEventListener('mouseup',()=>clearTimeout(logoTimer));
+logoEl.addEventListener('mouseleave',()=>clearTimeout(logoTimer));
+logoEl.addEventListener('touchstart',()=>{logoTimer=setTimeout(()=>showFirstAccess(),2000);},{passive:true});
+logoEl.addEventListener('touchend',()=>clearTimeout(logoTimer));
+logoEl.addEventListener('touchcancel',()=>clearTimeout(logoTimer));
 
 // ── INIT ──
 loadCfg();applyRoomInfo();
