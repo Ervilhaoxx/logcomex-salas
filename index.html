@@ -472,20 +472,22 @@ function renderMain(cl) {
 
   if (schedBtn) schedBtn.style.display='inline-block';
 
-  if (status==='busy') {
-    // Título da reunião
-    const title = current?.summary || '';
-    if (title && title !== 'Ocupada') {
-      mtitle.textContent = title;
-      mtitle.style.display = 'block';
-    } else {
-      mtitle.style.display = 'none';
-    }
-
-    // Check-in: só mostra se ainda não foi feito
-    if (checkinBtn && !checkinBtn.dataset.done) {
+  // Check-in aparece quando há reunião próxima (soon) ou em andamento (busy)
+  if (checkinBtn) {
+    const hasEvent = status === 'busy' || status === 'soon';
+    if (hasEvent && !checkinBtn.dataset.done) {
       checkinBtn.style.display = 'inline-block';
+    } else if (!hasEvent) {
+      checkinBtn.style.display = 'none';
+      delete checkinBtn.dataset.done;
+      checkinBtn.textContent = '✓ Check-in';
+      checkinBtn.style.background = 'var(--green-bg)';
+      checkinBtn.style.color = 'var(--green)';
+      checkinBtn.style.borderColor = 'var(--green-border)';
+      checkinBtn.style.cursor = 'pointer';
+      checkinBtn.onclick = doCheckin;
     }
+  }
 
     info.innerHTML=`Termina às <span class="hl">${fmt(endsAt)}</span>`;
     cd.textContent=countdown?fmtDur(countdown):'';
@@ -496,14 +498,12 @@ function renderMain(cl) {
     else { nc.innerHTML='Sem horário livre hoje'; nc.parentElement.dataset.nextStart=''; }
   } else if (status==='soon') {
     mtitle.style.display='none';
-    if (checkinBtn) { checkinBtn.style.display='none'; delete checkinBtn.dataset.done; }
     info.innerHTML=`Ocupada em <span class="hl">${fmtDur(countdown)}</span>`;
     cd.textContent=fmtDur(countdown); pf.style.width=`${progress}%`;
     pl.textContent='Livre agora'; pr.textContent=`Reunião às ${fmt(nextAt)}`;
     nc.innerHTML=`Próxima às <strong>${fmt(nextAt)}</strong>`; nc.parentElement.dataset.nextStart='';
   } else {
     mtitle.style.display='none';
-    if (checkinBtn) { checkinBtn.style.display='none'; delete checkinBtn.dataset.done; }
     info.innerHTML=cl.next?`Próxima reunião às <span class="hl">${fmt(nextAt)}</span>`:'<span class="hl">Livre o dia todo</span>';
     cd.textContent=''; pf.style.width='0%'; pl.textContent=''; pr.textContent='';
     nc.innerHTML=cl.next?`Próxima às <strong>${fmt(nextAt)}</strong>`:'Livre o dia todo'; nc.parentElement.dataset.nextStart='';
