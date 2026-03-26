@@ -525,7 +525,18 @@ function renderScheduleList(durMin){const slots=buildSlots(state.events,durMin),
 function pickSlot(startISO,endISO,durMin){hideModal('modal-schedule');const room=roomByEmail(cfg.thisRoom)||{name:'Esta sala',floor:''};const d=new Date(startISO);openBooking({email:cfg.thisRoom,name:room.name,floor:room.floor,presetDate:startISO.split('T')[0],presetTime:`${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`,presetDur:durMin});}
 document.getElementById('btn-close-schedule').addEventListener('click',()=>hideModal('modal-schedule'));
 
-function doCheckin(){const btn=document.getElementById('btn-checkin');if(!btn)return;btn.dataset.done='1';btn.textContent='✅ Check-in confirmado!';btn.style.background='var(--green)';btn.style.color='#fff';btn.style.borderColor='var(--green)';btn.style.cursor='default';btn.onclick=null;btn.animate([{transform:'scale(1)'},{transform:'scale(1.06)'},{transform:'scale(1)'}],{duration:300});}
+function doCheckin(){
+  const btn=document.getElementById('btn-checkin');
+  if(!btn)return;
+  btn.dataset.done='1';
+  btn.style.display='none';
+  // Mostra popup central
+  const popup=document.getElementById('checkin-popup');
+  popup.style.display='flex';
+  setTimeout(()=>{
+    popup.style.display='none';
+  },2500);
+}
 
 function addGuestField(val){const wrap=document.getElementById('guests-list'),row=document.createElement('div');row.style.cssText='display:flex;gap:6px;align-items:center';row.innerHTML=`<input type="email" placeholder="convidado@logcomex.com" value="${val||''}" style="flex:1;background:var(--purple-mid);border:1px solid var(--purple-border);border-radius:var(--radius-sm);color:var(--white);font-family:var(--font);font-size:13px;padding:10px 12px;outline:none" onfocus="this.style.borderColor='var(--orange)'" onblur="this.style.borderColor='var(--purple-border)'"><button type="button" onclick="this.parentElement.remove()" style="width:32px;height:38px;background:var(--red-bg);border:1px solid var(--red-border);border-radius:8px;color:var(--red);cursor:pointer;font-size:16px;flex-shrink:0">×</button>`;wrap.appendChild(row);}
 document.getElementById('btn-add-guest').addEventListener('click',()=>addGuestField(''));
@@ -596,6 +607,22 @@ function updateOnlineStatus(){const dot=document.querySelector('.sync-dot'),lbl=
 window.addEventListener('online',()=>{updateOnlineStatus();refresh();});
 window.addEventListener('offline',()=>updateOnlineStatus());
 updateOnlineStatus();
+
+// ── CLIQUE LONGO NA LOGO → seleção de sala ──
+let logoHoldTimer = null;
+const logoArea = document.querySelector('.logo-area');
+if (logoArea) {
+  logoArea.addEventListener('mousedown', () => {
+    logoHoldTimer = setTimeout(() => { showFirstAccess(); }, 2000);
+  });
+  logoArea.addEventListener('mouseup',   () => clearTimeout(logoHoldTimer));
+  logoArea.addEventListener('mouseleave',() => clearTimeout(logoHoldTimer));
+  // Touch para tablet
+  logoArea.addEventListener('touchstart', () => {
+    logoHoldTimer = setTimeout(() => { showFirstAccess(); }, 2000);
+  }, {passive:true});
+  logoArea.addEventListener('touchend',  () => clearTimeout(logoHoldTimer));
+}
 
 // ── INIT ──
 loadCfg();applyRoomInfo();
