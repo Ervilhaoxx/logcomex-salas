@@ -578,15 +578,8 @@ window.addEventListener('online',()=>{updateOnlineStatus();refresh();});
 window.addEventListener('offline',()=>updateOnlineStatus());
 updateOnlineStatus();
 
-// ── CLIQUE LONGO NA LOGO (2s) → seleção de sala ──
-let logoTimer=null;
-const logoEl=document.getElementById('logo-area');
-logoEl.addEventListener('mousedown',()=>{logoTimer=setTimeout(()=>showFirstAccess(),2000);});
-logoEl.addEventListener('mouseup',()=>clearTimeout(logoTimer));
-logoEl.addEventListener('mouseleave',()=>clearTimeout(logoTimer));
-logoEl.addEventListener('touchstart',()=>{logoTimer=setTimeout(()=>showFirstAccess(),2000);},{passive:true});
-logoEl.addEventListener('touchend',()=>clearTimeout(logoTimer));
-logoEl.addEventListener('touchcancel',()=>clearTimeout(logoTimer));
+// ── CLIQUE NA LOGO → seleção de sala ──
+document.getElementById('logo-area').addEventListener('click', ()=>showFirstAccess());
 
 // ── INIT ──
 loadCfg();applyRoomInfo();
