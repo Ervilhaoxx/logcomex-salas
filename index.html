@@ -403,9 +403,21 @@ function renderMain(cl){
   const checkinBtn=document.getElementById('btn-checkin');
   if(schedBtn)schedBtn.style.display='inline-block';
   if(checkinBtn){
-    const hasEvent=status==='busy'||status==='soon';
-    if(hasEvent&&!checkinBtn.dataset.done){checkinBtn.style.display='inline-block';}
-    else if(!hasEvent){checkinBtn.style.display='none';delete checkinBtn.dataset.done;checkinBtn.textContent='✓ Check-in';checkinBtn.style.background='var(--green-bg)';checkinBtn.style.color='var(--green)';checkinBtn.style.borderColor='var(--green-border)';checkinBtn.style.cursor='pointer';}
+    const hasEvent = status==='busy' || status==='soon';
+    // Gera um ID único para o evento atual
+    const eventId = status==='busy' ? (cl.endsAt?.getTime()+'') : status==='soon' ? (cl.nextAt?.getTime()+'') : null;
+    state.currentEventId = eventId;
+    if(hasEvent && eventId && checkinDoneForEvent !== eventId){
+      // Nova reunião — mostra botão e reseta
+      checkinBtn.style.display='inline-block';
+      checkinBtn.textContent='✓ Check-in';
+      checkinBtn.style.background='var(--green-bg)';
+      checkinBtn.style.color='var(--green)';
+      checkinBtn.style.borderColor='var(--green-border)';
+      checkinBtn.style.cursor='pointer';
+    } else if(!hasEvent){
+      checkinBtn.style.display='none';
+    }
   }
   if(status==='busy'){
     info.innerHTML=`Termina às <span class="hl">${fmt(endsAt)}</span>`;
@@ -497,10 +509,14 @@ function pickSlot(startISO,endISO,durMin){hideModal('modal-schedule');const room
 document.getElementById('btn-close-schedule').addEventListener('click',()=>hideModal('modal-schedule'));
 
 // ── CHECK-IN ──
+// Guarda o ID do evento atual que já teve check-in
+let checkinDoneForEvent = null;
+
 function doCheckin(){
   const btn=document.getElementById('btn-checkin');
   if(!btn)return;
-  btn.dataset.done='1';
+  // Marca check-in para o evento atual
+  checkinDoneForEvent = state.currentEventId;
   btn.style.display='none';
   const popup=document.getElementById('checkin-popup');
   popup.style.display='flex';
