@@ -209,17 +209,29 @@ html,body{font-family:var(--font);background:var(--purple-dark);color:var(--whit
   <div id="main-panel" class="free">
     <div id="bg-glow"></div>
     <div class="status-badge free" id="status-badge"><div class="st-dot"></div><span id="status-text">Disponível</span></div>
+    <!-- Nome da sala (sempre visível) -->
     <div id="room-name">—</div>
     <div id="room-type">—</div>
+
+    <!-- Título da reunião (só quando ocupada/em breve) -->
+    <div id="meeting-title" style="display:none;font-size:clamp(18px,2.5vw,26px);font-weight:600;color:var(--white-70);text-align:center;margin-bottom:4px;position:relative;z-index:1;letter-spacing:-.3px"></div>
+
     <div id="status-info"><span class="hl">Carregando...</span></div>
     <div id="countdown"></div>
     <div id="prog-wrap">
       <div class="prog-track"><div id="prog-fill" style="width:0%"></div></div>
       <div class="prog-labels"><span id="pl-left"></span><span id="pl-right"></span></div>
     </div>
-    <button id="btn-show-schedule" onclick="openScheduleModal()" style="display:none;margin-top:20px;padding:10px 28px;background:var(--green-bg);border:1px solid var(--green-border);border-radius:30px;color:var(--green);font-family:var(--font);font-size:13px;font-weight:700;cursor:pointer;transition:all .2s;letter-spacing:.3px;position:relative;z-index:1">
-      🗓 Ver horários disponíveis
-    </button>
+
+    <!-- Botões de ação -->
+    <div style="display:flex;gap:12px;margin-top:20px;position:relative;z-index:1;flex-wrap:wrap;justify-content:center">
+      <button id="btn-checkin" style="display:none;padding:10px 28px;background:var(--green-bg);border:1px solid var(--green-border);border-radius:30px;color:var(--green);font-family:var(--font);font-size:13px;font-weight:700;cursor:pointer;transition:all .3s;letter-spacing:.3px" onclick="doCheckin()">
+        ✓ Check-in
+      </button>
+      <button id="btn-show-schedule" onclick="openScheduleModal()" style="display:none;padding:10px 28px;background:var(--green-bg);border:1px solid var(--green-border);border-radius:30px;color:var(--green);font-family:var(--font);font-size:13px;font-weight:700;cursor:pointer;transition:all .2s;letter-spacing:.3px">
+        🗓 Ver horários disponíveis
+      </button>
+    </div>
   </div>
 
   <div id="avail-panel">
@@ -419,6 +431,7 @@ async function fetchCal(email) {
     return d.busy.map(b => ({
       start:     {dateTime: b.start},
       end:       {dateTime: b.end},
+      summary:   b.title || 'Ocupada',
       organizer: {email: b.responsible || ''},
     }));
   } catch(e) { return null; }
@@ -442,17 +455,38 @@ function classify(events) {
 }
 
 function renderMain(cl) {
-  const {status,progress,countdown,endsAt,nextAt,responsible} = cl;
+  const {status, current, progress, countdown, endsAt, nextAt, responsible} = cl;
   const mp=document.getElementById('main-panel');
   const bd=document.getElementById('status-badge');
   mp.className=status; bd.className=`status-badge ${status}`;
   document.getElementById('status-text').textContent={free:'Disponível',soon:'Em breve',busy:'Ocupada'}[status];
-  const info=document.getElementById('status-info'),cd=document.getElementById('countdown');
-  const pf=document.getElementById('prog-fill'),pl=document.getElementById('pl-left'),pr=document.getElementById('pl-right');
+
+  const info=document.getElementById('status-info');
+  const cd=document.getElementById('countdown');
+  const pf=document.getElementById('prog-fill');
+  const pl=document.getElementById('pl-left'),pr=document.getElementById('pl-right');
   const nc=document.getElementById('next-chip'),rc=document.getElementById('responsible-chip');
   const schedBtn=document.getElementById('btn-show-schedule');
+  const checkinBtn=document.getElementById('btn-checkin');
+  const mtitle=document.getElementById('meeting-title');
+
   if (schedBtn) schedBtn.style.display='inline-block';
+
   if (status==='busy') {
+    // Título da reunião
+    const title = current?.summary || '';
+    if (title && title !== 'Ocupada') {
+      mtitle.textContent = title;
+      mtitle.style.display = 'block';
+    } else {
+      mtitle.style.display = 'none';
+    }
+
+    // Check-in: só mostra se ainda não foi feito
+    if (checkinBtn && !checkinBtn.dataset.done) {
+      checkinBtn.style.display = 'inline-block';
+    }
+
     info.innerHTML=`Termina às <span class="hl">${fmt(endsAt)}</span>`;
     cd.textContent=countdown?fmtDur(countdown):'';
     pf.style.width=`${progress}%`;
@@ -461,11 +495,15 @@ function renderMain(cl) {
     if (na) { nc.innerHTML=`Próx. disponível: <strong>${fmt(na.start)}</strong> – <strong>${fmt(na.end)}</strong>`; nc.parentElement.dataset.nextStart=na.start.toISOString(); nc.parentElement.dataset.nextEnd=na.end.toISOString(); }
     else { nc.innerHTML='Sem horário livre hoje'; nc.parentElement.dataset.nextStart=''; }
   } else if (status==='soon') {
+    mtitle.style.display='none';
+    if (checkinBtn) { checkinBtn.style.display='none'; delete checkinBtn.dataset.done; }
     info.innerHTML=`Ocupada em <span class="hl">${fmtDur(countdown)}</span>`;
     cd.textContent=fmtDur(countdown); pf.style.width=`${progress}%`;
     pl.textContent='Livre agora'; pr.textContent=`Reunião às ${fmt(nextAt)}`;
     nc.innerHTML=`Próxima às <strong>${fmt(nextAt)}</strong>`; nc.parentElement.dataset.nextStart='';
   } else {
+    mtitle.style.display='none';
+    if (checkinBtn) { checkinBtn.style.display='none'; delete checkinBtn.dataset.done; }
     info.innerHTML=cl.next?`Próxima reunião às <span class="hl">${fmt(nextAt)}</span>`:'<span class="hl">Livre o dia todo</span>';
     cd.textContent=''; pf.style.width='0%'; pl.textContent=''; pr.textContent='';
     nc.innerHTML=cl.next?`Próxima às <strong>${fmt(nextAt)}</strong>`:'Livre o dia todo'; nc.parentElement.dataset.nextStart='';
@@ -557,6 +595,21 @@ document.getElementById('btn-save-cfg').addEventListener('click',()=>{
   saveCfg();applyRoomInfo();al.innerHTML='<div class="alert success">Salvo! Reconectando...</div>';
   setTimeout(()=>{hideModal('modal-cfg');startRefresh();},1000);
 });
+
+// ── CHECK-IN ──
+function doCheckin() {
+  const btn = document.getElementById('btn-checkin');
+  if (!btn) return;
+  btn.dataset.done = '1';
+  btn.textContent = '✅ Check-in confirmado!';
+  btn.style.background = 'var(--green)';
+  btn.style.color = '#fff';
+  btn.style.borderColor = 'var(--green)';
+  btn.style.cursor = 'default';
+  btn.onclick = null;
+  // Pulsa uma vez para dar feedback visual
+  btn.animate([{transform:'scale(1)'},{transform:'scale(1.06)'},{transform:'scale(1)'}],{duration:300});
+}
 
 // ── SLOTS DISPONÍVEIS ──
 function buildSlots(events, durMin) {
