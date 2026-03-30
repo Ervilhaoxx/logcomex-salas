@@ -783,8 +783,24 @@ updateOnlineStatus();
 
 
 // ── INIT ──
-loadCfg();applyRoomInfo();
-if(!cfg.thisRoom){showFirstAccess();}else{startRefresh();}
+loadCfg();
+applyRoomInfo();
+
+// Garante que a sala salva no localStorage é carregada corretamente
+const savedLocal = localStorage.getItem('lcx_l');
+if (savedLocal) {
+  try {
+    const p = JSON.parse(savedLocal);
+    if (p.thisRoom) cfg.thisRoom = p.thisRoom;
+  } catch(e) {}
+}
+
+if (!cfg.thisRoom) {
+  showFirstAccess();
+} else {
+  applyRoomInfo();
+  startRefresh();
+}
 </script>
 </body>
 </html>
