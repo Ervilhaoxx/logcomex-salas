@@ -185,6 +185,13 @@ html,body{font-family:var(--font);background:var(--purple-dark);color:var(--whit
 .spinner{width:18px;height:18px;border:2px solid rgba(255,255,255,.2);border-top-color:var(--orange);border-radius:50%;animation:spin .7s linear infinite;display:inline-block}
 @keyframes spin{to{transform:rotate(360deg)}}
 @keyframes popIn{from{transform:scale(.7);opacity:0}to{transform:scale(1);opacity:1}}
+/* autocomplete */
+.ac-dropdown{position:absolute;top:100%;left:0;right:40px;z-index:99999;background:var(--purple-card);border:1px solid var(--purple-border);border-radius:var(--radius-sm);max-height:200px;overflow-y:auto;display:none;scrollbar-width:thin;scrollbar-color:var(--purple-border) transparent;box-shadow:0 8px 32px rgba(0,0,0,.5)}
+.ac-item{display:flex;flex-direction:column;padding:10px 14px;cursor:pointer;border-bottom:1px solid var(--purple-border);transition:background .15s}
+.ac-item:last-child{border-bottom:none}
+.ac-item:hover{background:rgba(255,107,43,.15)}
+.ac-item .ac-nome{font-size:13px;font-weight:600;color:var(--white)}
+.ac-item .ac-email{font-size:11px;color:var(--white-40)}
 </style>
 </head>
 <body>
@@ -360,7 +367,12 @@ html,body{font-family:var(--font);background:var(--purple-dark);color:var(--whit
     <div class="field">
       <label>Convidados</label>
       <div id="guests-list" style="display:flex;flex-direction:column;gap:6px;margin-bottom:6px"></div>
-      <button type="button" id="btn-add-guest" style="display:flex;align-items:center;gap:7px;background:var(--white-15);border:1px dashed var(--purple-border);border-radius:var(--radius-sm);padding:9px 14px;color:var(--white-40);font-family:var(--font);font-size:12px;cursor:pointer;width:100%;justify-content:center;transition:all .2s" onmouseover="this.style.borderColor='var(--orange)';this.style.color='var(--orange-light)'" onmouseout="this.style.borderColor='var(--purple-border)';this.style.color='var(--white-40)'">+ Adicionar convidado</button>
+      <button type="button" id="btn-add-guest"
+        style="display:flex;align-items:center;gap:7px;background:var(--white-15);border:1px dashed var(--purple-border);border-radius:var(--radius-sm);padding:9px 14px;color:var(--white-40);font-family:var(--font);font-size:12px;cursor:pointer;width:100%;justify-content:center;transition:all .2s"
+        onmouseover="this.style.borderColor='var(--orange)';this.style.color='var(--orange-light)'"
+        onmouseout="this.style.borderColor='var(--purple-border)';this.style.color='var(--white-40)'">
+        + Adicionar convidado
+      </button>
     </div>
     <div class="modal-btns">
       <button class="btn-primary" id="btn-confirm-booking">Confirmar agendamento</button>
@@ -413,8 +425,80 @@ let cfg={
   ]
 };
 
-let state={events:[],allRoomData:[],refreshTimer:null,bookingTarget:null,_bookingEvents:[]};
+let state={events:[],allRoomData:[],refreshTimer:null,bookingTarget:null,_bookingEvents:[],currentEventId:null};
 
+// ── COLABORADORES AUTOCOMPLETE ──
+let _colaboradores=[];
+let _colaboradoresLoaded=false;
+
+async function loadColaboradores(){
+  if(_colaboradoresLoaded)return;
+  try{
+    const r=await fetch(`${BACKEND_URL}?action=colaboradores`);
+    const d=await r.json();
+    if(d.colaboradores&&d.colaboradores.length){
+      _colaboradores=d.colaboradores;
+      _colaboradoresLoaded=true;
+    }
+  }catch(e){}
+}
+
+function addGuestField(val){
+  const wrap=document.getElementById('guests-list');
+  const row=document.createElement('div');
+  row.style.cssText='display:flex;gap:6px;align-items:center;position:relative';
+
+  const input=document.createElement('input');
+  input.type='text';
+  input.placeholder='Nome ou e-mail do convidado';
+  input.value=val||'';
+  input.style.cssText='flex:1;background:var(--purple-mid);border:1px solid var(--purple-border);border-radius:var(--radius-sm);color:var(--white);font-family:var(--font);font-size:13px;padding:10px 12px;outline:none;transition:border-color .2s';
+  input.onfocus=()=>input.style.borderColor='var(--orange)';
+  input.onblur=()=>{setTimeout(()=>hideSuggestions(dd),200);input.style.borderColor='var(--purple-border)';};
+
+  const dd=document.createElement('div');
+  dd.className='ac-dropdown';
+
+  input.addEventListener('input',()=>{
+    const q=input.value.trim().toLowerCase();
+    if(q.length<2){hideSuggestions(dd);return;}
+    const matches=_colaboradores.filter(c=>
+      c.nome.toLowerCase().includes(q)||c.email.toLowerCase().includes(q)
+    ).slice(0,8);
+    if(!matches.length){hideSuggestions(dd);return;}
+    dd.innerHTML=matches.map(c=>`
+      <div class="ac-item" data-email="${c.email}">
+        <span class="ac-nome">${c.nome}</span>
+        <span class="ac-email">${c.email}</span>
+      </div>`).join('');
+    dd.querySelectorAll('.ac-item').forEach(item=>{
+      item.addEventListener('mousedown',()=>{
+        input.value=item.dataset.email;
+        hideSuggestions(dd);
+      });
+    });
+    dd.style.display='block';
+  });
+
+  const delBtn=document.createElement('button');
+  delBtn.type='button';
+  delBtn.textContent='×';
+  delBtn.style.cssText='width:32px;height:38px;background:var(--red-bg);border:1px solid var(--red-border);border-radius:8px;color:var(--red);cursor:pointer;font-size:16px;flex-shrink:0';
+  delBtn.onclick=()=>row.remove();
+
+  row.appendChild(input);
+  row.appendChild(dd);
+  row.appendChild(delBtn);
+  wrap.appendChild(row);
+}
+
+function hideSuggestions(dd){if(dd)dd.style.display='none';}
+function getGuestEmails(){return[...document.querySelectorAll('#guests-list input')].map(i=>i.value.trim()).filter(v=>v.includes('@'));}
+function resetGuests(){document.getElementById('guests-list').innerHTML='';}
+
+document.getElementById('btn-add-guest').addEventListener('click',()=>addGuestField(''));
+
+// ── CONFIG ──
 function saveCfg(){
   try{
     localStorage.setItem('lcx_g',JSON.stringify({pin:cfg.pin,rooms:cfg.rooms}));
@@ -645,16 +729,12 @@ function renderScheduleList(durMin){const slots=buildSlots(state.events,durMin),
 function pickSlot(startISO,endISO,durMin){hideModal('modal-schedule');const room=roomByEmail(cfg.thisRoom)||{name:'Esta sala',floor:''};const d=new Date(startISO);openBooking({email:cfg.thisRoom,name:room.name,floor:room.floor,presetDate:startISO.split('T')[0],presetTime:`${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`,presetDur:durMin});}
 document.getElementById('btn-close-schedule').addEventListener('click',()=>hideModal('modal-schedule'));
 
-function addGuestField(val){const wrap=document.getElementById('guests-list'),row=document.createElement('div');row.style.cssText='display:flex;gap:6px;align-items:center';row.innerHTML=`<input type="email" placeholder="convidado@logcomex.com" value="${val||''}" style="flex:1;background:var(--purple-mid);border:1px solid var(--purple-border);border-radius:var(--radius-sm);color:var(--white);font-family:var(--font);font-size:13px;padding:10px 12px;outline:none" onfocus="this.style.borderColor='var(--orange)'" onblur="this.style.borderColor='var(--purple-border)'"><button type="button" onclick="this.parentElement.remove()" style="width:32px;height:38px;background:var(--red-bg);border:1px solid var(--red-border);border-radius:8px;color:var(--red);cursor:pointer;font-size:16px;flex-shrink:0">×</button>`;wrap.appendChild(row);}
-document.getElementById('btn-add-guest').addEventListener('click',()=>addGuestField(''));
-function getGuestEmails(){return[...document.querySelectorAll('#guests-list input')].map(i=>i.value.trim()).filter(v=>v.includes('@'));}
-function resetGuests(){document.getElementById('guests-list').innerHTML='';}
-
 function populateBkTime(durMin,presetTime){const sel=document.getElementById('bk-time');const slots=buildSlots(state._bookingEvents||state.events,durMin);sel.innerHTML='';if(!slots.length){sel.innerHTML='<option value="">Nenhum horário disponível</option>';return;}slots.forEach(sl=>{const hh=String(sl.start.getHours()).padStart(2,'0'),mm=String(sl.start.getMinutes()).padStart(2,'0'),val=`${hh}:${mm}`;const opt=document.createElement('option');opt.value=val;opt.textContent=`${fmt(sl.start)} – ${fmt(sl.end)}`;if(presetTime&&val===presetTime)opt.selected=true;sel.appendChild(opt);});}
 document.getElementById('bk-duration').addEventListener('change',function(){populateBkTime(parseInt(this.value),null);});
 
 function openBooking(room){
   state.bookingTarget=room;
+  loadColaboradores(); // carrega lista em background (só na 1ª vez)
   const t=new Date().toISOString().split('T')[0];
   const dur=room.presetDur||parseInt(document.getElementById('bk-duration').value)||60;
   let eventsForRoom=state.events;
