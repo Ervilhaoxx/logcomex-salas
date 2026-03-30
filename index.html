@@ -97,7 +97,7 @@ html,body{font-family:var(--font);background:var(--purple-dark);color:var(--whit
 #main-panel.soon #prog-fill{background:var(--yellow)}
 #main-panel.free #prog-fill{background:var(--green);width:0!important}
 .prog-labels{display:flex;justify-content:space-between;font-size:10px;color:var(--white-40);margin-top:5px}
-#bottom-strip{grid-column:1/-1;display:flex;align-items:center;justify-content:center;gap:28px;padding:12px 24px 14px;background:var(--purple-mid);border-top:1px solid var(--purple-border);flex-wrap:wrap}
+#bottom-strip{grid-column:1/-1;display:flex;align-items:center;justify-content:center;gap:20px;padding:12px 24px 14px;background:var(--purple-mid);border-top:1px solid var(--purple-border);flex-wrap:wrap;overflow-x:auto}
 .info-chip{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--white-70)}
 .info-chip svg{width:15px;height:15px;stroke:var(--white-40);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
 .info-chip strong{color:var(--white);font-weight:600}
@@ -718,7 +718,7 @@ document.getElementById('btn-confirm-booking').addEventListener('click',async()=
   btn.disabled=false;btn.textContent='Confirmar agendamento';
 });
 
-['modal-pin','modal-cfg','modal-booking','modal-schedule'].forEach(id=>{document.getElementById(id).addEventListener('click',e=>{if(e.target.id===id)hideModal(id);});});
+['modal-pin','modal-cfg','modal-booking','modal-schedule','modal-support'].forEach(id=>{document.getElementById(id).addEventListener('click',e=>{if(e.target.id===id)hideModal(id);});});
 
 function findNextAvailable(events){if(!events||!events.length)return null;const now=new Date(),endOfDay=new Date(now.getFullYear(),now.getMonth(),now.getDate(),23,59,59);const sorted=[...events].map(e=>({s:new Date(e.start.dateTime),en:new Date(e.end.dateTime)})).filter(e=>e.en>now).sort((a,b)=>a.s-b.s);if(!sorted.length)return null;let freeStart=now>sorted[0].s?sorted[0].en:now;for(let i=0;i<sorted.length;i++){if(sorted[i].s>freeStart&&(sorted[i].s-freeStart)>=15*60000)return{start:freeStart,end:sorted[i].s};if(sorted[i].en>freeStart)freeStart=sorted[i].en;}if(freeStart<endOfDay)return{start:freeStart,end:endOfDay};return null;}
 
