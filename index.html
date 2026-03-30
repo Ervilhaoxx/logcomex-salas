@@ -18,30 +18,34 @@
 }
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{font-family:var(--font);background:var(--purple-dark);color:var(--white);height:100%;width:100%;overflow:hidden}
+
 #app{display:grid;grid-template-columns:1fr 300px;grid-template-rows:auto 1fr auto;height:100vh;width:100vw}
 
-@media(max-width:768px){
-  #app{grid-template-columns:1fr;grid-template-rows:auto 1fr auto auto}
-  #avail-panel{grid-column:1;grid-row:4;border-left:none;border-top:1px solid var(--purple-border);max-height:220px}
-  #bottom-strip{grid-column:1;grid-row:3}
-  #main-panel{grid-column:1;grid-row:2}
-  #top-bar{padding:10px 16px}
+@media(max-width:900px){
+  html,body{overflow-y:auto}
+  #app{
+    display:flex;flex-direction:column;
+    height:auto;min-height:100vh;width:100vw
+  }
+  #top-bar{order:0;padding:10px 14px}
+  #main-panel{order:1;min-height:60vh;grid-column:unset;grid-row:unset}
+  #bottom-strip{order:2;padding:10px 14px;gap:12px;flex-wrap:wrap}
+  #avail-panel{
+    order:3;grid-column:unset;grid-row:unset;
+    border-left:none;border-top:1px solid var(--purple-border);
+    max-height:none;overflow-y:visible
+  }
+  #avail-list{max-height:none;overflow-y:visible}
   .company-name{display:none}
   #top-clock{font-size:18px}
   #top-date{font-size:10px}
+  .sync-pill{padding:4px 10px;font-size:11px}
   #room-name{font-size:clamp(32px,10vw,56px)}
-  #countdown{font-size:clamp(40px,12vw,72px)}
-  #prog-wrap{width:90%}
-  .avail-header{padding:10px}
-  .avail-count{font-size:16px}
-  #avail-list{padding:4px}
-  .avail-item{padding:7px 8px}
+  #countdown{font-size:clamp(36px,12vw,68px)}
+  #prog-wrap{width:88%}
   .avail-name{font-size:12px}
-  #bottom-strip{gap:14px;padding:8px 16px;flex-wrap:nowrap;justify-content:space-between}
   .info-chip{font-size:11px}
   .chip-sep{display:none}
-  .sync-pill{padding:4px 10px;font-size:11px}
-  #btn-open-cfg{padding:6px}
   .modal{padding:20px;max-width:95vw!important}
   .field-row{grid-template-columns:1fr}
   .fa-grid{grid-template-columns:repeat(auto-fill,minmax(110px,1fr))}
