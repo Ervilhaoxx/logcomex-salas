@@ -510,15 +510,31 @@ function pickSlot(startISO,endISO,durMin){hideModal('modal-schedule');const room
 document.getElementById('btn-close-schedule').addEventListener('click',()=>hideModal('modal-schedule'));
 
 // ── CHECK-IN ──
-// Guarda o ID do evento atual que já teve check-in
 let checkinDoneForEvent = null;
 
 function doCheckin(){
   const btn=document.getElementById('btn-checkin');
   if(!btn)return;
-  // Marca check-in para o evento atual
-  checkinDoneForEvent = state.currentEventId;
+  btn.dataset.done='1';
   btn.style.display='none';
+
+  // Pega o e-mail do responsável da reunião atual
+  const responsible = document.getElementById('responsible-chip')?.textContent?.trim();
+  const roomName    = document.getElementById('room-name')?.textContent?.trim();
+  const endsAt      = document.getElementById('pl-right')?.textContent?.replace('Libera ','')?.trim();
+
+  // Envia notificação via backend se tiver e-mail válido
+  if(responsible && responsible.includes('@')) {
+    const params = new URLSearchParams({
+      action:      'checkin',
+      email:       responsible,
+      room:        roomName || 'Sala',
+      endsAt:      endsAt || ''
+    });
+    fetch(`${BACKEND_URL}?${params.toString()}`).catch(()=>{});
+  }
+
+  checkinDoneForEvent = state.currentEventId;
   const popup=document.getElementById('checkin-popup');
   popup.style.display='flex';
   setTimeout(()=>{popup.style.display='none';},2500);
