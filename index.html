@@ -405,19 +405,15 @@ function renderMain(cl){
   if(schedBtn)schedBtn.style.display='inline-block';
   if(checkinBtn){
     const hasEvent = status==='busy' || status==='soon';
-    // Gera um ID único para o evento atual
-    const eventId = status==='busy' ? (cl.endsAt?.getTime()+'') : status==='soon' ? (cl.nextAt?.getTime()+'') : null;
+    const eventId  = status==='busy' ? (cl.endsAt?.getTime()+'') : status==='soon' ? (cl.nextAt?.getTime()+'') : null;
     state.currentEventId = eventId;
     if(hasEvent && eventId && checkinDoneForEvent !== eventId){
-      // Nova reunião — mostra botão e reseta
-      checkinBtn.style.display='inline-block';
-      checkinBtn.textContent='✓ Check-in';
-      checkinBtn.style.background='var(--green-bg)';
-      checkinBtn.style.color='var(--green)';
-      checkinBtn.style.borderColor='var(--green-border)';
-      checkinBtn.style.cursor='pointer';
+      checkinBtn.style.display = 'inline-block';
+      // Inicia timer de tolerância apenas quando reunião está em andamento
+      if(status === 'busy') startToleranceTimer();
     } else if(!hasEvent){
-      checkinBtn.style.display='none';
+      checkinBtn.style.display = 'none';
+      resetToleranceTimer();
     }
   }
   if(status==='busy'){
@@ -509,7 +505,92 @@ function renderScheduleList(durMin){const slots=buildSlots(state.events,durMin),
 function pickSlot(startISO,endISO,durMin){hideModal('modal-schedule');const room=roomByEmail(cfg.thisRoom)||{name:'Esta sala',floor:''};const d=new Date(startISO);openBooking({email:cfg.thisRoom,name:room.name,floor:room.floor,presetDate:startISO.split('T')[0],presetTime:`${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`,presetDur:durMin});}
 document.getElementById('btn-close-schedule').addEventListener('click',()=>hideModal('modal-schedule'));
 
-// ── CHECK-IN ──
+// ── TOLERÂNCIA DE CHECK-IN ──
+const TOLERANCE_WARN_MS  =  5 * 60000; // 5 min → botão amarelo
+const TOLERANCE_ALERT_MS = 10 * 60000; // 10 min → aviso + e-mail
+const TOLERANCE_FREE_MS  = 15 * 60000; // 15 min → libera sala
+
+let toleranceTimer   = null;
+let toleranceStarted = false;
+let toleranceEmailSent = false;
+
+function startToleranceTimer() {
+  if (toleranceStarted) return;
+  toleranceStarted   = true;
+  toleranceEmailSent = false;
+  const btn = document.getElementById('btn-checkin');
+
+  // 5 min → botão amarelo pulsando
+  setTimeout(() => {
+    if (checkinDoneForEvent === state.currentEventId) return;
+    if (btn) {
+      btn.style.background   = 'var(--yellow-bg)';
+      btn.style.borderColor  = 'var(--yellow-border)';
+      btn.style.color        = 'var(--yellow)';
+      btn.style.animation    = 'blink 1s ease-in-out infinite';
+      btn.textContent        = '⚠️ Check-in pendente';
+    }
+  }, TOLERANCE_WARN_MS);
+
+  // 10 min → aviso na tela + e-mail
+  setTimeout(() => {
+    if (checkinDoneForEvent === state.currentEventId) return;
+    // Aviso visual
+    const info = document.getElementById('status-info');
+    if (info) info.innerHTML = `<span class="hl" style="color:var(--yellow)">⚠️ Sala será liberada em 5 min por falta de check-in</span>`;
+    // E-mail de aviso
+    const responsible = document.getElementById('responsible-chip')?.textContent?.trim();
+    const roomName    = document.getElementById('room-name')?.textContent?.trim();
+    if (responsible && responsible.includes('@') && !toleranceEmailSent) {
+      toleranceEmailSent = true;
+      const params = new URLSearchParams({
+        action:  'checkin_warning',
+        email:   responsible,
+        room:    roomName || 'Sala',
+      });
+      fetch(`${BACKEND_URL}?${params.toString()}`).catch(()=>{});
+    }
+  }, TOLERANCE_ALERT_MS);
+
+  // 15 min → libera sala visualmente
+  setTimeout(() => {
+    if (checkinDoneForEvent === state.currentEventId) return;
+    // Força visual de sala livre
+    const mp = document.getElementById('main-panel');
+    const bd = document.getElementById('status-badge');
+    if (mp) mp.className = 'free';
+    if (bd) bd.className = 'status-badge free';
+    document.getElementById('status-text').textContent = 'Disponível';
+    document.getElementById('status-info').innerHTML   = '<span class="hl">Sala liberada por falta de check-in</span>';
+    document.getElementById('countdown').textContent   = '';
+    document.getElementById('prog-fill').style.width   = '0%';
+    if (btn) btn.style.display = 'none';
+    // E-mail de liberação
+    const responsible = document.getElementById('responsible-chip')?.textContent?.trim();
+    const roomName    = document.getElementById('room-name')?.textContent?.trim();
+    if (responsible && responsible.includes('@')) {
+      const params = new URLSearchParams({
+        action: 'checkin_released',
+        email:  responsible,
+        room:   roomName || 'Sala',
+      });
+      fetch(`${BACKEND_URL}?${params.toString()}`).catch(()=>{});
+    }
+  }, TOLERANCE_FREE_MS);
+}
+
+function resetToleranceTimer() {
+  toleranceStarted   = false;
+  toleranceEmailSent = false;
+  const btn = document.getElementById('btn-checkin');
+  if (btn) {
+    btn.style.animation   = '';
+    btn.style.background  = 'var(--green-bg)';
+    btn.style.borderColor = 'var(--green-border)';
+    btn.style.color       = 'var(--green)';
+    btn.textContent       = '✓ Check-in';
+  }
+}
 let checkinDoneForEvent = null;
 
 function doCheckin(){
