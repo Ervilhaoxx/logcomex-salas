@@ -1,4 +1,4 @@
-<!DOCTYPE html> 
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
@@ -7,34 +7,25 @@
 <title>Salas · Logcomex</title>
 <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-:root {
-  --purple-dark:#0a0118; --purple-mid:#150328; --purple-card:#1c0438; --purple-border:#3a0d5e;
-  --orange:#ff6b2b; --orange-light:#ff8c57;
-  --white:#fff; --white-70:rgba(255,255,255,.7); --white-40:rgba(255,255,255,.4); --white-15:rgba(255,255,255,.08);
-  --green:#16db6a; --green-bg:rgba(22,219,106,.1); --green-border:rgba(22,219,106,.28);
-  --yellow:#f59e0b; --yellow-bg:rgba(245,158,11,.1); --yellow-border:rgba(245,158,11,.28);
-  --red:#ff1f1f; --red-bg:rgba(255,31,31,.1); --red-border:rgba(255,31,31,.3);
-  --font:'Sora',sans-serif; --radius:20px; --radius-sm:12px;
+:root{
+  --purple-dark:#0a0118;--purple-mid:#150328;--purple-card:#1c0438;--purple-border:#3a0d5e;
+  --orange:#ff6b2b;--orange-light:#ff8c57;
+  --white:#fff;--white-70:rgba(255,255,255,.7);--white-40:rgba(255,255,255,.4);--white-15:rgba(255,255,255,.08);
+  --green:#16db6a;--green-bg:rgba(22,219,106,.1);--green-border:rgba(22,219,106,.28);
+  --yellow:#f59e0b;--yellow-bg:rgba(245,158,11,.1);--yellow-border:rgba(245,158,11,.28);
+  --red:#ff1f1f;--red-bg:rgba(255,31,31,.1);--red-border:rgba(255,31,31,.3);
+  --font:'Sora',sans-serif;--radius:20px;--radius-sm:12px;
 }
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{font-family:var(--font);background:var(--purple-dark);color:var(--white);height:100%;width:100%;overflow:hidden}
-
 #app{display:grid;grid-template-columns:1fr 300px;grid-template-rows:auto 1fr auto;height:100vh;width:100vw}
-
 @media(max-width:900px){
   html,body{overflow-y:auto}
-  #app{
-    display:flex;flex-direction:column;
-    height:auto;min-height:100vh;width:100vw
-  }
+  #app{display:flex;flex-direction:column;height:auto;min-height:100vh;width:100vw}
   #top-bar{order:0;padding:10px 14px}
-  #main-panel{order:1;min-height:60vh;grid-column:unset;grid-row:unset}
+  #main-panel{order:1;min-height:60vh}
   #bottom-strip{order:2;padding:10px 14px;gap:12px;flex-wrap:wrap}
-  #avail-panel{
-    order:3;grid-column:unset;grid-row:unset;
-    border-left:none;border-top:1px solid var(--purple-border);
-    max-height:none;overflow-y:visible
-  }
+  #avail-panel{order:3;border-left:none;border-top:1px solid var(--purple-border);max-height:none;overflow-y:visible}
   #avail-list{max-height:none;overflow-y:visible}
   .company-name{display:none}
   #top-clock{font-size:18px}
@@ -43,7 +34,6 @@ html,body{font-family:var(--font);background:var(--purple-dark);color:var(--whit
   #room-name{font-size:clamp(32px,10vw,56px)}
   #countdown{font-size:clamp(36px,12vw,68px)}
   #prog-wrap{width:88%}
-  .avail-name{font-size:12px}
   .info-chip{font-size:11px}
   .chip-sep{display:none}
   .modal{padding:20px;max-width:95vw!important}
@@ -51,7 +41,7 @@ html,body{font-family:var(--font);background:var(--purple-dark);color:var(--whit
   .fa-grid{grid-template-columns:repeat(auto-fill,minmax(110px,1fr))}
 }
 #top-bar{grid-column:1/-1;display:flex;align-items:center;justify-content:space-between;padding:14px 24px;background:var(--purple-mid);border-bottom:1px solid var(--purple-border)}
-.logo-area{display:flex;align-items:center;gap:10px;cursor:pointer;user-select:none;-webkit-user-select:none}
+.logo-area{display:flex;align-items:center;gap:10px}
 .company-name{font-size:13px;font-weight:600;color:var(--white-40);letter-spacing:.3px;white-space:nowrap}
 .logo-img{height:32px;width:auto}
 .top-center{display:flex;flex-direction:column;align-items:center;gap:1px}
@@ -97,13 +87,15 @@ html,body{font-family:var(--font);background:var(--purple-dark);color:var(--whit
 #main-panel.soon #prog-fill{background:var(--yellow)}
 #main-panel.free #prog-fill{background:var(--green);width:0!important}
 .prog-labels{display:flex;justify-content:space-between;font-size:10px;color:var(--white-40);margin-top:5px}
-#bottom-strip{grid-column:1/-1;display:flex;align-items:center;justify-content:center;gap:20px;padding:12px 24px 14px;background:var(--purple-mid);border-top:1px solid var(--purple-border);flex-wrap:wrap;overflow-x:auto}
+#bottom-strip{grid-column:1/-1;display:flex;align-items:center;justify-content:center;gap:16px;padding:12px 24px 14px;background:var(--purple-mid);border-top:1px solid var(--purple-border);flex-wrap:wrap;overflow-x:auto}
 .info-chip{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--white-70)}
 .info-chip svg{width:15px;height:15px;stroke:var(--white-40);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
 .info-chip strong{color:var(--white);font-weight:600}
-.chip-sep{width:1px;height:18px;background:var(--purple-border)}
-#next-avail-chip{cursor:pointer;border-radius:20px;padding:4px 10px;transition:background .2s}
-#next-avail-chip:hover{background:rgba(255,107,43,.15)}
+.chip-sep{width:1px;height:18px;background:var(--purple-border);flex-shrink:0}
+.chip-btn{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--white-70);cursor:pointer;border-radius:20px;padding:4px 10px;transition:background .2s;border:none;background:transparent;font-family:var(--font)}
+.chip-btn:hover{background:rgba(255,107,43,.15)}
+.chip-btn:hover svg{stroke:var(--orange)}
+.chip-btn svg{width:15px;height:15px;stroke:var(--white-40);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
 #avail-panel{grid-column:2;grid-row:2;background:var(--purple-mid);border-left:1px solid var(--purple-border);display:flex;flex-direction:column;overflow:hidden}
 .avail-header{padding:14px 14px 10px;border-bottom:1px solid var(--purple-border);flex-shrink:0}
 .avail-title{font-size:10px;font-weight:700;color:var(--white-40);text-transform:uppercase;letter-spacing:.8px;display:flex;align-items:center;gap:6px}
@@ -132,9 +124,10 @@ html,body{font-family:var(--font);background:var(--purple-dark);color:var(--whit
 .modal .sub{font-size:13px;color:var(--white-40);margin-bottom:20px;line-height:1.5}
 .field{margin-bottom:15px}
 .field label{display:block;font-size:11px;font-weight:600;color:var(--white-40);margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px}
-.field input,.field select{width:100%;background:var(--purple-mid);border:1px solid var(--purple-border);border-radius:var(--radius-sm);color:var(--white);font-family:var(--font);font-size:14px;padding:12px 14px;outline:none;transition:border-color .2s;-webkit-appearance:none}
-.field input:focus,.field select:focus{border-color:var(--orange)}
-.field input::placeholder{color:var(--white-40)}
+.field input,.field select,.field textarea{width:100%;background:var(--purple-mid);border:1px solid var(--purple-border);border-radius:var(--radius-sm);color:var(--white);font-family:var(--font);font-size:14px;padding:12px 14px;outline:none;transition:border-color .2s;-webkit-appearance:none}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--orange)}
+.field input::placeholder,.field textarea::placeholder{color:var(--white-40)}
+.field textarea{resize:vertical;min-height:100px}
 .field-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .modal-btns{display:flex;gap:10px;margin-top:20px}
 .btn-primary{flex:1;padding:13px;background:var(--orange);border:none;border-radius:var(--radius-sm);color:var(--white);font-family:var(--font);font-size:14px;font-weight:600;cursor:pointer;transition:background .2s}
@@ -196,7 +189,7 @@ html,body{font-family:var(--font);background:var(--purple-dark);color:var(--whit
 </head>
 <body>
 
-<!-- ── POPUP CHECK-IN ── -->
+<!-- POPUP CHECK-IN -->
 <div id="checkin-popup" style="display:none;position:fixed;inset:0;z-index:99999;background:rgba(0,0,0,.7);align-items:center;justify-content:center">
   <div style="background:var(--purple-card);border:2px solid var(--green-border);border-radius:var(--radius);padding:48px 64px;text-align:center;animation:popIn .35s cubic-bezier(.34,1.56,.64,1)">
     <div style="font-size:72px;margin-bottom:16px;line-height:1">✅</div>
@@ -205,7 +198,16 @@ html,body{font-family:var(--font);background:var(--purple-dark);color:var(--whit
   </div>
 </div>
 
-<!-- ── FIRST ACCESS ── -->
+<!-- POPUP SUPORTE -->
+<div id="support-popup" style="display:none;position:fixed;inset:0;z-index:99999;background:rgba(0,0,0,.7);align-items:center;justify-content:center">
+  <div style="background:var(--purple-card);border:2px solid var(--orange-light);border-radius:var(--radius);padding:48px 56px;text-align:center;animation:popIn .35s cubic-bezier(.34,1.56,.64,1)">
+    <div style="font-size:56px;margin-bottom:16px;line-height:1">✅</div>
+    <div style="font-size:22px;font-weight:700;color:var(--orange-light);letter-spacing:-.5px;margin-bottom:8px">Chamado aberto!</div>
+    <div style="font-size:14px;color:var(--white-40);line-height:1.6">O time de Facilities foi notificado.<br>Você receberá um retorno em breve.</div>
+  </div>
+</div>
+
+<!-- FIRST ACCESS -->
 <div id="first-access">
   <img class="fa-logo" src="data:image/png;base64,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" alt="Logcomex">
   <div class="fa-title">Qual sala é esta?</div>
@@ -217,7 +219,7 @@ html,body{font-family:var(--font);background:var(--purple-dark);color:var(--whit
 
 <div id="app">
   <div id="top-bar">
-    <div class="logo-area" id="logo-area">
+    <div class="logo-area">
       <img class="logo-img" src="data:image/png;base64,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" alt="Logcomex">
       <span class="company-name">Meeting Rooms</span>
     </div>
@@ -269,10 +271,15 @@ html,body{font-family:var(--font);background:var(--purple-dark);color:var(--whit
       <span>Responsável: <strong id="responsible-chip">—</strong></span>
     </div>
     <div class="chip-sep"></div>
-    <div class="info-chip" id="next-avail-chip" onclick="openNextAvail()">
+    <button class="chip-btn" id="next-avail-chip" onclick="openNextAvail()">
       <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12,6 12,12 16,14"/></svg>
       <span id="next-chip">—</span>
-    </div>
+    </button>
+    <div class="chip-sep"></div>
+    <button class="chip-btn" onclick="showModal('modal-support')">
+      <svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.65 3.4 2 2 0 0 1 3.62 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 9.91a16 16 0 0 0 6 6l.92-.92a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+      <span>Suporte</span>
+    </button>
   </div>
 </div>
 
@@ -362,39 +369,66 @@ html,body{font-family:var(--font);background:var(--purple-dark);color:var(--whit
   </div>
 </div>
 
-<script>
-const DEFAULT_PIN = '1234';
-const BACKEND_URL = 'https://script.google.com/macros/s/AKfycbyDgucsB17Z1Al0_15ZJ1WaPvJHkapmyxITLDHE9WBGl3DHmXNnMJET9xRNLzn-aov7/exec';
+<div class="modal-overlay" id="modal-support">
+  <div class="modal">
+    <h2>Abrir chamado</h2>
+    <p class="sub">Descreva o problema e entraremos em contato.</p>
+    <div id="support-alert"></div>
+    <div class="field"><label>Seu nome</label><input type="text" id="sp-name" placeholder="ex: João Faria"></div>
+    <div class="field"><label>Seu e-mail corporativo</label><input type="email" id="sp-email" placeholder="nome@logcomex.com"></div>
+    <div class="field"><label>Descrição do problema</label><textarea id="sp-desc" placeholder="Descreva o que está acontecendo..."></textarea></div>
+    <div class="modal-btns">
+      <button class="btn-primary" id="btn-send-support">Enviar chamado</button>
+      <button class="btn-secondary" id="btn-close-support">Cancelar</button>
+    </div>
+  </div>
+</div>
 
-let cfg = {
+<script>
+const DEFAULT_PIN='1234';
+const BACKEND_URL='https://script.google.com/macros/s/AKfycbyDgucsB17Z1Al0_15ZJ1WaPvJHkapmyxITLDHE9WBGl3DHmXNnMJET9xRNLzn-aov7/exec';
+
+let cfg={
   thisRoom:'',pin:DEFAULT_PIN,
   rooms:[
-    {name:'1. PHP',               email:'c_1884rp7puo7gejdji3bfro291a05i@resource.calendar.google.com',floor:'Andar 1'},
-    {name:'2. Javascript',        email:'c_18846snhor0rghuijj2jq394chmhm@resource.calendar.google.com',floor:'Andar 1'},
-    {name:'3. Python',            email:'c_18861lda8ehrigurm6fjo5nbo1c5g@resource.calendar.google.com',floor:'Andar 1'},
-    {name:'4. Container',         email:'c_1885hqdo4dj4oi8rgski9h95qrg08@resource.calendar.google.com',floor:'Andar 1'},
-    {name:'5. API',               email:'c_1885ntl4m11isgpvjuc8fo1iv4qmo@resource.calendar.google.com',floor:'Andar 1'},
-    {name:'7. Cloud',             email:'c_1881ud60ske32hi6ijkhq4vqc82pk@resource.calendar.google.com',floor:'Andar 1'},
-    {name:'8. HTML',              email:'c_188fffg8bgsf2hc2n3akt767cul1c@resource.calendar.google.com',floor:'Andar 1'},
-    {name:'9. Cron',              email:'c_188etf42m0avah8cja6sc0hcg3o0u@resource.calendar.google.com',floor:'Andar 1'},
-    {name:'10. Linux',            email:'c_1881e936asq96go0jfpj5bjigjpck@resource.calendar.google.com',floor:'Andar 1'},
-    {name:'11. Bot',              email:'c_18838gojbu52mh82nle2pf8heg7h4@resource.calendar.google.com',floor:'Andar 1'},
-    {name:'12. Git',              email:'c_188bm0osiiqtkgishm26mbabaae30@resource.calendar.google.com',floor:'Andar 1'},
-    {name:'14. Fullstack',        email:'c_18864rq4tvokmh1cn3fju1d4nkauk@resource.calendar.google.com',floor:'Andar 1'},
-    {name:'15. War Room',         email:'c_188etao1p55mmit9nqqemnvfhlhuc@resource.calendar.google.com',floor:'Andar 2'},
-    {name:'16. XGH',              email:'c_1886tvmpocelmh5pjo46elcu1lkb6@resource.calendar.google.com',floor:'Andar 2'},
-    {name:'17. IA',               email:'c_1882utjqrvmj0hn8njjjtulf0e6j6@resource.calendar.google.com',floor:'Andar 2'},
-    {name:'18. Deploy',           email:'c_1887ki69uao2uj01mvhinb7rma7re@resource.calendar.google.com',floor:'Andar 2'},
-    {name:'19. Root',             email:'c_1881aq8cgkbfuhdpgdh4dn4oj0qjk@resource.calendar.google.com',floor:'Andar 2'},
-    {name:'23. Sofá Ext-Gemini',  email:'c_188cbbs1brgsshq6lo8fasg8lqn26@resource.calendar.google.com',floor:'Andar 2'},
-    {name:'24. Mesa Ext-Dataset', email:'c_1880d4ibnjevmg1qidnmi5lhn6m9m@resource.calendar.google.com',floor:'Andar 2'},
+    {name:'1. PHP',email:'c_1884rp7puo7gejdji3bfro291a05i@resource.calendar.google.com',floor:'Andar 1'},
+    {name:'2. Javascript',email:'c_18846snhor0rghuijj2jq394chmhm@resource.calendar.google.com',floor:'Andar 1'},
+    {name:'3. Python',email:'c_18861lda8ehrigurm6fjo5nbo1c5g@resource.calendar.google.com',floor:'Andar 1'},
+    {name:'4. Container',email:'c_1885hqdo4dj4oi8rgski9h95qrg08@resource.calendar.google.com',floor:'Andar 1'},
+    {name:'5. API',email:'c_1885ntl4m11isgpvjuc8fo1iv4qmo@resource.calendar.google.com',floor:'Andar 1'},
+    {name:'7. Cloud',email:'c_1881ud60ske32hi6ijkhq4vqc82pk@resource.calendar.google.com',floor:'Andar 1'},
+    {name:'8. HTML',email:'c_188fffg8bgsf2hc2n3akt767cul1c@resource.calendar.google.com',floor:'Andar 1'},
+    {name:'9. Cron',email:'c_188etf42m0avah8cja6sc0hcg3o0u@resource.calendar.google.com',floor:'Andar 1'},
+    {name:'10. Linux',email:'c_1881e936asq96go0jfpj5bjigjpck@resource.calendar.google.com',floor:'Andar 1'},
+    {name:'11. Bot',email:'c_18838gojbu52mh82nle2pf8heg7h4@resource.calendar.google.com',floor:'Andar 1'},
+    {name:'12. Git',email:'c_188bm0osiiqtkgishm26mbabaae30@resource.calendar.google.com',floor:'Andar 1'},
+    {name:'14. Fullstack',email:'c_18864rq4tvokmh1cn3fju1d4nkauk@resource.calendar.google.com',floor:'Andar 1'},
+    {name:'15. War Room',email:'c_188etao1p55mmit9nqqemnvfhlhuc@resource.calendar.google.com',floor:'Andar 2'},
+    {name:'16. XGH',email:'c_1886tvmpocelmh5pjo46elcu1lkb6@resource.calendar.google.com',floor:'Andar 2'},
+    {name:'17. IA',email:'c_1882utjqrvmj0hn8njjjtulf0e6j6@resource.calendar.google.com',floor:'Andar 2'},
+    {name:'18. Deploy',email:'c_1887ki69uao2uj01mvhinb7rma7re@resource.calendar.google.com',floor:'Andar 2'},
+    {name:'19. Root',email:'c_1881aq8cgkbfuhdpgdh4dn4oj0qjk@resource.calendar.google.com',floor:'Andar 2'},
+    {name:'23. Sofá Ext-Gemini',email:'c_188cbbs1brgsshq6lo8fasg8lqn26@resource.calendar.google.com',floor:'Andar 2'},
+    {name:'24. Mesa Ext-Dataset',email:'c_1880d4ibnjevmg1qidnmi5lhn6m9m@resource.calendar.google.com',floor:'Andar 2'},
   ]
 };
 
 let state={events:[],allRoomData:[],refreshTimer:null,bookingTarget:null,_bookingEvents:[]};
 
-function saveCfg(){try{localStorage.setItem('lcx_g',JSON.stringify({pin:cfg.pin,rooms:cfg.rooms}));localStorage.setItem('lcx_l',JSON.stringify({thisRoom:cfg.thisRoom}));}catch(e){}}
-function loadCfg(){try{const g=localStorage.getItem('lcx_g');if(g){const p=JSON.parse(g);cfg.pin=p.pin||DEFAULT_PIN;cfg.rooms=p.rooms||cfg.rooms;}const l=localStorage.getItem('lcx_l');if(l){const p=JSON.parse(l);cfg.thisRoom=p.thisRoom||'';}}catch(e){}}
+function saveCfg(){
+  try{
+    localStorage.setItem('lcx_g',JSON.stringify({pin:cfg.pin,rooms:cfg.rooms}));
+    localStorage.setItem('lcx_l',JSON.stringify({thisRoom:cfg.thisRoom}));
+  }catch(e){}
+}
+function loadCfg(){
+  try{
+    const g=localStorage.getItem('lcx_g');
+    if(g){const p=JSON.parse(g);cfg.pin=p.pin||DEFAULT_PIN;if(p.rooms&&p.rooms.length)cfg.rooms=p.rooms;}
+    const l=localStorage.getItem('lcx_l');
+    if(l){const p=JSON.parse(l);if(p.thisRoom)cfg.thisRoom=p.thisRoom;}
+  }catch(e){}
+}
 
 const fmt=d=>d?d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}):'';
 function fmtDur(ms){const m=Math.ceil(ms/60000);return m>=60?`${Math.floor(m/60)}h${m%60?' '+m%60+'min':''}`:`${m} min`;}
@@ -423,6 +457,82 @@ function classify(events){
   return{status:'free',progress:0,responsible:null};
 }
 
+// ── TOLERÂNCIA ──
+const TOLERANCE_WARN_MS=5*60000;
+const TOLERANCE_ALERT_MS=10*60000;
+const TOLERANCE_FREE_MS=15*60000;
+let toleranceStarted=false,toleranceEmailSent=false;
+let checkinDoneForEvent=null;
+
+function startToleranceTimer(){
+  if(toleranceStarted)return;
+  toleranceStarted=true;toleranceEmailSent=false;
+  const btn=document.getElementById('btn-checkin');
+  setTimeout(()=>{
+    if(checkinDoneForEvent===state.currentEventId)return;
+    if(btn){btn.style.background='var(--yellow-bg)';btn.style.borderColor='var(--yellow-border)';btn.style.color='var(--yellow)';btn.style.animation='blink 1s ease-in-out infinite';btn.textContent='⚠️ Check-in pendente';}
+  },TOLERANCE_WARN_MS);
+  setTimeout(()=>{
+    if(checkinDoneForEvent===state.currentEventId)return;
+    const info=document.getElementById('status-info');
+    if(info)info.innerHTML='<span class="hl" style="color:var(--yellow)">⚠️ Sala será liberada em 5 min por falta de check-in</span>';
+    if(!toleranceEmailSent){
+      toleranceEmailSent=true;
+      const responsible=document.getElementById('responsible-chip')?.textContent?.trim();
+      const roomName=document.getElementById('room-name')?.textContent?.trim();
+      if(responsible&&responsible.includes('@')){
+        const p=new URLSearchParams({action:'checkin_warning',email:responsible,room:roomName||'Sala'});
+        fetch(`${BACKEND_URL}?${p.toString()}`).catch(()=>{});
+      }
+    }
+  },TOLERANCE_ALERT_MS);
+  setTimeout(()=>{
+    if(checkinDoneForEvent===state.currentEventId)return;
+    const responsible=document.getElementById('responsible-chip')?.textContent?.trim();
+    const roomName=document.getElementById('room-name')?.textContent?.trim();
+    if(state.events.length){
+      const now=new Date();
+      const cur=state.events.find(e=>{const s=new Date(e.start.dateTime),en=new Date(e.end.dateTime);return s<=now&&en>now;});
+      if(cur){
+        const p=new URLSearchParams({action:'cancel',roomEmail:cfg.thisRoom,eventStart:cur.start.dateTime,email:responsible||'',room:roomName||'Sala'});
+        fetch(`${BACKEND_URL}?${p.toString()}`).catch(()=>{});
+      }
+    }
+    const mp=document.getElementById('main-panel'),bd=document.getElementById('status-badge');
+    if(mp)mp.className='free';if(bd)bd.className='status-badge free';
+    document.getElementById('status-text').textContent='Disponível';
+    document.getElementById('status-info').innerHTML='<span class="hl">Reserva cancelada por falta de check-in</span>';
+    document.getElementById('countdown').textContent='';
+    document.getElementById('prog-fill').style.width='0%';
+    if(btn)btn.style.display='none';
+  },TOLERANCE_FREE_MS);
+}
+
+function resetToleranceTimer(){
+  toleranceStarted=false;toleranceEmailSent=false;
+  const btn=document.getElementById('btn-checkin');
+  if(btn){btn.style.animation='';btn.style.background='var(--green-bg)';btn.style.borderColor='var(--green-border)';btn.style.color='var(--green)';btn.textContent='✓ Check-in';}
+}
+
+// ── CHECK-IN ──
+function doCheckin(){
+  const btn=document.getElementById('btn-checkin');
+  if(!btn)return;
+  checkinDoneForEvent=state.currentEventId;
+  btn.style.display='none';
+  const responsible=document.getElementById('responsible-chip')?.textContent?.trim();
+  const roomName=document.getElementById('room-name')?.textContent?.trim();
+  const endsAt=document.getElementById('pl-right')?.textContent?.replace('Libera ','')?.trim();
+  if(responsible&&responsible.includes('@')){
+    const p=new URLSearchParams({action:'checkin',email:responsible,room:roomName||'Sala',endsAt:endsAt||''});
+    fetch(`${BACKEND_URL}?${p.toString()}`).catch(()=>{});
+  }
+  const popup=document.getElementById('checkin-popup');
+  popup.style.display='flex';
+  setTimeout(()=>{popup.style.display='none';},2500);
+}
+document.getElementById('btn-checkin').addEventListener('click',doCheckin);
+
 function renderMain(cl){
   const{status,current,progress,countdown,endsAt,nextAt,responsible}=cl;
   const mp=document.getElementById('main-panel'),bd=document.getElementById('status-badge');
@@ -435,15 +545,14 @@ function renderMain(cl){
   const checkinBtn=document.getElementById('btn-checkin');
   if(schedBtn)schedBtn.style.display='inline-block';
   if(checkinBtn){
-    const hasEvent = status==='busy' || status==='soon';
-    const eventId  = status==='busy' ? (cl.endsAt?.getTime()+'') : status==='soon' ? (cl.nextAt?.getTime()+'') : null;
-    state.currentEventId = eventId;
-    if(hasEvent && eventId && checkinDoneForEvent !== eventId){
-      checkinBtn.style.display = 'inline-block';
-      // Inicia timer de tolerância apenas quando reunião está em andamento
-      if(status === 'busy') startToleranceTimer();
-    } else if(!hasEvent){
-      checkinBtn.style.display = 'none';
+    const hasEvent=status==='busy'||status==='soon';
+    const eventId=status==='busy'?(cl.endsAt?.getTime()+''):status==='soon'?(cl.nextAt?.getTime()+''):null;
+    state.currentEventId=eventId;
+    if(hasEvent&&eventId&&checkinDoneForEvent!==eventId){
+      checkinBtn.style.display='inline-block';
+      if(status==='busy')startToleranceTimer();
+    }else if(!hasEvent){
+      checkinBtn.style.display='none';
       resetToleranceTimer();
     }
   }
@@ -536,134 +645,6 @@ function renderScheduleList(durMin){const slots=buildSlots(state.events,durMin),
 function pickSlot(startISO,endISO,durMin){hideModal('modal-schedule');const room=roomByEmail(cfg.thisRoom)||{name:'Esta sala',floor:''};const d=new Date(startISO);openBooking({email:cfg.thisRoom,name:room.name,floor:room.floor,presetDate:startISO.split('T')[0],presetTime:`${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`,presetDur:durMin});}
 document.getElementById('btn-close-schedule').addEventListener('click',()=>hideModal('modal-schedule'));
 
-// ── TOLERÂNCIA DE CHECK-IN ──
-const TOLERANCE_WARN_MS  =  5 * 60000; // 5 min após início → botão amarelo
-const TOLERANCE_ALERT_MS = 10 * 60000; // 10 min após início → aviso + e-mail
-const TOLERANCE_FREE_MS  = 15 * 60000; // 15 min após início → cancela agenda
-
-let toleranceTimer   = null;
-let toleranceStarted = false;
-let toleranceEmailSent = false;
-
-function startToleranceTimer() {
-  if (toleranceStarted) return;
-  toleranceStarted   = true;
-  toleranceEmailSent = false;
-  const btn = document.getElementById('btn-checkin');
-
-  // 5 min → botão amarelo pulsando
-  setTimeout(() => {
-    if (checkinDoneForEvent === state.currentEventId) return;
-    if (btn) {
-      btn.style.background   = 'var(--yellow-bg)';
-      btn.style.borderColor  = 'var(--yellow-border)';
-      btn.style.color        = 'var(--yellow)';
-      btn.style.animation    = 'blink 1s ease-in-out infinite';
-      btn.textContent        = '⚠️ Check-in pendente';
-    }
-  }, TOLERANCE_WARN_MS);
-
-  // 10 min → aviso na tela + e-mail
-  setTimeout(() => {
-    if (checkinDoneForEvent === state.currentEventId) return;
-    // Aviso visual
-    const info = document.getElementById('status-info');
-    if (info) info.innerHTML = `<span class="hl" style="color:var(--yellow)">⚠️ Sala será liberada em 5 min por falta de check-in</span>`;
-    // E-mail de aviso
-    const responsible = document.getElementById('responsible-chip')?.textContent?.trim();
-    const roomName    = document.getElementById('room-name')?.textContent?.trim();
-    if (responsible && responsible.includes('@') && !toleranceEmailSent) {
-      toleranceEmailSent = true;
-      const params = new URLSearchParams({
-        action:  'checkin_warning',
-        email:   responsible,
-        room:    roomName || 'Sala',
-      });
-      fetch(`${BACKEND_URL}?${params.toString()}`).catch(()=>{});
-    }
-  }, TOLERANCE_ALERT_MS);
-
-  // 15 min → cancela evento no backend + libera sala visualmente
-  setTimeout(() => {
-    if (checkinDoneForEvent === state.currentEventId) return;
-    const responsible = document.getElementById('responsible-chip')?.textContent?.trim();
-    const roomName    = document.getElementById('room-name')?.textContent?.trim();
-
-    // Cancela o evento via Apps Script
-    if (state.events.length) {
-      const cur = state.events.find(e => {
-        const s=new Date(e.start.dateTime),en=new Date(e.end.dateTime);
-        return s <= new Date() && en > new Date();
-      });
-      if (cur) {
-        const params = new URLSearchParams({
-          action:     'cancel',
-          roomEmail:  cfg.thisRoom,
-          eventStart: cur.start.dateTime,
-          email:      responsible || '',
-          room:       roomName || 'Sala'
-        });
-        fetch(`${BACKEND_URL}?${params.toString()}`).catch(()=>{});
-      }
-    }
-
-    // Visual de sala livre
-    const mp = document.getElementById('main-panel');
-    const bd = document.getElementById('status-badge');
-    if (mp) mp.className = 'free';
-    if (bd) bd.className = 'status-badge free';
-    document.getElementById('status-text').textContent   = 'Disponível';
-    document.getElementById('status-info').innerHTML     = '<span class="hl">Reserva cancelada por falta de check-in</span>';
-    document.getElementById('countdown').textContent     = '';
-    document.getElementById('prog-fill').style.width     = '0%';
-    const btn = document.getElementById('btn-checkin');
-    if (btn) btn.style.display = 'none';
-  }, TOLERANCE_FREE_MS);
-}
-
-function resetToleranceTimer() {
-  toleranceStarted   = false;
-  toleranceEmailSent = false;
-  const btn = document.getElementById('btn-checkin');
-  if (btn) {
-    btn.style.animation   = '';
-    btn.style.background  = 'var(--green-bg)';
-    btn.style.borderColor = 'var(--green-border)';
-    btn.style.color       = 'var(--green)';
-    btn.textContent       = '✓ Check-in';
-  }
-}
-let checkinDoneForEvent = null;
-
-function doCheckin(){
-  const btn=document.getElementById('btn-checkin');
-  if(!btn)return;
-  btn.dataset.done='1';
-  btn.style.display='none';
-
-  // Pega o e-mail do responsável da reunião atual
-  const responsible = document.getElementById('responsible-chip')?.textContent?.trim();
-  const roomName    = document.getElementById('room-name')?.textContent?.trim();
-  const endsAt      = document.getElementById('pl-right')?.textContent?.replace('Libera ','')?.trim();
-
-  // Envia notificação via backend se tiver e-mail válido
-  if(responsible && responsible.includes('@')) {
-    const params = new URLSearchParams({
-      action:      'checkin',
-      email:       responsible,
-      room:        roomName || 'Sala',
-      endsAt:      endsAt || ''
-    });
-    fetch(`${BACKEND_URL}?${params.toString()}`).catch(()=>{});
-  }
-
-  checkinDoneForEvent = state.currentEventId;
-  const popup=document.getElementById('checkin-popup');
-  popup.style.display='flex';
-  setTimeout(()=>{popup.style.display='none';},2500);
-}
-document.getElementById('btn-checkin').addEventListener('click', doCheckin);
-
 function addGuestField(val){const wrap=document.getElementById('guests-list'),row=document.createElement('div');row.style.cssText='display:flex;gap:6px;align-items:center';row.innerHTML=`<input type="email" placeholder="convidado@logcomex.com" value="${val||''}" style="flex:1;background:var(--purple-mid);border:1px solid var(--purple-border);border-radius:var(--radius-sm);color:var(--white);font-family:var(--font);font-size:13px;padding:10px 12px;outline:none" onfocus="this.style.borderColor='var(--orange)'" onblur="this.style.borderColor='var(--purple-border)'"><button type="button" onclick="this.parentElement.remove()" style="width:32px;height:38px;background:var(--red-bg);border:1px solid var(--red-border);border-radius:8px;color:var(--red);cursor:pointer;font-size:16px;flex-shrink:0">×</button>`;wrap.appendChild(row);}
 document.getElementById('btn-add-guest').addEventListener('click',()=>addGuestField(''));
 function getGuestEmails(){return[...document.querySelectorAll('#guests-list input')].map(i=>i.value.trim()).filter(v=>v.includes('@'));}
@@ -718,89 +699,53 @@ document.getElementById('btn-confirm-booking').addEventListener('click',async()=
   btn.disabled=false;btn.textContent='Confirmar agendamento';
 });
 
-['modal-pin','modal-cfg','modal-booking','modal-schedule','modal-support'].forEach(id=>{document.getElementById(id).addEventListener('click',e=>{if(e.target.id===id)hideModal(id);});});
+// ── SUPORTE ──
+document.getElementById('btn-close-support').addEventListener('click',()=>hideModal('modal-support'));
+document.getElementById('btn-send-support').addEventListener('click',async()=>{
+  const name=document.getElementById('sp-name').value.trim();
+  const email=document.getElementById('sp-email').value.trim();
+  const desc=document.getElementById('sp-desc').value.trim();
+  const al=document.getElementById('support-alert');
+  const room=document.getElementById('room-name')?.textContent?.trim();
+  if(!name||!email||!desc){al.innerHTML='<div class="alert error">Preencha todos os campos.</div>';return;}
+  if(!email.includes('@')){al.innerHTML='<div class="alert error">E-mail inválido.</div>';return;}
+  const btn=document.getElementById('btn-send-support');
+  btn.disabled=true;btn.innerHTML='<span class="spinner"></span>';
+  try{
+    const params=new URLSearchParams({action:'support',name,email,desc,room:room||'Sala não identificada',timestamp:new Date().toLocaleString('pt-BR')});
+    await fetch(`${BACKEND_URL}?${params.toString()}`);
+    hideModal('modal-support');
+    document.getElementById('sp-name').value='';
+    document.getElementById('sp-email').value='';
+    document.getElementById('sp-desc').value='';
+    al.innerHTML='';
+    const popup=document.getElementById('support-popup');
+    popup.style.display='flex';
+    setTimeout(()=>{popup.style.display='none';},3000);
+  }catch(err){al.innerHTML='<div class="alert error">Erro ao enviar. Tente novamente.</div>';}
+  btn.disabled=false;btn.textContent='Enviar chamado';
+});
+
+['modal-pin','modal-cfg','modal-booking','modal-schedule','modal-support'].forEach(id=>{
+  document.getElementById(id).addEventListener('click',e=>{if(e.target.id===id)hideModal(id);});
+});
 
 function findNextAvailable(events){if(!events||!events.length)return null;const now=new Date(),endOfDay=new Date(now.getFullYear(),now.getMonth(),now.getDate(),23,59,59);const sorted=[...events].map(e=>({s:new Date(e.start.dateTime),en:new Date(e.end.dateTime)})).filter(e=>e.en>now).sort((a,b)=>a.s-b.s);if(!sorted.length)return null;let freeStart=now>sorted[0].s?sorted[0].en:now;for(let i=0;i<sorted.length;i++){if(sorted[i].s>freeStart&&(sorted[i].s-freeStart)>=15*60000)return{start:freeStart,end:sorted[i].s};if(sorted[i].en>freeStart)freeStart=sorted[i].en;}if(freeStart<endOfDay)return{start:freeStart,end:endOfDay};return null;}
 
 function openNextAvail(){const chip=document.getElementById('next-avail-chip'),nextStart=chip?.dataset?.nextStart;if(!nextStart)return;const room=roomByEmail(cfg.thisRoom)||{name:'Esta sala',floor:''};openBooking({email:cfg.thisRoom,name:room.name,floor:room.floor,presetDate:nextStart.split('T')[0],presetTime:nextStart.split('T')[1]?.substring(0,5)});}
 
-// ── SUPORTE ──
-document.getElementById('btn-close-support').addEventListener('click', () => hideModal('modal-support'));
-
-document.getElementById('btn-send-support').addEventListener('click', async () => {
-  const name  = document.getElementById('sp-name').value.trim();
-  const email = document.getElementById('sp-email').value.trim();
-  const desc  = document.getElementById('sp-desc').value.trim();
-  const al    = document.getElementById('support-alert');
-  const room  = document.getElementById('room-name')?.textContent?.trim();
-
-  if (!name || !email || !desc) { al.innerHTML='<div class="alert error">Preencha todos os campos.</div>'; return; }
-  if (!email.includes('@'))     { al.innerHTML='<div class="alert error">E-mail inválido.</div>'; return; }
-
-  const btn = document.getElementById('btn-send-support');
-  btn.disabled = true; btn.innerHTML = '<span class="spinner"></span>';
-
-  try {
-    const params = new URLSearchParams({
-      action:    'support',
-      name,
-      email,
-      desc,
-      room:      room || 'Sala não identificada',
-      timestamp: new Date().toLocaleString('pt-BR')
-    });
-    await fetch(`${BACKEND_URL}?${params.toString()}`);
-    hideModal('modal-support');
-    document.getElementById('sp-name').value  = '';
-    document.getElementById('sp-email').value = '';
-    document.getElementById('sp-desc').value  = '';
-    al.innerHTML = '';
-    // Popup de confirmação
-    const popup = document.getElementById('support-popup');
-    popup.style.display = 'flex';
-    setTimeout(() => { popup.style.display = 'none'; }, 3000);
-  } catch(err) {
-    al.innerHTML = `<div class="alert error">Erro ao enviar. Tente novamente.</div>`;
-  }
-
-  btn.disabled = false; btn.textContent = 'Enviar chamado';
-});
-
-['modal-support'].forEach(id => {
-  document.getElementById(id).addEventListener('click', e => { if(e.target.id===id) hideModal(id); });
-});
-
-// ── RELOAD À MEIA-NOITE ──
 function scheduleAutoReload(){const now=new Date();const midnight=new Date(now.getFullYear(),now.getMonth(),now.getDate()+1,0,0,10);setTimeout(()=>location.reload(),midnight-now);}
 scheduleAutoReload();
 
-// ── INDICADOR OFFLINE ──
 function updateOnlineStatus(){const dot=document.querySelector('.sync-dot'),lbl=document.getElementById('sync-label'),pill=document.querySelector('.sync-pill');if(!navigator.onLine){dot.style.background='var(--red)';dot.style.animation='none';lbl.textContent='⚠ Sem conexão';pill.style.borderColor='var(--red-border)';}else{dot.style.background='var(--green)';dot.style.animation='blink 2.5s ease-in-out infinite';pill.style.borderColor='var(--purple-border)';}}
 window.addEventListener('online',()=>{updateOnlineStatus();refresh();});
 window.addEventListener('offline',()=>updateOnlineStatus());
 updateOnlineStatus();
 
-
-
 // ── INIT ──
 loadCfg();
 applyRoomInfo();
-
-// Garante que a sala salva no localStorage é carregada corretamente
-const savedLocal = localStorage.getItem('lcx_l');
-if (savedLocal) {
-  try {
-    const p = JSON.parse(savedLocal);
-    if (p.thisRoom) cfg.thisRoom = p.thisRoom;
-  } catch(e) {}
-}
-
-if (!cfg.thisRoom) {
-  showFirstAccess();
-} else {
-  applyRoomInfo();
-  startRefresh();
-}
+if(!cfg.thisRoom){showFirstAccess();}else{startRefresh();}
 </script>
 </body>
 </html>
