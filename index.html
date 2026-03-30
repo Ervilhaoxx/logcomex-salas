@@ -537,9 +537,9 @@ function pickSlot(startISO,endISO,durMin){hideModal('modal-schedule');const room
 document.getElementById('btn-close-schedule').addEventListener('click',()=>hideModal('modal-schedule'));
 
 // ── TOLERÂNCIA DE CHECK-IN ──
-const TOLERANCE_WARN_MS  =  5 * 60000; // 5 min → botão amarelo
-const TOLERANCE_ALERT_MS = 10 * 60000; // 10 min → aviso + e-mail
-const TOLERANCE_FREE_MS  = 15 * 60000; // 15 min → libera sala
+const TOLERANCE_WARN_MS  =  5 * 60000; // 5 min após início → botão amarelo
+const TOLERANCE_ALERT_MS = 10 * 60000; // 10 min após início → aviso + e-mail
+const TOLERANCE_FREE_MS  = 15 * 60000; // 15 min após início → cancela agenda
 
 let toleranceTimer   = null;
 let toleranceStarted = false;
