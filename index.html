@@ -552,30 +552,41 @@ function startToleranceTimer() {
     }
   }, TOLERANCE_ALERT_MS);
 
-  // 15 min → libera sala visualmente
+  // 15 min → cancela evento no backend + libera sala visualmente
   setTimeout(() => {
     if (checkinDoneForEvent === state.currentEventId) return;
-    // Força visual de sala livre
+    const responsible = document.getElementById('responsible-chip')?.textContent?.trim();
+    const roomName    = document.getElementById('room-name')?.textContent?.trim();
+
+    // Cancela o evento via Apps Script
+    if (state.events.length) {
+      const cur = state.events.find(e => {
+        const s=new Date(e.start.dateTime),en=new Date(e.end.dateTime);
+        return s <= new Date() && en > new Date();
+      });
+      if (cur) {
+        const params = new URLSearchParams({
+          action:     'cancel',
+          roomEmail:  cfg.thisRoom,
+          eventStart: cur.start.dateTime,
+          email:      responsible || '',
+          room:       roomName || 'Sala'
+        });
+        fetch(`${BACKEND_URL}?${params.toString()}`).catch(()=>{});
+      }
+    }
+
+    // Visual de sala livre
     const mp = document.getElementById('main-panel');
     const bd = document.getElementById('status-badge');
     if (mp) mp.className = 'free';
     if (bd) bd.className = 'status-badge free';
-    document.getElementById('status-text').textContent = 'Disponível';
-    document.getElementById('status-info').innerHTML   = '<span class="hl">Sala liberada por falta de check-in</span>';
-    document.getElementById('countdown').textContent   = '';
-    document.getElementById('prog-fill').style.width   = '0%';
+    document.getElementById('status-text').textContent   = 'Disponível';
+    document.getElementById('status-info').innerHTML     = '<span class="hl">Reserva cancelada por falta de check-in</span>';
+    document.getElementById('countdown').textContent     = '';
+    document.getElementById('prog-fill').style.width     = '0%';
+    const btn = document.getElementById('btn-checkin');
     if (btn) btn.style.display = 'none';
-    // E-mail de liberação
-    const responsible = document.getElementById('responsible-chip')?.textContent?.trim();
-    const roomName    = document.getElementById('room-name')?.textContent?.trim();
-    if (responsible && responsible.includes('@')) {
-      const params = new URLSearchParams({
-        action: 'checkin_released',
-        email:  responsible,
-        room:   roomName || 'Sala',
-      });
-      fetch(`${BACKEND_URL}?${params.toString()}`).catch(()=>{});
-    }
   }, TOLERANCE_FREE_MS);
 }
 
