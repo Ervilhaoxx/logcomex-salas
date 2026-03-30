@@ -724,6 +724,52 @@ function findNextAvailable(events){if(!events||!events.length)return null;const 
 
 function openNextAvail(){const chip=document.getElementById('next-avail-chip'),nextStart=chip?.dataset?.nextStart;if(!nextStart)return;const room=roomByEmail(cfg.thisRoom)||{name:'Esta sala',floor:''};openBooking({email:cfg.thisRoom,name:room.name,floor:room.floor,presetDate:nextStart.split('T')[0],presetTime:nextStart.split('T')[1]?.substring(0,5)});}
 
+// ── SUPORTE ──
+document.getElementById('btn-close-support').addEventListener('click', () => hideModal('modal-support'));
+
+document.getElementById('btn-send-support').addEventListener('click', async () => {
+  const name  = document.getElementById('sp-name').value.trim();
+  const email = document.getElementById('sp-email').value.trim();
+  const desc  = document.getElementById('sp-desc').value.trim();
+  const al    = document.getElementById('support-alert');
+  const room  = document.getElementById('room-name')?.textContent?.trim();
+
+  if (!name || !email || !desc) { al.innerHTML='<div class="alert error">Preencha todos os campos.</div>'; return; }
+  if (!email.includes('@'))     { al.innerHTML='<div class="alert error">E-mail inválido.</div>'; return; }
+
+  const btn = document.getElementById('btn-send-support');
+  btn.disabled = true; btn.innerHTML = '<span class="spinner"></span>';
+
+  try {
+    const params = new URLSearchParams({
+      action:    'support',
+      name,
+      email,
+      desc,
+      room:      room || 'Sala não identificada',
+      timestamp: new Date().toLocaleString('pt-BR')
+    });
+    await fetch(`${BACKEND_URL}?${params.toString()}`);
+    hideModal('modal-support');
+    document.getElementById('sp-name').value  = '';
+    document.getElementById('sp-email').value = '';
+    document.getElementById('sp-desc').value  = '';
+    al.innerHTML = '';
+    // Popup de confirmação
+    const popup = document.getElementById('support-popup');
+    popup.style.display = 'flex';
+    setTimeout(() => { popup.style.display = 'none'; }, 3000);
+  } catch(err) {
+    al.innerHTML = `<div class="alert error">Erro ao enviar. Tente novamente.</div>`;
+  }
+
+  btn.disabled = false; btn.textContent = 'Enviar chamado';
+});
+
+['modal-support'].forEach(id => {
+  document.getElementById(id).addEventListener('click', e => { if(e.target.id===id) hideModal(id); });
+});
+
 // ── RELOAD À MEIA-NOITE ──
 function scheduleAutoReload(){const now=new Date();const midnight=new Date(now.getFullYear(),now.getMonth(),now.getDate()+1,0,0,10);setTimeout(()=>location.reload(),midnight-now);}
 scheduleAutoReload();
