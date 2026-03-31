@@ -316,7 +316,7 @@ html,body{font-family:var(--font);background:var(--purple-dark);color:var(--whit
         </optgroup>
       </select>
       <div id="wifi-qr-wrap">
-        <canvas id="wifi-qr-canvas" width="120" height="120"></canvas>
+        <div id="wifi-qr-canvas" style="width:120px;height:120px;background:#fff;border-radius:8px;padding:4px;display:flex;align-items:center;justify-content:center"></div>
         <div class="wifi-info" id="wifi-info-text"></div>
       </div>
     </div>
@@ -476,7 +476,7 @@ html,body{font-family:var(--font);background:var(--purple-dark);color:var(--whit
   </div>
 </div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
 <script>
 const DEFAULT_PIN='1234';
 const BACKEND_URL='https://script.google.com/macros/s/AKfycbyDgucsB17Z1Al0_15ZJ1WaPvJHkapmyxITLDHE9WBGl3DHmXNnMJET9xRNLzn-aov7/exec';
@@ -508,9 +508,7 @@ let _qrInstance=null;
 function renderWifiQR(ssid,pass){
   const canvas=document.getElementById('wifi-qr-canvas'),info=document.getElementById('wifi-info-text');
   if(!canvas)return;
-  canvas.getContext('2d').clearRect(0,0,canvas.width,canvas.height);
-  if(_qrInstance){try{_qrInstance.clear();}catch(e){}}
-  _qrInstance=new QRCode(canvas,{text:`WIFI:T:WPA;S:${ssid};P:${pass};;`,width:112,height:112,colorDark:'#1c0438',colorLight:'#ffffff',correctLevel:QRCode.CorrectLevel.M});
+  _qrInstance=new QRious({element:canvas,value:`WIFI:T:WPA;S:${ssid};P:${pass};;`,size:120,foreground:'#1c0438',background:'#ffffff',level:'M'});
   if(info)info.innerHTML=`<strong>${ssid}</strong><br>Senha: ${pass}`;
 }
 document.getElementById('wifi-select').addEventListener('change',function(){
