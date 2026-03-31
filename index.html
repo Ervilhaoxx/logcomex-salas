@@ -297,15 +297,23 @@ html,body{font-family:var(--font);background:var(--purple-dark);color:var(--whit
         Wi-Fi
       </div>
       <select id="wifi-select">
-        <option value="LoComexU-CS01|Cs@log24">LoComexU-CS01</option>
-        <option value="LogComexU-CS02|Cs2@log24">LogComexU-CS02</option>
-        <option value="LogComexU-Tech|Tech@log24">LogComexU-Tech</option>
-        <option value="LogComexU-Descompressão|Desc@log24">LogComexU-Descompressão</option>
-        <option value="LogComexU-Externo|Ext@log24">LogComexU-Externo</option>
-        <option value="LogComexU-Sales02|Sal@log24">LogComexU-Sales02</option>
-        <option value="LogComexA-Sales1|logCorp@12">LogComexA-Sales1</option>
-        <option value="LogComexA-Sales2|logCorp@12">LogComexA-Sales2</option>
-        <option value="LogComexA-Tech1|Tech@log24">LogComexA-Tech1</option>
+        <optgroup label="── 1º Andar ──">
+          <option value="LoComexU-CS01|Cs@log24">LoComexU-CS01</option>
+          <option value="LogComexU-CS02|Cs2@log24">LogComexU-CS02</option>
+          <option value="LogComexU-Tech|Tech@log24">LogComexU-Tech</option>
+          <option value="LogComexU-Descompressao|Desc@log24">LogComexU-Descompressao</option>
+          <option value="LogComexU-Externo|Ext@log24">LogComexU-Externo</option>
+          <option value="LogComexU-Sales02|Sal@log24">LogComexU-Sales02</option>
+          <option value="LogComexA-Sales1|logCorp@12">LogComexA-Sales1</option>
+          <option value="LogComexA-Sales2|logCorp@12">LogComexA-Sales2</option>
+          <option value="LogComexA-Tech1|Tech@log24">LogComexA-Tech1</option>
+        </optgroup>
+        <optgroup label="── 2º Andar ──">
+          <option value="LogComex-Finance|Fin@log2024">LogComex-Finance</option>
+          <option value="LogComex-Planning|Pla@log2024">LogComex-Planning</option>
+          <option value="LogComex-Tech|Tec@log2024">LogComex-Tech</option>
+          <option value="LogComex-War-Room|War@log2024">LogComex-War-Room</option>
+        </optgroup>
       </select>
       <div id="wifi-qr-wrap">
         <canvas id="wifi-qr-canvas" width="120" height="120"></canvas>
@@ -491,6 +499,10 @@ const WIFI_NETS=[
   {ssid:'LogComexU-Externo',pass:'Ext@log24'},{ssid:'LogComexU-Sales02',pass:'Sal@log24'},
   {ssid:'LogComexA-Sales1',pass:'logCorp@12'},{ssid:'LogComexA-Sales2',pass:'logCorp@12'},
   {ssid:'LogComexA-Tech1',pass:'Tech@log24'},
+  {ssid:'LogComex-Finance',pass:'Fin@log2024'},
+  {ssid:'LogComex-Planning',pass:'Pla@log2024'},
+  {ssid:'LogComex-Tech',pass:'Tec@log2024'},
+  {ssid:'LogComex-War-Room',pass:'War@log2024'},
 ];
 let _qrInstance=null;
 function renderWifiQR(ssid,pass){
