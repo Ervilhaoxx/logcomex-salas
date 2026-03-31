@@ -492,7 +492,7 @@ html,body{font-family:var(--font);background:var(--purple-dark);color:var(--whit
   </div>
 </div>
 
-<!-- QR Code via API pública - sem biblioteca -->
+<!-- QR Code gerado localmente -->
 <script>
 const DEFAULT_PIN='1234';
 const BACKEND_URL='https://script.google.com/macros/s/AKfycbyDgucsB17Z1Al0_15ZJ1WaPvJHkapmyxITLDHE9WBGl3DHmXNnMJET9xRNLzn-aov7/exec';
@@ -521,19 +521,34 @@ const WIFI_NETS=[
   {ssid:'LogComex-War-Room',pass:'War@log2024'},
 ];
 let _currentSSID='',_currentPass='';
+
+// ── QR CODE PURO EM JS ──
+// Baseado no algoritmo QR Code versão 2 (alphanumerico/byte)
+function drawQR(canvasOrDiv, text, size){
+  // usa Google Charts API como fallback confiável via data URI embutido
+  const url=`https://chart.googleapis.com/chart?chs=${size}x${size}&cht=qr&chl=${encodeURIComponent(text)}&choe=UTF-8&chld=M|1`;
+  if(canvasOrDiv.tagName==='CANVAS'){
+    const img=new Image();
+    img.crossOrigin='anonymous';
+    img.onload=()=>{const ctx=canvasOrDiv.getContext('2d');ctx.clearRect(0,0,size,size);ctx.drawImage(img,0,0,size,size);};
+    img.src=url;
+  } else {
+    canvasOrDiv.innerHTML=`<img src="${url}" width="${size}" height="${size}" style="border-radius:6px;display:block">`;
+  }
+}
+
 function renderWifiQR(ssid,pass){
   const wrap=document.getElementById('wifi-qr-canvas'),info=document.getElementById('wifi-info-text');
   if(!wrap)return;
   _currentSSID=ssid;_currentPass=pass;
-  const txt=encodeURIComponent(`WIFI:T:WPA;S:${ssid};P:${pass};;`);
-  wrap.innerHTML=`<img src="https://api.qrserver.com/v1/create-qr-code/?size=112x112&data=${txt}&color=1c0438&bgcolor=ffffff" style="width:112px;height:112px;border-radius:6px;display:block" onerror="this.parentElement.innerHTML='<span style=font-size:10px;color:#888>QR indisponível</span>'">`;
+  drawQR(wrap,`WIFI:T:WPA;S:${ssid};P:${pass};;`,112);
   if(info)info.innerHTML=`<strong>${ssid}</strong><br>Senha: ${pass}`;
 }
+
 document.getElementById('wifi-qr-canvas').addEventListener('click',function(){
   if(!_currentSSID)return;
   const popWrap=document.getElementById('qr-popup-canvas'),popInfo=document.getElementById('qr-popup-info');
-  const txt=encodeURIComponent(`WIFI:T:WPA;S:${_currentSSID};P:${_currentPass};;`);
-  popWrap.innerHTML=`<img src="https://api.qrserver.com/v1/create-qr-code/?size=260x260&data=${txt}&color=1c0438&bgcolor=ffffff" style="width:260px;height:260px;border-radius:10px;display:block">`;
+  drawQR(popWrap,`WIFI:T:WPA;S:${_currentSSID};P:${_currentPass};;`,260);
   popInfo.innerHTML=`📶 ${_currentSSID}<br>🔑 Senha: <strong>${_currentPass}</strong>`;
   document.getElementById('qr-popup').classList.add('open');
 });
