@@ -96,10 +96,8 @@ html,body{font-family:var(--font);background:var(--purple-dark);color:var(--whit
 .chip-btn:hover{background:rgba(255,107,43,.15)}
 .chip-btn:hover svg{stroke:var(--orange)}
 .chip-btn svg{width:15px;height:15px;stroke:var(--white-40);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
-/* mensagem institucional */
 #msg-chip{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--white-40);font-style:italic;max-width:260px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;transition:opacity .6s}
 #msg-chip svg{width:14px;height:14px;stroke:var(--orange);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
-/* painel lateral */
 #avail-panel{grid-column:2;grid-row:2;background:var(--purple-mid);border-left:1px solid var(--purple-border);display:flex;flex-direction:column;overflow:hidden}
 .avail-header{padding:14px 14px 10px;border-bottom:1px solid var(--purple-border);flex-shrink:0}
 .avail-title{font-size:10px;font-weight:700;color:var(--white-40);text-transform:uppercase;letter-spacing:.8px;display:flex;align-items:center;gap:6px}
@@ -108,7 +106,6 @@ html,body{font-family:var(--font);background:var(--purple-dark);color:var(--whit
 .avail-count span{font-size:12px;font-weight:400;color:var(--white-40);letter-spacing:0;margin-left:4px}
 .avail-hint{font-size:10px;color:var(--white-40);margin-top:3px}
 #avail-list{flex:1;overflow-y:auto;padding:6px;scrollbar-width:thin;scrollbar-color:var(--purple-border) transparent}
-/* QR Code Wi-Fi no painel lateral */
 #wifi-panel{padding:10px 14px 14px;border-top:1px solid var(--purple-border);flex-shrink:0}
 .wifi-title{font-size:10px;font-weight:700;color:var(--white-40);text-transform:uppercase;letter-spacing:.8px;display:flex;align-items:center;gap:6px;margin-bottom:8px}
 .wifi-title svg{width:12px;height:12px;stroke:var(--orange);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
@@ -182,6 +179,17 @@ html,body{font-family:var(--font);background:var(--purple-dark);color:var(--whit
 .this-room-select select{width:100%}
 .badge-global{display:inline-block;background:rgba(255,107,43,.12);border:1px solid rgba(255,107,43,.3);color:var(--orange-light);font-size:9px;font-weight:700;padding:1px 6px;border-radius:8px;letter-spacing:.4px;text-transform:uppercase;margin-left:6px;vertical-align:middle}
 .badge-local{display:inline-block;background:rgba(22,219,106,.1);border:1px solid rgba(22,219,106,.25);color:var(--green);font-size:9px;font-weight:700;padding:1px 6px;border-radius:8px;letter-spacing:.4px;text-transform:uppercase;margin-left:6px;vertical-align:middle}
+/* toggle switch */
+.toggle-row{display:flex;align-items:center;justify-content:space-between;padding:12px 14px;background:var(--purple-mid);border:1px solid var(--purple-border);border-radius:var(--radius-sm);margin-bottom:4px}
+.toggle-info{display:flex;flex-direction:column;gap:3px}
+.toggle-label{font-size:13px;font-weight:600;color:var(--white)}
+.toggle-desc{font-size:11px;color:var(--white-40);line-height:1.4;max-width:300px}
+.toggle-switch{position:relative;width:44px;height:24px;flex-shrink:0}
+.toggle-switch input{opacity:0;width:0;height:0}
+.toggle-slider{position:absolute;inset:0;background:var(--purple-border);border-radius:24px;cursor:pointer;transition:background .3s}
+.toggle-slider:before{content:'';position:absolute;width:18px;height:18px;left:3px;top:3px;background:var(--white-40);border-radius:50%;transition:all .3s}
+.toggle-switch input:checked+.toggle-slider{background:var(--green)}
+.toggle-switch input:checked+.toggle-slider:before{transform:translateX(20px);background:var(--white)}
 #first-access{display:none;position:fixed;inset:0;z-index:200;background:var(--purple-dark);flex-direction:column;align-items:center;justify-content:center;gap:16px;padding:32px 24px;text-align:center}
 #first-access.show{display:flex}
 .fa-logo{height:40px;margin-bottom:4px}
@@ -283,17 +291,15 @@ html,body{font-family:var(--font);background:var(--purple-dark);color:var(--whit
       <div class="avail-hint">Toque para agendar</div>
     </div>
     <div id="avail-list"><div class="avail-empty">Carregando...</div></div>
-
-    <!-- QR CODE WI-FI -->
     <div id="wifi-panel">
       <div class="wifi-title">
         <svg viewBox="0 0 24 24"><path d="M5 12.55a11 11 0 0 1 14.08 0"/><path d="M1.42 9a16 16 0 0 1 21.16 0"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><circle cx="12" cy="20" r="1" fill="currentColor" stroke="none"/></svg>
         Wi-Fi
       </div>
       <select id="wifi-select">
-        <option value="LoComexU-CS01|Cs@log24">LoComexU-CS01 (CS01)</option>
-        <option value="LogComexU-CS02|Cs2@log24">LogComexU-CS02 (CS02)</option>
-        <option value="LogComexU-Tech|Tech@log24">LogComexU-Tech (Tech)</option>
+        <option value="LoComexU-CS01|Cs@log24">LoComexU-CS01</option>
+        <option value="LogComexU-CS02|Cs2@log24">LogComexU-CS02</option>
+        <option value="LogComexU-Tech|Tech@log24">LogComexU-Tech</option>
         <option value="LogComexU-Descompressão|Desc@log24">LogComexU-Descompressão</option>
         <option value="LogComexU-Externo|Ext@log24">LogComexU-Externo</option>
         <option value="LogComexU-Sales02|Sal@log24">LogComexU-Sales02</option>
@@ -319,7 +325,6 @@ html,body{font-family:var(--font);background:var(--purple-dark);color:var(--whit
       <span id="next-chip">—</span>
     </button>
     <div class="chip-sep"></div>
-    <!-- MENSAGEM INSTITUCIONAL -->
     <div id="msg-chip">
       <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
       <span id="msg-text"></span>
@@ -356,13 +361,29 @@ html,body{font-family:var(--font);background:var(--purple-dark);color:var(--whit
   <div class="modal" style="max-width:560px">
     <h2>Configurações</h2>
     <p class="sub"><span class="badge-local">Este tablet</span> salvo só aqui. <span class="badge-global">Global</span> salvo para todos.</p>
+
     <span class="sec-lbl">Sala deste tablet <span class="badge-local">Este tablet</span></span>
     <div class="this-room-select"><label>Qual sala este tablet representa</label><select id="cfg-this-room"><option value="">— selecione —</option></select></div>
+
+    <div class="sec-sep"></div>
+    <span class="sec-lbl">Funcionalidades <span class="badge-global">Global</span></span>
+    <div class="toggle-row">
+      <div class="toggle-info">
+        <span class="toggle-label">Cancelamento automático por check-in</span>
+        <span class="toggle-desc">Quando ativo, cancela o evento no Google Calendar após 15 min sem check-in. Mantenha desativado durante a fase de implementação.</span>
+      </div>
+      <label class="toggle-switch">
+        <input type="checkbox" id="cfg-auto-cancel">
+        <span class="toggle-slider"></span>
+      </label>
+    </div>
+
     <div class="sec-sep"></div>
     <span class="sec-lbl">Todas as salas <span class="badge-global">Global</span></span>
     <div class="room-row-header"><span>Nome</span><span>E-mail do recurso</span><span>Andar</span><span></span></div>
     <div class="room-list-edit" id="room-list-edit"></div>
     <button class="btn-add-room" id="btn-add-room">+ Adicionar sala</button>
+
     <div class="sec-sep"></div>
     <span class="sec-lbl">Código PIN <span class="badge-global">Global</span></span>
     <div class="field-row">
@@ -382,7 +403,6 @@ html,body{font-family:var(--font);background:var(--purple-dark);color:var(--whit
     <h2>Horários disponíveis</h2>
     <div id="schedule-room-tag" class="booking-room-tag">—</div>
     <p class="sub" style="margin-bottom:12px">Selecione a duração e depois um horário.</p>
-    <!-- CORREÇÃO: seletor de duração dentro do modal de horários -->
     <div class="field" style="margin-bottom:12px">
       <label>Duração desejada</label>
       <select id="schedule-duration" style="width:100%;background:var(--purple-mid);border:1px solid var(--purple-border);border-radius:var(--radius-sm);color:var(--white);font-family:var(--font);font-size:14px;padding:12px 14px;outline:none;-webkit-appearance:none">
@@ -448,91 +468,59 @@ html,body{font-family:var(--font);background:var(--purple-dark);color:var(--whit
   </div>
 </div>
 
-<!-- QR CODE LIBRARY -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-
 <script>
 const DEFAULT_PIN='1234';
 const BACKEND_URL='https://script.google.com/macros/s/AKfycbyDgucsB17Z1Al0_15ZJ1WaPvJHkapmyxITLDHE9WBGl3DHmXNnMJET9xRNLzn-aov7/exec';
 
 // ── MENSAGENS INSTITUCIONAIS ──
-const MSGS=[
-  '💡 Desligue as luzes ao sair da sala',
-  '🧹 Mantenha a sala limpa',
-];
+const MSGS=['💡 Desligue as luzes ao sair da sala','🧹 Mantenha a sala limpa'];
 let _msgIdx=0;
 function rotateMsgs(){
-  const el=document.getElementById('msg-text');
-  const chip=document.getElementById('msg-chip');
+  const el=document.getElementById('msg-text'),chip=document.getElementById('msg-chip');
   if(!el||!chip)return;
   chip.style.opacity='0';
-  setTimeout(()=>{
-    el.textContent=MSGS[_msgIdx];
-    _msgIdx=(_msgIdx+1)%MSGS.length;
-    chip.style.opacity='1';
-  },600);
+  setTimeout(()=>{el.textContent=MSGS[_msgIdx];_msgIdx=(_msgIdx+1)%MSGS.length;chip.style.opacity='1';},600);
 }
-rotateMsgs();
-setInterval(rotateMsgs,6000);
+rotateMsgs();setInterval(rotateMsgs,6000);
 
 // ── QR CODE WI-FI ──
 const WIFI_NETS=[
-  {ssid:'LoComexU-CS01',pass:'Cs@log24'},
-  {ssid:'LogComexU-CS02',pass:'Cs2@log24'},
-  {ssid:'LogComexU-Tech',pass:'Tech@log24'},
-  {ssid:'LogComexU-Descompressão',pass:'Desc@log24'},
-  {ssid:'LogComexU-Externo',pass:'Ext@log24'},
-  {ssid:'LogComexU-Sales02',pass:'Sal@log24'},
-  {ssid:'LogComexA-Sales1',pass:'logCorp@12'},
-  {ssid:'LogComexA-Sales2',pass:'logCorp@12'},
+  {ssid:'LoComexU-CS01',pass:'Cs@log24'},{ssid:'LogComexU-CS02',pass:'Cs2@log24'},
+  {ssid:'LogComexU-Tech',pass:'Tech@log24'},{ssid:'LogComexU-Descompressão',pass:'Desc@log24'},
+  {ssid:'LogComexU-Externo',pass:'Ext@log24'},{ssid:'LogComexU-Sales02',pass:'Sal@log24'},
+  {ssid:'LogComexA-Sales1',pass:'logCorp@12'},{ssid:'LogComexA-Sales2',pass:'logCorp@12'},
   {ssid:'LogComexA-Tech1',pass:'Tech@log24'},
 ];
-
 let _qrInstance=null;
 function renderWifiQR(ssid,pass){
-  const canvas=document.getElementById('wifi-qr-canvas');
-  const info=document.getElementById('wifi-info-text');
+  const canvas=document.getElementById('wifi-qr-canvas'),info=document.getElementById('wifi-info-text');
   if(!canvas)return;
-  const wifiStr=`WIFI:T:WPA;S:${ssid};P:${pass};;`;
   canvas.getContext('2d').clearRect(0,0,canvas.width,canvas.height);
   if(_qrInstance){try{_qrInstance.clear();}catch(e){}}
-  _qrInstance=new QRCode(canvas,{text:wifiStr,width:112,height:112,colorDark:'#1c0438',colorLight:'#ffffff',correctLevel:QRCode.CorrectLevel.M});
+  _qrInstance=new QRCode(canvas,{text:`WIFI:T:WPA;S:${ssid};P:${pass};;`,width:112,height:112,colorDark:'#1c0438',colorLight:'#ffffff',correctLevel:QRCode.CorrectLevel.M});
   if(info)info.innerHTML=`<strong>${ssid}</strong><br>Senha: ${pass}`;
 }
-
 document.getElementById('wifi-select').addEventListener('change',function(){
-  const [ssid,pass]=this.value.split('|');
-  renderWifiQR(ssid,pass);
+  const[ssid,pass]=this.value.split('|');renderWifiQR(ssid,pass);
 });
-
-// inicia com a primeira rede
-window.addEventListener('load',()=>{
-  const [ssid,pass]=WIFI_NETS[0].ssid+'|'+WIFI_NETS[0].pass ? (WIFI_NETS[0].ssid+'|'+WIFI_NETS[0].pass).split('|') : [];
-  renderWifiQR(WIFI_NETS[0].ssid,WIFI_NETS[0].pass);
-});
+window.addEventListener('load',()=>renderWifiQR(WIFI_NETS[0].ssid,WIFI_NETS[0].pass));
 
 // ── COLABORADORES AUTOCOMPLETE ──
 let _colaboradores=[],_colaboradoresLoaded=false;
 async function loadColaboradores(){
   if(_colaboradoresLoaded)return;
-  try{
-    const r=await fetch(`${BACKEND_URL}?action=colaboradores`);
-    const d=await r.json();
-    if(d.colaboradores&&d.colaboradores.length){_colaboradores=d.colaboradores;_colaboradoresLoaded=true;}
-  }catch(e){}
+  try{const r=await fetch(`${BACKEND_URL}?action=colaboradores`);const d=await r.json();if(d.colaboradores&&d.colaboradores.length){_colaboradores=d.colaboradores;_colaboradoresLoaded=true;}}catch(e){}
 }
-
 function addGuestField(val){
-  const wrap=document.getElementById('guests-list');
-  const row=document.createElement('div');
+  const wrap=document.getElementById('guests-list'),row=document.createElement('div');
   row.style.cssText='display:flex;gap:6px;align-items:center;position:relative';
   const input=document.createElement('input');
   input.type='text';input.placeholder='Nome ou e-mail do convidado';input.value=val||'';
   input.style.cssText='flex:1;background:var(--purple-mid);border:1px solid var(--purple-border);border-radius:var(--radius-sm);color:var(--white);font-family:var(--font);font-size:13px;padding:10px 12px;outline:none;transition:border-color .2s';
   input.onfocus=()=>input.style.borderColor='var(--orange)';
   input.onblur=()=>{setTimeout(()=>hideSuggestions(dd),200);input.style.borderColor='var(--purple-border)';};
-  const dd=document.createElement('div');
-  dd.className='ac-dropdown';
+  const dd=document.createElement('div');dd.className='ac-dropdown';
   input.addEventListener('input',()=>{
     const q=input.value.trim().toLowerCase();
     if(q.length<2){hideSuggestions(dd);return;}
@@ -556,7 +544,7 @@ document.getElementById('btn-add-guest').addEventListener('click',()=>addGuestFi
 
 // ── CONFIG ──
 let cfg={
-  thisRoom:'',pin:DEFAULT_PIN,
+  thisRoom:'',pin:DEFAULT_PIN,autoCancel:false,
   rooms:[
     {name:'1. PHP',email:'c_1884rp7puo7gejdji3bfro291a05i@resource.calendar.google.com',floor:'Andar 1'},
     {name:'2. Javascript',email:'c_18846snhor0rghuijj2jq394chmhm@resource.calendar.google.com',floor:'Andar 1'},
@@ -581,8 +569,20 @@ let cfg={
 };
 let state={events:[],allRoomData:[],refreshTimer:null,bookingTarget:null,_bookingEvents:[],currentEventId:null};
 
-function saveCfg(){try{localStorage.setItem('lcx_g',JSON.stringify({pin:cfg.pin,rooms:cfg.rooms}));localStorage.setItem('lcx_l',JSON.stringify({thisRoom:cfg.thisRoom}));}catch(e){}}
-function loadCfg(){try{const g=localStorage.getItem('lcx_g');if(g){const p=JSON.parse(g);cfg.pin=p.pin||DEFAULT_PIN;if(p.rooms&&p.rooms.length)cfg.rooms=p.rooms;}const l=localStorage.getItem('lcx_l');if(l){const p=JSON.parse(l);if(p.thisRoom)cfg.thisRoom=p.thisRoom;}}catch(e){}}
+function saveCfg(){
+  try{
+    localStorage.setItem('lcx_g',JSON.stringify({pin:cfg.pin,rooms:cfg.rooms,autoCancel:cfg.autoCancel}));
+    localStorage.setItem('lcx_l',JSON.stringify({thisRoom:cfg.thisRoom}));
+  }catch(e){}
+}
+function loadCfg(){
+  try{
+    const g=localStorage.getItem('lcx_g');
+    if(g){const p=JSON.parse(g);cfg.pin=p.pin||DEFAULT_PIN;if(p.rooms&&p.rooms.length)cfg.rooms=p.rooms;cfg.autoCancel=!!p.autoCancel;}
+    const l=localStorage.getItem('lcx_l');
+    if(l){const p=JSON.parse(l);if(p.thisRoom)cfg.thisRoom=p.thisRoom;}
+  }catch(e){}
+}
 
 const fmt=d=>d?d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}):'';
 function fmtDur(ms){const m=Math.ceil(ms/60000);return m>=60?`${Math.floor(m/60)}h${m%60?' '+m%60+'min':''}`:`${m} min`;}
@@ -633,7 +633,17 @@ function startToleranceTimer(){
     if(checkinDoneForEvent===state.currentEventId)return;
     const responsible=document.getElementById('responsible-chip')?.textContent?.trim();
     const roomName=document.getElementById('room-name')?.textContent?.trim();
-    if(state.events.length){const now=new Date();const cur=state.events.find(e=>{const s=new Date(e.start.dateTime),en=new Date(e.end.dateTime);return s<=now&&en>now;});if(cur){const p=new URLSearchParams({action:'cancel',roomEmail:cfg.thisRoom,eventStart:cur.start.dateTime,email:responsible||'',room:roomName||'Sala'});fetch(`${BACKEND_URL}?${p.toString()}`).catch(()=>{});}}
+
+    // ── SÓ CANCELA NO CALENDAR SE autoCancel ESTIVER ATIVO ──
+    if(cfg.autoCancel&&state.events.length){
+      const now=new Date();
+      const cur=state.events.find(e=>{const s=new Date(e.start.dateTime),en=new Date(e.end.dateTime);return s<=now&&en>now;});
+      if(cur){
+        const p=new URLSearchParams({action:'cancel',roomEmail:cfg.thisRoom,eventStart:cur.start.dateTime,email:responsible||'',room:roomName||'Sala'});
+        fetch(`${BACKEND_URL}?${p.toString()}`).catch(()=>{});
+      }
+    }
+
     const mp=document.getElementById('main-panel'),bd=document.getElementById('status-badge');
     if(mp)mp.className='free';if(bd)bd.className='status-badge free';
     document.getElementById('status-text').textContent='Disponível';
@@ -663,7 +673,7 @@ function doCheckin(){
 document.getElementById('btn-checkin').addEventListener('click',doCheckin);
 
 function renderMain(cl){
-  const{status,current,progress,countdown,endsAt,nextAt,responsible}=cl;
+  const{status,progress,countdown,endsAt,nextAt,responsible}=cl;
   const mp=document.getElementById('main-panel'),bd=document.getElementById('status-badge');
   mp.className=status;bd.className=`status-badge ${status}`;
   document.getElementById('status-text').textContent={free:'Disponível',soon:'Em breve',busy:'Ocupada'}[status];
@@ -742,13 +752,22 @@ document.querySelectorAll('#pin-keypad .key-btn').forEach(btn=>{btn.addEventList
 
 function buildRoomList(){const wrap=document.getElementById('room-list-edit');wrap.innerHTML=cfg.rooms.map((r,i)=>`<div class="room-row" data-idx="${i}"><input type="text" class="rn" value="${r.name}" placeholder="Nome"><input type="text" class="re" value="${r.email}" placeholder="c_xxx@resource..." style="font-size:11px"><select class="rf"><option value="Andar 1"${r.floor==='Andar 1'?' selected':''}>Andar 1</option><option value="Andar 2"${r.floor==='Andar 2'?' selected':''}>Andar 2</option><option value="Andar 3"${r.floor==='Andar 3'?' selected':''}>Andar 3</option></select><button class="btn-del-room" data-idx="${i}">×</button></div>`).join('');wrap.querySelectorAll('.btn-del-room').forEach(b=>{b.addEventListener('click',()=>{cfg.rooms.splice(parseInt(b.dataset.idx),1);buildRoomList();buildThisRoomSelect();});});}
 function buildThisRoomSelect(){const sel=document.getElementById('cfg-this-room');sel.innerHTML='<option value="">— selecione —</option>'+cfg.rooms.map(r=>`<option value="${r.email}"${r.email===cfg.thisRoom?' selected':''}>${r.name} · ${r.floor}</option>`).join('');}
-function openCfg(){document.getElementById('cfg-pin-current').value='';document.getElementById('cfg-pin-new').value='';document.getElementById('cfg-alert').innerHTML='';buildRoomList();buildThisRoomSelect();showModal('modal-cfg');}
+
+function openCfg(){
+  document.getElementById('cfg-pin-current').value='';
+  document.getElementById('cfg-pin-new').value='';
+  document.getElementById('cfg-alert').innerHTML='';
+  document.getElementById('cfg-auto-cancel').checked=cfg.autoCancel;
+  buildRoomList();buildThisRoomSelect();showModal('modal-cfg');
+}
+
 document.getElementById('btn-add-room').addEventListener('click',()=>{cfg.rooms.push({name:'Nova sala',email:'',floor:'Andar 1'});buildRoomList();buildThisRoomSelect();});
 document.getElementById('btn-close-cfg').addEventListener('click',()=>hideModal('modal-cfg'));
 document.getElementById('btn-save-cfg').addEventListener('click',()=>{
   const al=document.getElementById('cfg-alert');
   document.querySelectorAll('#room-list-edit .room-row').forEach((row,i)=>{if(cfg.rooms[i]){cfg.rooms[i].name=row.querySelector('.rn').value.trim();cfg.rooms[i].email=row.querySelector('.re').value.trim();cfg.rooms[i].floor=row.querySelector('.rf').value;}});
   cfg.thisRoom=document.getElementById('cfg-this-room').value;
+  cfg.autoCancel=document.getElementById('cfg-auto-cancel').checked;
   const pinCur=document.getElementById('cfg-pin-current').value,pinNew=document.getElementById('cfg-pin-new').value;
   if(pinNew){if(pinCur!==cfg.pin){al.innerHTML='<div class="alert error">PIN atual incorreto.</div>';return;}if(!/^\d{4}$/.test(pinNew)){al.innerHTML='<div class="alert error">Novo PIN deve ter 4 dígitos.</div>';return;}cfg.pin=pinNew;}
   saveCfg();applyRoomInfo();al.innerHTML='<div class="alert success">Salvo! Reconectando...</div>';
@@ -763,33 +782,26 @@ function buildSlots(events,durMin){
   return slots;
 }
 
-// ── MODAL DE HORÁRIOS — corrigido com seletor de duração ──
 function openScheduleModal(){
   const room=roomByEmail(cfg.thisRoom)||{name:'Esta sala',floor:''};
   document.getElementById('schedule-room-tag').textContent=`${room.name} · ${room.floor}`;
-  const dur=parseInt(document.getElementById('schedule-duration').value)||60;
-  renderScheduleList(dur);
+  renderScheduleList(parseInt(document.getElementById('schedule-duration').value)||60);
   showModal('modal-schedule');
 }
-document.getElementById('schedule-duration').addEventListener('change',function(){
-  renderScheduleList(parseInt(this.value));
-});
+document.getElementById('schedule-duration').addEventListener('change',function(){renderScheduleList(parseInt(this.value));});
 function renderScheduleList(durMin){
   const slots=buildSlots(state.events,durMin),list=document.getElementById('schedule-list');
   if(!slots.length){list.innerHTML='<div style="text-align:center;padding:24px;font-size:13px;color:var(--white-40)">Nenhum horário disponível hoje.</div>';return;}
   list.innerHTML=slots.map(sl=>`<div onclick="pickSlot('${sl.start.toISOString()}','${sl.end.toISOString()}',${durMin})" style="display:flex;align-items:center;justify-content:space-between;padding:12px 14px;background:var(--purple-mid);border:1px solid var(--purple-border);border-radius:var(--radius-sm);cursor:pointer;transition:all .18s" onmouseover="this.style.borderColor='var(--orange)';this.style.background='rgba(255,107,43,.1)'" onmouseout="this.style.borderColor='var(--purple-border)';this.style.background='var(--purple-mid)'"><span style="font-size:15px;font-weight:700;color:var(--white)">${fmt(sl.start)} – ${fmt(sl.end)}</span><span style="font-size:11px;color:var(--orange);font-weight:600;background:rgba(255,107,43,.12);border:1px solid rgba(255,107,43,.3);border-radius:20px;padding:3px 10px">${durMin} min →</span></div>`).join('');
 }
 function pickSlot(startISO,endISO,durMin){
-  hideModal('modal-schedule');
-  const room=roomByEmail(cfg.thisRoom)||{name:'Esta sala',floor:''};
-  const d=new Date(startISO);
+  hideModal('modal-schedule');const room=roomByEmail(cfg.thisRoom)||{name:'Esta sala',floor:''};const d=new Date(startISO);
   openBooking({email:cfg.thisRoom,name:room.name,floor:room.floor,presetDate:startISO.split('T')[0],presetTime:`${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`,presetDur:durMin});
 }
 document.getElementById('btn-close-schedule').addEventListener('click',()=>hideModal('modal-schedule'));
 
 function populateBkTime(durMin,presetTime){
-  const sel=document.getElementById('bk-time');
-  const slots=buildSlots(state._bookingEvents||state.events,durMin);
+  const sel=document.getElementById('bk-time'),slots=buildSlots(state._bookingEvents||state.events,durMin);
   sel.innerHTML='';
   if(!slots.length){sel.innerHTML='<option value="">Nenhum horário disponível</option>';return;}
   slots.forEach(sl=>{const hh=String(sl.start.getHours()).padStart(2,'0'),mm=String(sl.start.getMinutes()).padStart(2,'0'),val=`${hh}:${mm}`;const opt=document.createElement('option');opt.value=val;opt.textContent=`${fmt(sl.start)} – ${fmt(sl.end)}`;if(presetTime&&val===presetTime)opt.selected=true;sel.appendChild(opt);});
@@ -797,8 +809,7 @@ function populateBkTime(durMin,presetTime){
 document.getElementById('bk-duration').addEventListener('change',function(){populateBkTime(parseInt(this.value),null);});
 
 function openBooking(room){
-  state.bookingTarget=room;
-  loadColaboradores();
+  state.bookingTarget=room;loadColaboradores();
   const t=new Date().toISOString().split('T')[0];
   const dur=room.presetDur||parseInt(document.getElementById('bk-duration').value)||60;
   let eventsForRoom=state.events;
@@ -824,14 +835,12 @@ document.getElementById('btn-confirm-booking').addEventListener('click',async()=
   const date=document.getElementById('bk-date').value;
   const time=document.getElementById('bk-time').value;
   const dur=parseInt(document.getElementById('bk-duration').value);
-  const al=document.getElementById('booking-alert');
-  const guests=getGuestEmails();
+  const al=document.getElementById('booking-alert'),guests=getGuestEmails();
   if(!email||!title||!date||!time){al.innerHTML='<div class="alert error">Preencha todos os campos.</div>';return;}
   if(!email.includes('@')){al.innerHTML='<div class="alert error">E-mail inválido.</div>';return;}
   const btn=document.getElementById('btn-confirm-booking');
   btn.disabled=true;btn.innerHTML='<span class="spinner"></span>';
-  const start=new Date(`${date}T${time}:00`);
-  const end=new Date(start.getTime()+dur*60000);
+  const start=new Date(`${date}T${time}:00`),end=new Date(start.getTime()+dur*60000);
   try{
     const params=new URLSearchParams({action:'create',roomEmail:room.email,title,start:start.toISOString(),end:end.toISOString(),attendees:[email,...guests].join(',')});
     const resp=await fetch(`${BACKEND_URL}?${params.toString()}`);
