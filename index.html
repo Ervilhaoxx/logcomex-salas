@@ -520,115 +520,61 @@ const WIFI_NETS=[
   {ssid:'LogComex-Tech',pass:'Tec@log2024'},
   {ssid:'LogComex-War-Room',pass:'War@log2024'},
 ];
-// ── QR CODE 100% LOCAL SEM BIBLIOTECA ──
-// Implementação mínima de QR Code versão 2 para texto curto (WiFi strings)
-(function(){
-  const _qr={};
-  // tabela de lookup GF(256)
-  const EXP=new Uint8Array(512),LOG=new Uint8Array(256);
-  (function(){let x=1;for(let i=0;i<255;i++){EXP[i]=x;LOG[x]=i;x<<=1;if(x>255)x^=285;}for(let i=255;i<512;i++)EXP[i]=EXP[i-255];})();
-  function gmul(a,b){return a&&b?EXP[LOG[a]+LOG[b]]:0;}
-  function gpoly(n){let p=[1];for(let i=0;i<n;i++){const q=new Uint8Array(p.length+1);for(let j=0;j<p.length;j++){q[j]^=gmul(p[j],EXP[i]);q[j+1]^=p[j];}p=q;}return p;}
-  function eccBytes(data,n){const g=gpoly(n),msg=new Uint8Array(data.length+n);for(let i=0;i<data.length;i++)msg[i]=data[i];for(let i=0;i<data.length;i++){const c=msg[i];if(c)for(let j=0;j<g.length-1;j++)msg[i+j+1]^=gmul(g[j],c);}return msg.slice(data.length);}
-
-  // encode byte mode
-  function encode(text){
-    const bytes=[];for(let i=0;i<text.length;i++)bytes.push(text.charCodeAt(i)&0xff);
-    // version 3-M: 26x26, 28 data codewords, 16 ecc
-    const bits=[];
-    function addBits(val,len){for(let i=len-1;i>=0;i--)bits.push((val>>i)&1);}
-    addBits(0b0100,4); // byte mode
-    addBits(bytes.length,8);
-    bytes.forEach(b=>addBits(b,8));
-    // terminator
-    for(let i=0;i<4&&bits.length<224;i++)bits.push(0);
-    while(bits.length%8)bits.push(0);
-    const codewords=[];
-    for(let i=0;i<bits.length;i+=8){let b=0;for(let j=0;j<8;j++)b=(b<<1)|bits[i+j];codewords.push(b);}
-    const pad=[0xEC,0x11];while(codewords.length<28)codewords.push(pad[(codewords.length-0)%2===0?0:1]); // simplified
-    const ecc=eccBytes(new Uint8Array(codewords),16);
-    const all=[...codewords,...ecc];
-    const stream=[];all.forEach(b=>{for(let i=7;i>=0;i--)stream.push((b>>i)&1);});
-    return stream;
-  }
-
-  // version 3 matrix (29x29)
-  const SIZE=29;
-  function makeMatrix(){
-    const m=Array.from({length:SIZE},()=>new Array(SIZE).fill(-1));
-    // finder patterns
-    function finder(r,c){for(let i=0;i<7;i++)for(let j=0;j<7;j++){const v=i===0||i===6||j===0||j===6?1:i>=2&&i<=4&&j>=2&&j<=4?1:0;m[r+i][c+j]=v;}}
-    finder(0,0);finder(0,SIZE-7);finder(SIZE-7,0);
-    // separators
-    for(let i=0;i<8;i++){if(m[7][i]<0||true)m[7][i]=0;if(m[i][7]<0||true)m[i][7]=0;if(m[7][SIZE-1-i]<0||true)m[7][SIZE-1-i]=0;if(m[i][SIZE-8]<0||true)m[i][SIZE-8]=0;if(m[SIZE-8][i]<0||true)m[SIZE-8][i]=0;if(m[SIZE-1-i][7]<0||true)m[SIZE-1-i][7]=0;}
-    // alignment pattern version 3: at (22,22) — but we use version 2 (25x25 equiv via upscale)
-    // timing
-    for(let i=8;i<SIZE-8;i++){m[6][i]=i%2===0?1:0;m[i][6]=i%2===0?1:0;}
-    // dark module
-    m[SIZE-8][8]=1;
-    return m;
-  }
-
-  function placeData(m,stream){
-    let idx=0;
-    const isFunc=(r,c)=>m[r][c]>=0;
-    let up=true;
-    for(let col=SIZE-1;col>0;col-=2){
-      if(col===6)col--;
-      for(let row=0;row<SIZE;row++){
-        const r=up?SIZE-1-row:row;
-        for(let dc=0;dc<2;dc++){
-          const c=col-dc;
-          if(!isFunc(r,c)){m[r][c]=idx<stream.length?stream[idx++]:0;}
-        }
-      }
-      up=!up;
-    }
-  }
-
-  function applyMask(m){
-    // mask pattern 0: (i+j)%2==0
-    for(let r=0;r<SIZE;r++)for(let c=0;c<SIZE;c++)if(m[r][c]>=0&&!(r<9&&c<9)&&!(r<9&&c>=SIZE-8)&&!(r>=SIZE-8&&c<9))if((r+c)%2===0)m[r][c]^=1;
-    return m;
-  }
-
-  function applyFormat(m){
-    // format string for mask 0, level M: 101010000010010
-    const fmt=[1,0,1,0,1,0,0,0,0,0,1,0,0,1,0];
-    const pos1=[[8,0],[8,1],[8,2],[8,3],[8,4],[8,5],[8,7],[8,8],[7,8],[5,8],[4,8],[3,8],[2,8],[1,8],[0,8]];
-    const pos2=[[SIZE-1,8],[SIZE-2,8],[SIZE-3,8],[SIZE-4,8],[SIZE-5,8],[SIZE-6,8],[SIZE-7,8],[8,SIZE-8],[8,SIZE-7],[8,SIZE-6],[8,SIZE-5],[8,SIZE-4],[8,SIZE-3],[8,SIZE-2],[8,SIZE-1]];
-    for(let i=0;i<15;i++){m[pos1[i][0]][pos1[i][1]]=fmt[i];m[pos2[i][0]][pos2[i][1]]=fmt[i];}
-  }
-
-  _qr.draw=function(canvas,text,size){
-    let stream;
-    try{stream=encode(text);}catch(e){stream=new Array(368).fill(0);}
-    const m=makeMatrix();
-    placeData(m,stream);
-    applyMask(m);
-    applyFormat(m);
-    canvas.width=size;canvas.height=size;
-    const ctx=canvas.getContext('2d');
-    const cell=size/SIZE;
-    ctx.fillStyle='#fff';ctx.fillRect(0,0,size,size);
-    ctx.fillStyle='#1c0438';
-    for(let r=0;r<SIZE;r++)for(let c=0;c<SIZE;c++)if(m[r][c]===1)ctx.fillRect(Math.floor(c*cell),Math.floor(r*cell),Math.ceil(cell),Math.ceil(cell));
+// ── QR CODE VIA SCRIPT INLINE CONFIÁVEL ──
+function loadQRScript(cb){
+  if(window.qrcode){cb();return;}
+  const s=document.createElement('script');
+  s.src='https://cdnjs.cloudflare.com/ajax/libs/jquery.qrcode/1.0/jquery.qrcode.min.js';
+  s.onload=cb;s.onerror=()=>{
+    // fallback: carrega qrcodejs via unpkg
+    const s2=document.createElement('script');
+    s2.src='https://unpkg.com/qrcode-generator@1.4.4/qrcode.js';
+    s2.onload=cb;document.head.appendChild(s2);
   };
-  window._qr=_qr;
-})();
+  document.head.appendChild(s);
+}
+
+function makeQRsvg(text,size){
+  // usa qrcode-generator se disponível
+  if(window.qrcode){
+    try{
+      const qr=qrcode(0,'M');
+      qr.addData(text);qr.make();
+      const n=qr.getModuleCount(),cell=size/n;
+      let rects='';
+      for(let r=0;r<n;r++)for(let c=0;c<n;c++)
+        if(qr.isDark(r,c))rects+=`<rect x="${c*cell}" y="${r*cell}" width="${cell}" height="${cell}"/>`;
+      return `<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="0 0 ${size} ${size}"><rect width="${size}" height="${size}" fill="white"/><g fill="#1c0438">${rects}</g></svg>`;
+    }catch(e){}
+  }
+  return null;
+}
+
+function setQR(el,text,size){
+  if(!el)return;
+  const svg=makeQRsvg(text,size);
+  if(svg){el.innerHTML=svg;return;}
+  // fallback visual enquanto carrega
+  el.innerHTML=`<div style="font-size:11px;color:#888;text-align:center;padding:8px">Carregando QR...</div>`;
+  loadQRScript(()=>{
+    const svg2=makeQRsvg(text,size);
+    if(svg2)el.innerHTML=svg2;
+  });
+}
 
 let _currentSSID='',_currentPass='';
 function renderWifiQR(ssid,pass){
-  const canvas=document.getElementById('wifi-qr-canvas'),info=document.getElementById('wifi-info-text');
-  if(!canvas)return;
+  const wrap=document.getElementById('wifi-qr-canvas'),info=document.getElementById('wifi-info-text');
+  if(!wrap)return;
   _currentSSID=ssid;_currentPass=pass;
-  try{_qr.draw(canvas,`WIFI:T:WPA;S:${ssid};P:${pass};;`,120);}catch(e){}
+  // carrega lib antecipadamente
+  loadQRScript(()=>setQR(wrap,`WIFI:T:WPA;S:${ssid};P:${pass};;`,112));
   if(info)info.innerHTML=`<strong>${ssid}</strong><br>Senha: ${pass}`;
 }
 document.getElementById('wifi-qr-canvas').addEventListener('click',function(){
   if(!_currentSSID)return;
-  const popCanvas=document.getElementById('qr-popup-canvas'),popInfo=document.getElementById('qr-popup-info');
-  try{_qr.draw(popCanvas,`WIFI:T:WPA;S:${_currentSSID};P:${_currentPass};;`,280);}catch(e){}
+  const popWrap=document.getElementById('qr-popup-canvas'),popInfo=document.getElementById('qr-popup-info');
+  setQR(popWrap,`WIFI:T:WPA;S:${_currentSSID};P:${_currentPass};;`,268);
   popInfo.innerHTML=`📶 ${_currentSSID}<br>🔑 Senha: <strong>${_currentPass}</strong>`;
   document.getElementById('qr-popup').classList.add('open');
 });
