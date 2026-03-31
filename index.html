@@ -492,7 +492,7 @@ html,body{font-family:var(--font);background:var(--purple-dark);color:var(--whit
   </div>
 </div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script>
 const DEFAULT_PIN='1234';
 const BACKEND_URL='https://script.google.com/macros/s/AKfycbyDgucsB17Z1Al0_15ZJ1WaPvJHkapmyxITLDHE9WBGl3DHmXNnMJET9xRNLzn-aov7/exec';
@@ -520,21 +520,21 @@ const WIFI_NETS=[
   {ssid:'LogComex-Tech',pass:'Tec@log2024'},
   {ssid:'LogComex-War-Room',pass:'War@log2024'},
 ];
-let _qrInstance=null,_qrPopupInstance=null;
+let _currentSSID='',_currentPass='';
 function renderWifiQR(ssid,pass){
-  const canvas=document.getElementById('wifi-qr-canvas'),info=document.getElementById('wifi-info-text');
-  if(!canvas)return;
-  _qrInstance=new QRious({element:canvas,value:`WIFI:T:WPA;S:${ssid};P:${pass};;`,size:120,foreground:'#1c0438',background:'#ffffff',level:'M'});
+  const wrap=document.getElementById('wifi-qr-canvas'),info=document.getElementById('wifi-info-text');
+  if(!wrap)return;
+  _currentSSID=ssid;_currentPass=pass;
+  wrap.innerHTML='';
+  new QRCode(wrap,{text:`WIFI:T:WPA;S:${ssid};P:${pass};;`,width:112,height:112,colorDark:'#1c0438',colorLight:'#ffffff',correctLevel:QRCode.CorrectLevel.M});
   if(info)info.innerHTML=`<strong>${ssid}</strong><br>Senha: ${pass}`;
-  // guarda os dados para o popup
-  canvas._ssid=ssid;canvas._pass=pass;
 }
 document.getElementById('wifi-qr-canvas').addEventListener('click',function(){
-  const ssid=this._ssid,pass=this._pass;
-  if(!ssid)return;
-  const popCanvas=document.getElementById('qr-popup-canvas'),popInfo=document.getElementById('qr-popup-info');
-  _qrPopupInstance=new QRious({element:popCanvas,value:`WIFI:T:WPA;S:${ssid};P:${pass};;`,size:260,foreground:'#1c0438',background:'#ffffff',level:'M'});
-  popInfo.innerHTML=`📶 ${ssid}<br>🔑 Senha: <strong>${pass}</strong>`;
+  if(!_currentSSID)return;
+  const popWrap=document.getElementById('qr-popup-canvas'),popInfo=document.getElementById('qr-popup-info');
+  popWrap.innerHTML='';
+  new QRCode(popWrap,{text:`WIFI:T:WPA;S:${_currentSSID};P:${_currentPass};;`,width:244,height:244,colorDark:'#1c0438',colorLight:'#ffffff',correctLevel:QRCode.CorrectLevel.M});
+  popInfo.innerHTML=`📶 ${_currentSSID}<br>🔑 Senha: <strong>${_currentPass}</strong>`;
   document.getElementById('qr-popup').classList.add('open');
 });
 document.getElementById('wifi-select').addEventListener('change',function(){
