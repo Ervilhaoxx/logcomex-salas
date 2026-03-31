@@ -227,7 +227,7 @@ html,body{font-family:var(--font);background:var(--purple-dark);color:var(--whit
 <!-- POPUP QR CODE GRANDE -->
 <div id="qr-popup" onclick="document.getElementById('qr-popup').classList.remove('open')">
   <div id="qr-popup-inner" onclick="event.stopPropagation()">
-    <canvas id="qr-popup-canvas" width="260" height="260"></canvas>
+    <div id="qr-popup-canvas" style="width:260px;height:260px;display:flex;align-items:center;justify-content:center"></div>
     <div id="qr-popup-info"></div>
   </div>
   <div id="qr-popup-hint">Toque fora para fechar</div>
@@ -314,21 +314,21 @@ html,body{font-family:var(--font);background:var(--purple-dark);color:var(--whit
       </div>
       <select id="wifi-select">
         <optgroup label="── 1º Andar ──">
-          <option value="LoComexU-CS01|Cs@log24">LoComexU-CS01</option>
-          <option value="LogComexU-CS02|Cs2@log24">LogComexU-CS02</option>
-          <option value="LogComexU-Tech|Tech@log24">LogComexU-Tech</option>
-          <option value="LogComexU-Descompressao|Desc@log24">LogComexU-Descompressao</option>
-          <option value="LogComexU-Externo|Ext@log24">LogComexU-Externo</option>
-          <option value="LogComexU-Sales02|Sal@log24">LogComexU-Sales02</option>
-          <option value="LogComexA-Sales1|logCorp@12">LogComexA-Sales1</option>
-          <option value="LogComexA-Sales2|logCorp@12">LogComexA-Sales2</option>
-          <option value="LogComexA-Tech1|Tech@log24">LogComexA-Tech1</option>
+          <option value="1_Andar_LogComexA-Sales1|logCorp@12">LogComexA-Sales1</option>
+          <option value="1_Andar_LogComexA-Sales2|logCorp@12">LogComexA-Sales2</option>
+          <option value="1_Andar_LogComexA-Tech1|Tech@log24">LogComexA-Tech1</option>
+          <option value="1_Andar_LogComexU-CS01|Cs@log24">LogComexU-CS01</option>
+          <option value="1_Andar_LogComexU-CS02|Cs2@log24">LogComexU-CS02</option>
+          <option value="1_Andar_LogComexU-Descompressao|Desc@log24">LogComexU-Descompressao</option>
+          <option value="1_Andar_LogComexU-Externo|Ext@log24">LogComexU-Externo</option>
+          <option value="1_Andar_LogComexU-Sales02|Sal@log24">LogComexU-Sales02</option>
+          <option value="1_Andar_LogComexU-Tech|Tech@log24">LogComexU-Tech</option>
         </optgroup>
         <optgroup label="── 2º Andar ──">
-          <option value="LogComex-Finance|Fin@log2024">LogComex-Finance</option>
-          <option value="LogComex-Planning|Pla@log2024">LogComex-Planning</option>
-          <option value="LogComex-Tech|Tec@log2024">LogComex-Tech</option>
-          <option value="LogComex-War-Room|War@log2024">LogComex-War-Room</option>
+          <option value="2_Andar_LogComex-Finance|Fin@log2024">LogComex-Finance</option>
+          <option value="2_Andar_LogComex-Planning|Pla@log2024">LogComex-Planning</option>
+          <option value="2_Andar_LogComex-Tech|Tec@log2024">LogComex-Tech</option>
+          <option value="2_Andar_LogComex-War-Room|War@log2024">LogComex-War-Room</option>
         </optgroup>
       </select>
       <div id="wifi-qr-wrap">
@@ -492,7 +492,7 @@ html,body{font-family:var(--font);background:var(--purple-dark);color:var(--whit
   </div>
 </div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<!-- sem biblioteca externa -->
 <script>
 const DEFAULT_PIN='1234';
 const BACKEND_URL='https://script.google.com/macros/s/AKfycbyDgucsB17Z1Al0_15ZJ1WaPvJHkapmyxITLDHE9WBGl3DHmXNnMJET9xRNLzn-aov7/exec';
@@ -520,22 +520,32 @@ const WIFI_NETS=[
   {ssid:'LogComex-Tech',pass:'Tec@log2024'},
   {ssid:'LogComex-War-Room',pass:'War@log2024'},
 ];
-let _currentSSID='',_currentPass='';
-function renderWifiQR(ssid,pass){
+let _currentSSID='',_currentPass='',_currentFile='';
+function renderWifiQR(fileBase,pass,ssid){
   const wrap=document.getElementById('wifi-qr-canvas'),info=document.getElementById('wifi-info-text');
   if(!wrap)return;
-  _currentSSID=ssid;_currentPass=pass;
-  wrap.innerHTML='';
-  new QRCode(wrap,{text:`WIFI:T:WPA;S:${ssid};P:${pass};;`,width:112,height:112,colorDark:'#1c0438',colorLight:'#ffffff',correctLevel:QRCode.CorrectLevel.M});
+  _currentSSID=ssid;_currentPass=pass;_currentFile=fileBase;
+  wrap.innerHTML=`<img src="${fileBase}.png" style="width:112px;height:112px;border-radius:6px;display:block" alt="${ssid}">`;
   if(info)info.innerHTML=`<strong>${ssid}</strong><br>Senha: ${pass}`;
 }
+document.getElementById('wifi-select').addEventListener('change',function(){
+  const val=this.value.split('|');
+  const fileBase=val[0],pass=val[1];
+  const ssid=this.options[this.selectedIndex].text.trim();
+  renderWifiQR(fileBase,pass,ssid);
+});
 document.getElementById('wifi-qr-canvas').addEventListener('click',function(){
-  if(!_currentSSID)return;
+  if(!_currentFile)return;
   const popWrap=document.getElementById('qr-popup-canvas'),popInfo=document.getElementById('qr-popup-info');
-  popWrap.innerHTML='';
-  new QRCode(popWrap,{text:`WIFI:T:WPA;S:${_currentSSID};P:${_currentPass};;`,width:244,height:244,colorDark:'#1c0438',colorLight:'#ffffff',correctLevel:QRCode.CorrectLevel.M});
+  popWrap.innerHTML=`<img src="${_currentFile}.png" style="width:260px;height:260px;border-radius:10px;display:block" alt="${_currentSSID}">`;
   popInfo.innerHTML=`📶 ${_currentSSID}<br>🔑 Senha: <strong>${_currentPass}</strong>`;
   document.getElementById('qr-popup').classList.add('open');
+});
+window.addEventListener('load',()=>{
+  const sel=document.getElementById('wifi-select');
+  const val=sel.value.split('|');
+  const ssid=sel.options[sel.selectedIndex].text.trim();
+  renderWifiQR(val[0],val[1],ssid);
 });
 document.getElementById('wifi-select').addEventListener('change',function(){
   const[ssid,pass]=this.value.split('|');renderWifiQR(ssid,pass);
