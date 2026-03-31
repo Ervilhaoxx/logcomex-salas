@@ -529,8 +529,9 @@ function renderWifiQR(fileBase,pass,ssid){
   if(info)info.innerHTML=`<strong>${ssid}</strong><br>Senha: ${pass}`;
 }
 document.getElementById('wifi-select').addEventListener('change',function(){
-  const[fileBase,pass]=this.value.split('|');
-  const ssid=this.options[this.selectedIndex].text;
+  const val=this.value.split('|');
+  const fileBase=val[0],pass=val[1];
+  const ssid=this.options[this.selectedIndex].text.trim();
   renderWifiQR(fileBase,pass,ssid);
 });
 document.getElementById('wifi-qr-canvas').addEventListener('click',function(){
@@ -542,8 +543,9 @@ document.getElementById('wifi-qr-canvas').addEventListener('click',function(){
 });
 window.addEventListener('load',()=>{
   const sel=document.getElementById('wifi-select');
-  const[fileBase,pass]=sel.value.split('|');
-  renderWifiQR(fileBase,pass,sel.options[sel.selectedIndex].text);
+  const val=sel.value.split('|');
+  const ssid=sel.options[sel.selectedIndex].text.trim();
+  renderWifiQR(val[0],val[1],ssid);
 });
 document.getElementById('wifi-select').addEventListener('change',function(){
   const[ssid,pass]=this.value.split('|');renderWifiQR(ssid,pass);
