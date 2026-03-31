@@ -112,7 +112,14 @@ html,body{font-family:var(--font);background:var(--purple-dark);color:var(--whit
 #wifi-select{width:100%;background:var(--purple-dark);border:1px solid var(--purple-border);border-radius:var(--radius-sm);color:var(--white);font-family:var(--font);font-size:11px;padding:6px 10px;outline:none;-webkit-appearance:none;margin-bottom:8px;cursor:pointer}
 #wifi-select:focus{border-color:var(--orange)}
 #wifi-qr-wrap{display:flex;flex-direction:column;align-items:center;gap:4px}
-#wifi-qr-wrap canvas{border-radius:8px;background:#fff;padding:6px}
+#wifi-qr-wrap canvas{border-radius:8px;background:#fff;padding:6px;cursor:pointer;transition:transform .2s}
+#wifi-qr-wrap canvas:hover{transform:scale(1.05)}
+#qr-popup{display:none;position:fixed;inset:0;z-index:99999;background:rgba(0,0,0,.85);align-items:center;justify-content:center;flex-direction:column;gap:16px;cursor:pointer}
+#qr-popup.open{display:flex}
+#qr-popup-inner{background:#fff;border-radius:20px;padding:24px;display:flex;flex-direction:column;align-items:center;gap:12px}
+#qr-popup-canvas{display:block}
+#qr-popup-info{font-family:var(--font);font-size:15px;color:#1c0438;font-weight:700;text-align:center;line-height:1.5}
+#qr-popup-hint{font-family:var(--font);font-size:12px;color:rgba(255,255,255,.5);letter-spacing:.3px}
 .wifi-info{font-size:10px;color:var(--white-40);text-align:center;line-height:1.5}
 .wifi-info strong{color:var(--white-70)}
 .avail-item{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:var(--radius-sm);margin-bottom:4px;cursor:pointer;transition:all .18s;border:1px solid transparent}
@@ -216,6 +223,15 @@ html,body{font-family:var(--font);background:var(--purple-dark);color:var(--whit
 </style>
 </head>
 <body>
+
+<!-- POPUP QR CODE GRANDE -->
+<div id="qr-popup" onclick="document.getElementById('qr-popup').classList.remove('open')">
+  <div id="qr-popup-inner" onclick="event.stopPropagation()">
+    <canvas id="qr-popup-canvas" width="260" height="260"></canvas>
+    <div id="qr-popup-info"></div>
+  </div>
+  <div id="qr-popup-hint">Toque fora para fechar</div>
+</div>
 
 <!-- POPUP CHECK-IN -->
 <div id="checkin-popup" style="display:none;position:fixed;inset:0;z-index:99999;background:rgba(0,0,0,.7);align-items:center;justify-content:center">
@@ -504,13 +520,23 @@ const WIFI_NETS=[
   {ssid:'LogComex-Tech',pass:'Tec@log2024'},
   {ssid:'LogComex-War-Room',pass:'War@log2024'},
 ];
-let _qrInstance=null;
+let _qrInstance=null,_qrPopupInstance=null;
 function renderWifiQR(ssid,pass){
   const canvas=document.getElementById('wifi-qr-canvas'),info=document.getElementById('wifi-info-text');
   if(!canvas)return;
   _qrInstance=new QRious({element:canvas,value:`WIFI:T:WPA;S:${ssid};P:${pass};;`,size:120,foreground:'#1c0438',background:'#ffffff',level:'M'});
   if(info)info.innerHTML=`<strong>${ssid}</strong><br>Senha: ${pass}`;
+  // guarda os dados para o popup
+  canvas._ssid=ssid;canvas._pass=pass;
 }
+document.getElementById('wifi-qr-canvas').addEventListener('click',function(){
+  const ssid=this._ssid,pass=this._pass;
+  if(!ssid)return;
+  const popCanvas=document.getElementById('qr-popup-canvas'),popInfo=document.getElementById('qr-popup-info');
+  _qrPopupInstance=new QRious({element:popCanvas,value:`WIFI:T:WPA;S:${ssid};P:${pass};;`,size:260,foreground:'#1c0438',background:'#ffffff',level:'M'});
+  popInfo.innerHTML=`📶 ${ssid}<br>🔑 Senha: <strong>${pass}</strong>`;
+  document.getElementById('qr-popup').classList.add('open');
+});
 document.getElementById('wifi-select').addEventListener('change',function(){
   const[ssid,pass]=this.value.split('|');renderWifiQR(ssid,pass);
 });
