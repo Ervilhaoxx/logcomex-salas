@@ -547,10 +547,6 @@ window.addEventListener('load',()=>{
   const ssid=sel.options[sel.selectedIndex].text.trim();
   renderWifiQR(val[0],val[1],ssid);
 });
-document.getElementById('wifi-select').addEventListener('change',function(){
-  const[ssid,pass]=this.value.split('|');renderWifiQR(ssid,pass);
-});
-window.addEventListener('load',()=>renderWifiQR(WIFI_NETS[0].ssid,WIFI_NETS[0].pass));
 
 // ── COLABORADORES AUTOCOMPLETE ──
 let _colaboradores=[],_colaboradoresLoaded=false;
