@@ -492,7 +492,7 @@ html,body{font-family:var(--font);background:var(--purple-dark);color:var(--whit
   </div>
 </div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<!-- QR Code via API pública - sem biblioteca -->
 <script>
 const DEFAULT_PIN='1234';
 const BACKEND_URL='https://script.google.com/macros/s/AKfycbyDgucsB17Z1Al0_15ZJ1WaPvJHkapmyxITLDHE9WBGl3DHmXNnMJET9xRNLzn-aov7/exec';
@@ -525,15 +525,15 @@ function renderWifiQR(ssid,pass){
   const wrap=document.getElementById('wifi-qr-canvas'),info=document.getElementById('wifi-info-text');
   if(!wrap)return;
   _currentSSID=ssid;_currentPass=pass;
-  wrap.innerHTML='';
-  new QRCode(wrap,{text:`WIFI:T:WPA;S:${ssid};P:${pass};;`,width:112,height:112,colorDark:'#1c0438',colorLight:'#ffffff',correctLevel:QRCode.CorrectLevel.M});
+  const txt=encodeURIComponent(`WIFI:T:WPA;S:${ssid};P:${pass};;`);
+  wrap.innerHTML=`<img src="https://api.qrserver.com/v1/create-qr-code/?size=112x112&data=${txt}&color=1c0438&bgcolor=ffffff" style="width:112px;height:112px;border-radius:6px;display:block" onerror="this.parentElement.innerHTML='<span style=font-size:10px;color:#888>QR indisponível</span>'">`;
   if(info)info.innerHTML=`<strong>${ssid}</strong><br>Senha: ${pass}`;
 }
 document.getElementById('wifi-qr-canvas').addEventListener('click',function(){
   if(!_currentSSID)return;
   const popWrap=document.getElementById('qr-popup-canvas'),popInfo=document.getElementById('qr-popup-info');
-  popWrap.innerHTML='';
-  new QRCode(popWrap,{text:`WIFI:T:WPA;S:${_currentSSID};P:${_currentPass};;`,width:244,height:244,colorDark:'#1c0438',colorLight:'#ffffff',correctLevel:QRCode.CorrectLevel.M});
+  const txt=encodeURIComponent(`WIFI:T:WPA;S:${_currentSSID};P:${_currentPass};;`);
+  popWrap.innerHTML=`<img src="https://api.qrserver.com/v1/create-qr-code/?size=260x260&data=${txt}&color=1c0438&bgcolor=ffffff" style="width:260px;height:260px;border-radius:10px;display:block">`;
   popInfo.innerHTML=`📶 ${_currentSSID}<br>🔑 Senha: <strong>${_currentPass}</strong>`;
   document.getElementById('qr-popup').classList.add('open');
 });
