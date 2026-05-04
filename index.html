@@ -702,7 +702,7 @@ function doCheckin(){
   const responsible=document.getElementById('responsible-chip')?.textContent?.trim();
   const roomName=document.getElementById('room-name')?.textContent?.trim();
   const endsAt=document.getElementById('pl-right')?.textContent?.replace('Libera ','')?.trim();
-  if(responsible&&responsible.includes('@')){const p=new URLSearchParams({action:'checkin',email:responsible,room:roomName||'Sala',endsAt:endsAt||''});fetch(`${BACKEND_URL}?${p.toString()}`).catch(()=>{});}
+  if(responsible&&responsible.includes('@')){const p=new URLSearchParams({action:'checkin',email:responsible,room:roomName||'Sala',endsAt:endsAt||'',roomEmail:cfg.thisRoom||''});fetch(`${BACKEND_URL}?${p.toString()}`).catch(()=>{});}
   const popup=document.getElementById('checkin-popup');popup.style.display='flex';
   setTimeout(()=>{popup.style.display='none';},2500);
 }
