@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sistema de Salas — Logcomex</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #08080f;
+    --surface: #0f0f1a;
+    --card: #13131f;
+    --border: #1c1c2e;
+    --purple: #7c3aed;
+    --purple-l: #a855f7;
+    --purple-xl: #c084fc;
+    --orange: #f97316;
+    --orange-l: #fb923c;
+    --green: #22c55e;
+    --teal: #14b8a6;
+    --red: #ef4444;
+    --amber: #f59e0b;
+    --text: #f1f5f9;
+    --muted: #475569;
+    --font: 'Sora', sans-serif;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Background mesh */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 80% 50% at 10% 10%, rgba(124,58,237,.12) 0%, transparent 60%),
+      radial-gradient(ellipse 60% 40% at 90% 80%, rgba(249,115,22,.08) 0%, transparent 60%),
+      radial-gradient(ellipse 40% 60% at 50% 50%, rgba(124,58,237,.04) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .container {
+    position: relative;
+    z-index: 1;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 48px 32px 80px;
+  }
+
+  /* Header */
+  .header {
+    text-align: center;
+    margin-bottom: 64px;
+    animation: fadeDown .8s ease both;
+  }
+
+  .logo-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    margin-bottom: 24px;
+  }
+
+  .logo-mark {
+    width: 48px; height: 48px;
+    background: linear-gradient(135deg, var(--purple), var(--orange));
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px; font-weight: 800; color: #fff;
+    box-shadow: 0 0 32px rgba(124,58,237,.4);
+  }
+
+  .logo-name {
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: -.01em;
+    background: linear-gradient(90deg, #fff, #a855f7);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .header h1 {
+    font-size: clamp(28px, 5vw, 44px);
+    font-weight: 800;
+    letter-spacing: -.03em;
+    line-height: 1.1;
+    margin-bottom: 12px;
+  }
+
+  .header h1 span {
+    background: linear-gradient(90deg, var(--purple-l), var(--orange));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .header p {
+    font-size: 15px;
+    color: #94a3b8;
+    font-weight: 300;
+  }
+
+  /* Divider */
+  .divider {
+    width: 60px; height: 3px;
+    background: linear-gradient(90deg, var(--purple), var(--orange));
+    border-radius: 99px;
+    margin: 20px auto;
+  }
+
+  /* ── FLOW ── */
+  .flow {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .flow-step {
+    display: grid;
+    grid-template-columns: 1fr 56px 1fr;
+    align-items: start;
+    gap: 0;
+    animation: fadeUp .6s ease both;
+  }
+
+  .flow-step:nth-child(1) { animation-delay: .1s; }
+  .flow-step:nth-child(2) { animation-delay: .2s; }
+  .flow-step:nth-child(3) { animation-delay: .3s; }
+  .flow-step:nth-child(4) { animation-delay: .4s; }
+  .flow-step:nth-child(5) { animation-delay: .5s; }
+  .flow-step:nth-child(6) { animation-delay: .6s; }
+
+  .flow-left { display: flex; justify-content: flex-end; padding-right: 24px; padding-bottom: 32px; }
+  .flow-right { display: flex; justify-content: flex-start; padding-left: 24px; padding-bottom: 32px; }
+  .flow-empty { padding-bottom: 32px; }
+
+  .flow-center {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .flow-dot {
+    width: 16px; height: 16px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--purple), var(--orange));
+    box-shadow: 0 0 16px rgba(124,58,237,.6);
+    flex-shrink: 0;
+    margin-top: 20px;
+    position: relative;
+    z-index: 2;
+  }
+
+  .flow-line {
+    width: 2px;
+    flex: 1;
+    min-height: 32px;
+    background: linear-gradient(180deg, rgba(124,58,237,.4), rgba(249,115,22,.2));
+    margin-top: 4px;
+  }
+
+  /* Cards */
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 20px 24px;
+    max-width: 420px;
+    width: 100%;
+    transition: transform .2s, box-shadow .2s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 16px;
+    opacity: 0;
+    transition: opacity .3s;
+  }
+
+  .card:hover { transform: translateY(-2px); }
+
+  .card.purple { border-color: rgba(124,58,237,.3); }
+  .card.purple::before { background: radial-gradient(ellipse at 0% 0%, rgba(124,58,237,.08), transparent 70%); }
+  .card.purple:hover::before { opacity: 1; }
+  .card.purple:hover { box-shadow: 0 8px 32px rgba(124,58,237,.2); }
+
+  .card.orange { border-color: rgba(249,115,22,.3); }
+  .card.orange::before { background: radial-gradient(ellipse at 100% 0%, rgba(249,115,22,.08), transparent 70%); }
+  .card.orange:hover::before { opacity: 1; }
+  .card.orange:hover { box-shadow: 0 8px 32px rgba(249,115,22,.2); }
+
+  .card.green { border-color: rgba(34,197,94,.3); }
+  .card.green:hover { box-shadow: 0 8px 32px rgba(34,197,94,.15); }
+
+  .card.teal { border-color: rgba(20,184,166,.3); }
+  .card.teal:hover { box-shadow: 0 8px 32px rgba(20,184,166,.15); }
+
+  .card.red { border-color: rgba(239,68,68,.3); }
+  .card.red:hover { box-shadow: 0 8px 32px rgba(239,68,68,.15); }
+
+  .card.amber { border-color: rgba(245,158,11,.3); }
+  .card.amber:hover { box-shadow: 0 8px 32px rgba(245,158,11,.15); }
+
+  .card-icon {
+    font-size: 28px;
+    margin-bottom: 10px;
+    display: block;
+  }
+
+  .card-step {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+
+  .card.purple .card-step { color: var(--purple-l); }
+  .card.orange .card-step { color: var(--orange-l); }
+  .card.green .card-step { color: var(--green); }
+  .card.teal .card-step { color: var(--teal); }
+  .card.red .card-step { color: var(--red); }
+  .card.amber .card-step { color: var(--amber); }
+
+  .card-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 8px;
+    letter-spacing: -.02em;
+  }
+
+  .card-desc {
+    font-size: 13px;
+    color: #94a3b8;
+    line-height: 1.6;
+    font-weight: 300;
+  }
+
+  .card-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 12px;
+  }
+
+  .tag {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 99px;
+    font-family: var(--font);
+  }
+
+  .tag-purple { background: rgba(124,58,237,.15); color: var(--purple-xl); border: 1px solid rgba(124,58,237,.25); }
+  .tag-orange { background: rgba(249,115,22,.15); color: var(--orange-l); border: 1px solid rgba(249,115,22,.25); }
+  .tag-green  { background: rgba(34,197,94,.12);  color: var(--green);    border: 1px solid rgba(34,197,94,.2); }
+  .tag-teal   { background: rgba(20,184,166,.12); color: var(--teal);     border: 1px solid rgba(20,184,166,.2); }
+  .tag-red    { background: rgba(239,68,68,.12);  color: var(--red);      border: 1px solid rgba(239,68,68,.2); }
+  .tag-amber  { background: rgba(245,158,11,.12); color: var(--amber);    border: 1px solid rgba(245,158,11,.2); }
+  .tag-gray   { background: rgba(71,85,105,.2);   color: #94a3b8;         border: 1px solid rgba(71,85,105,.3); }
+
+  /* Porta states grid */
+  .states-section {
+    margin-top: 64px;
+    animation: fadeUp .6s .7s ease both;
+  }
+
+  .states-title {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--purple-l);
+    text-align: center;
+    margin-bottom: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+  }
+
+  .states-title::before,
+  .states-title::after {
+    content: '';
+    flex: 1;
+    max-width: 120px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(124,58,237,.4));
+  }
+  .states-title::after { transform: scaleX(-1); }
+
+  .states-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 16px;
+  }
+
+  .state-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 18px;
+    transition: transform .2s, box-shadow .2s;
+  }
+
+  .state-card:hover { transform: translateY(-2px); }
+
+  .state-icon { font-size: 24px; margin-bottom: 10px; }
+
+  .state-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+
+  .state-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 10px;
+    letter-spacing: -.01em;
+  }
+
+  .state-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 5px;
+  }
+
+  .state-dot {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .state-row span {
+    font-size: 12px;
+    color: #94a3b8;
+    font-weight: 300;
+  }
+
+  /* Safety section */
+  .safety-section {
+    margin-top: 48px;
+    animation: fadeUp .6s .9s ease both;
+  }
+
+  .safety-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 16px;
+  }
+
+  .safety-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 20px;
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+  }
+
+  .safety-icon {
+    font-size: 24px;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  .safety-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 5px;
+  }
+
+  .safety-desc {
+    font-size: 12px;
+    color: #94a3b8;
+    line-height: 1.6;
+    font-weight: 300;
+  }
+
+  /* Footer */
+  .footer {
+    text-align: center;
+    margin-top: 64px;
+    font-size: 12px;
+    color: var(--muted);
+    animation: fadeUp .6s 1s ease both;
+  }
+
+  /* Animations */
+  @keyframes fadeDown {
+    from { opacity: 0; transform: translateY(-20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Mobile */
+  @media (max-width: 640px) {
+    .container { padding: 32px 16px 60px; }
+    .flow-step { grid-template-columns: 1fr 40px; }
+    .flow-right { display: none; }
+    .flow-left { padding-right: 16px; justify-content: flex-start; }
+    .card { max-width: 100%; }
+    .states-grid { grid-template-columns: 1fr 1fr; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="logo-row">
+      <div class="logo-mark">L</div>
+      <div class="logo-name">Logcomex</div>
+    </div>
+    <h1>Sistema de <span>Salas Inteligentes</span></h1>
+    <div class="divider"></div>
+    <p>Gestão de salas de reunião com controle de acesso eletrônico integrado</p>
+  </div>
+
+  <!-- FLOW -->
+  <div class="flow">
+
+    <!-- STEP 1 -->
+    <div class="flow-step">
+      <div class="flow-left">
+        <div class="card purple">
+          <span class="card-icon">🖥️</span>
+          <div class="card-step">Passo 01</div>
+          <div class="card-title">Painel no Tablet</div>
+          <div class="card-desc">Cada sala tem um tablet fixo na porta exibindo status em tempo real — Disponível, Em breve ou Ocupada — com countdown e responsável da reunião.</div>
+          <div class="card-tags">
+            <span class="tag tag-purple">Tempo real</span>
+            <span class="tag tag-gray">30s sync</span>
+            <span class="tag tag-gray">19 salas</span>
+          </div>
+        </div>
+      </div>
+      <div class="flow-center">
+        <div class="flow-dot"></div>
+        <div class="flow-line"></div>
+      </div>
+      <div class="flow-empty"></div>
+    </div>
+
+    <!-- STEP 2 -->
+    <div class="flow-step">
+      <div class="flow-empty"></div>
+      <div class="flow-center">
+        <div class="flow-dot"></div>
+        <div class="flow-line"></div>
+      </div>
+      <div class="flow-right">
+        <div class="card orange">
+          <span class="card-icon">📅</span>
+          <div class="card-step">Passo 02</div>
+          <div class="card-title">Agendamento</div>
+          <div class="card-desc">Colaborador vê os horários livres e agenda pelo tablet. O evento é criado automaticamente no Google Calendar e o convite é enviado por e-mail.</div>
+          <div class="card-tags">
+            <span class="tag tag-orange">Google Calendar</span>
+            <span class="tag tag-gray">E-mail convite</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 3 -->
+    <div class="flow-step">
+      <div class="flow-left">
+        <div class="card green">
+          <span class="card-icon">✅</span>
+          <div class="card-step">Passo 03</div>
+          <div class="card-title">Check-in</div>
+          <div class="card-desc">Quando a reunião começa, o responsável confirma o check-in no tablet. O sistema dispara o controle da porta e confirma por e-mail.</div>
+          <div class="card-tags">
+            <span class="tag tag-green">Porta abre</span>
+            <span class="tag tag-gray">E-mail confirmação</span>
+            <span class="tag tag-gray">15min tolerância</span>
+          </div>
+        </div>
+      </div>
+      <div class="flow-center">
+        <div class="flow-dot"></div>
+        <div class="flow-line"></div>
+      </div>
+      <div class="flow-empty"></div>
+    </div>
+
+    <!-- STEP 4 -->
+    <div class="flow-step">
+      <div class="flow-empty"></div>
+      <div class="flow-center">
+        <div class="flow-dot"></div>
+        <div class="flow-line"></div>
+      </div>
+      <div class="flow-right">
+        <div class="card teal">
+          <span class="card-icon">🔐</span>
+          <div class="card-step">Passo 04</div>
+          <div class="card-title">Controle de Acesso</div>
+          <div class="card-desc">Eletroímã + Raspberry Pi gerenciam a entrada e saída. Botão interno sempre libera saída. Botão externo só funciona com check-in ativo.</div>
+          <div class="card-tags">
+            <span class="tag tag-teal">Raspberry Pi</span>
+            <span class="tag tag-teal">Eletroímã 12V</span>
+            <span class="tag tag-gray">Reed switch</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 5 -->
+    <div class="flow-step">
+      <div class="flow-left">
+        <div class="card amber">
+          <span class="card-icon">⏰</span>
+          <div class="card-step">Passo 05</div>
+          <div class="card-title">Sem Check-in — Alerta</div>
+          <div class="card-desc">Sem check-in após 10 minutos → e-mail de aviso. Após 15 minutos → sala liberada automaticamente, evento cancelado e e-mail enviado.</div>
+          <div class="card-tags">
+            <span class="tag tag-amber">10min aviso</span>
+            <span class="tag tag-amber">15min cancelamento</span>
+          </div>
+        </div>
+      </div>
+      <div class="flow-center">
+        <div class="flow-dot"></div>
+        <div class="flow-line"></div>
+      </div>
+      <div class="flow-empty"></div>
+    </div>
+
+    <!-- STEP 6 -->
+    <div class="flow-step">
+      <div class="flow-empty"></div>
+      <div class="flow-center">
+        <div class="flow-dot"></div>
+      </div>
+      <div class="flow-right">
+        <div class="card red">
+          <span class="card-icon">🔓</span>
+          <div class="card-step">Passo 06</div>
+          <div class="card-title">Encerramento</div>
+          <div class="card-desc">Reunião termina → botão externo desativa automaticamente. Sala volta ao status Disponível. Próximo agendamento pode ser feito imediatamente.</div>
+          <div class="card-tags">
+            <span class="tag tag-red">Acesso bloqueado</span>
+            <span class="tag tag-green">Sala liberada</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ESTADOS DA PORTA -->
+  <div class="states-section">
+    <div class="states-title">Estados da porta</div>
+    <div class="states-grid">
+
+      <div class="state-card" style="border-color:rgba(71,85,105,.4)">
+        <div class="state-icon">🔘</div>
+        <div class="state-label" style="color:#94a3b8">Sem check-in</div>
+        <div class="state-title">Sala livre</div>
+        <div class="state-row"><div class="state-dot" style="background:#22c55e"></div><span>Botão interno — sempre abre</span></div>
+        <div class="state-row"><div class="state-dot" style="background:#ef4444"></div><span>Botão externo — bloqueado</span></div>
+      </div>
+
+      <div class="state-card" style="border-color:rgba(34,197,94,.3)">
+        <div class="state-icon">✅</div>
+        <div class="state-label" style="color:#22c55e">Check-in confirmado</div>
+        <div class="state-title">Entrando na sala</div>
+        <div class="state-row"><div class="state-dot" style="background:#22c55e"></div><span>Porta destrava por 60s</span></div>
+        <div class="state-row"><div class="state-dot" style="background:#22c55e"></div><span>Botão externo ativado</span></div>
+        <div class="state-row"><div class="state-dot" style="background:#14b8a6"></div><span>Porta fecha → trava auto</span></div>
+      </div>
+
+      <div class="state-card" style="border-color:rgba(124,58,237,.3)">
+        <div class="state-icon">🟣</div>
+        <div class="state-label" style="color:#a855f7">Durante a reunião</div>
+        <div class="state-title">Em andamento</div>
+        <div class="state-row"><div class="state-dot" style="background:#22c55e"></div><span>Botão interno — sair</span></div>
+        <div class="state-row"><div class="state-dot" style="background:#22c55e"></div><span>Botão externo — entrar</span></div>
+        <div class="state-row"><div class="state-dot" style="background:#14b8a6"></div><span>Porta fecha → trava auto</span></div>
+      </div>
+
+      <div class="state-card" style="border-color:rgba(245,158,11,.3)">
+        <div class="state-icon">🔴</div>
+        <div class="state-label" style="color:#f59e0b">Reunião encerrada</div>
+        <div class="state-title">Sala liberada</div>
+        <div class="state-row"><div class="state-dot" style="background:#22c55e"></div><span>Botão interno — sempre abre</span></div>
+        <div class="state-row"><div class="state-dot" style="background:#ef4444"></div><span>Botão externo — bloqueado</span></div>
+      </div>
+
+      <div class="state-card" style="border-color:rgba(239,68,68,.3)">
+        <div class="state-icon">⚡</div>
+        <div class="state-label" style="color:#ef4444">Queda de energia</div>
+        <div class="state-title">Failsafe ativo</div>
+        <div class="state-row"><div class="state-dot" style="background:#22c55e"></div><span>Porta manual — ambos lados</span></div>
+        <div class="state-row"><div class="state-dot" style="background:#22c55e"></div><span>Ninguém fica preso</span></div>
+      </div>
+
+      <div class="state-card" style="border-color:rgba(239,68,68,.3)">
+        <div class="state-icon">🚨</div>
+        <div class="state-label" style="color:#ef4444">Emergência</div>
+        <div class="state-title">Botão físico</div>
+        <div class="state-row"><div class="state-dot" style="background:#22c55e"></div><span>Corta energia do eletroímã</span></div>
+        <div class="state-row"><div class="state-dot" style="background:#22c55e"></div><span>Independe do sistema</span></div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- SEGURANÇA -->
+  <div class="safety-section">
+    <div class="states-title">Segurança e confiabilidade</div>
+    <div class="safety-grid">
+
+      <div class="safety-card">
+        <div class="safety-icon">🔒</div>
+        <div>
+          <div class="safety-title">Failsafe por hardware</div>
+          <div class="safety-desc">Eletroímã em terminal NO — sem energia a porta abre automaticamente. Ninguém fica preso em nenhuma situação.</div>
+        </div>
+      </div>
+
+      <div class="safety-card">
+        <div class="safety-icon">🚪</div>
+        <div>
+          <div class="safety-title">Saída sempre garantida</div>
+          <div class="safety-desc">Botão interno funciona 100% do tempo, independente de check-in, reunião ou estado do sistema.</div>
+        </div>
+      </div>
+
+      <div class="safety-card">
+        <div class="safety-icon">⚙️</div>
+        <div>
+          <div class="safety-title">Boot automático</div>
+          <div class="safety-desc">O serviço inicia automaticamente quando o Raspberry Pi liga — sem necessidade de intervenção manual.</div>
+        </div>
+      </div>
+
+      <div class="safety-card">
+        <div class="safety-icon">📡</div>
+        <div>
+          <div class="safety-title">IP fixo na rede</div>
+          <div class="safety-desc">Raspberry Pi com IP fixo garantido pelo TI — comunicação estável com o Apps Script em qualquer momento.</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="footer">
+    <p>Logcomex Facilities · Sistema de Salas Inteligentes · v6 · 2026</p>
+  </div>
+
+</div>
+</body>
+</html>
