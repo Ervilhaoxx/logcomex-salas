@@ -603,7 +603,7 @@ let cfg={
     {name:'24. Mesa Ext-Dataset',email:'c_1880d4ibnjevmg1qidnmi5lhn6m9m@resource.calendar.google.com',floor:'Andar 2'},
   ]
 };
-let state={events:[],allRoomData:[],refreshTimer:null,bookingTarget:null,_bookingEvents:[],currentEventId:null};
+let state={events:[],allRoomData:[],refreshTimer:null,bookingTarget:null,_bookingEvents:[],currentEventId:null,lastStatus:null,lastResponsible:null};
 
 function saveCfg(){
   try{
@@ -711,6 +711,14 @@ document.getElementById('btn-checkin').addEventListener('click',doCheckin);
 function renderMain(cl){
   const{status,progress,countdown,endsAt,nextAt,responsible}=cl;
   const mp=document.getElementById('main-panel'),bd=document.getElementById('status-badge');
+  // Detecta fim de reuniao: era busy, agora virou free -> envia NPS
+  if(state.lastStatus==='busy'&&status==='free'&&state.lastResponsible&&cfg.thisRoom){
+    const p=new URLSearchParams({action:'reuniao_encerrada',email:state.lastResponsible,room:roomByEmail(cfg.thisRoom)?.name||cfg.thisRoom,roomEmail:cfg.thisRoom});
+    fetch(BACKEND_URL+'?'+p.toString()).catch(()=>{});
+    state.lastResponsible=null;
+  }
+  state.lastStatus=status;
+  if(status==='busy'&&responsible)state.lastResponsible=responsible;
   mp.className=status;bd.className=`status-badge ${status}`;
   document.getElementById('status-text').textContent={free:'Disponível',soon:'Em breve',busy:'Ocupada'}[status];
   const info=document.getElementById('status-info'),cd=document.getElementById('countdown');
