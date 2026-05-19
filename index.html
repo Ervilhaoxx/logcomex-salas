@@ -828,35 +828,10 @@ function buildVipList(){
   el.innerHTML=cfg.vipEmails.map(e=>`<div style="padding:2px 0;border-bottom:1px solid rgba(255,255,255,0.05)">${e}</div>`).join('');
 }
 
-  el.innerHTML=hist.map(h=>{
-    const d=new Date(h.ts);
-    const dt=d.toLocaleDateString('pt-BR')+' '+d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
-    const badge=h.checkin
-      ?'<span style="background:rgba(22,219,106,.15);color:#16db6a;border:1px solid rgba(22,219,106,.3);border-radius:99px;padding:1px 8px;font-size:10px;font-weight:700">CHECK-IN ✓</span>'
-      :'<span style="background:rgba(255,31,31,.12);color:#ff4444;border:1px solid rgba(255,31,31,.25);border-radius:99px;padding:1px 8px;font-size:10px;font-weight:700">SEM CHECK-IN</span>';
-    return`<div style="display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid rgba(255,255,255,0.06);font-size:12px">
-      <div style="flex:1;min-width:0">
-        <div style="color:var(--white-70);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${h.email}</div>
-        <div style="color:var(--white-40);font-size:11px">${h.room} · ${dt}</div>
-      </div>
-      ${badge}
-    </div>`;
-  }).join('');
-}
-
 function buildVipList(){
   const el=document.getElementById('vip-list');
   if(!el)return;
   el.innerHTML=cfg.vipEmails.map(e=>`<div style="padding:2px 0;border-bottom:1px solid rgba(255,255,255,0.05);color:var(--white-70)">${e}</div>`).join('');
-}
-  el.innerHTML=hist.map(h=>{
-    const d=new Date(h.ts);
-    const dt=d.toLocaleDateString('pt-BR')+' '+d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
-    const badge=h.checkin
-      ?'<span style="background:rgba(22,219,106,.15);color:#16db6a;border:1px solid rgba(22,219,106,.3);border-radius:99px;padding:1px 8px;font-size:10px;font-weight:700">CHECK-IN ✓</span>'
-      :'<span style="background:rgba(255,31,31,.12);color:#ff4444;border:1px solid rgba(255,31,31,.25);border-radius:99px;padding:1px 8px;font-size:10px;font-weight:700">SEM CHECK-IN</span>';
-    return`<div style="display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid rgba(255,255,255,0.06);font-size:12px"><div style="flex:1;min-width:0"><div style="color:var(--white-70);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${h.email}</div><div style="color:var(--white-40);font-size:11px">${h.room} · ${dt}</div></div>${badge}</div>`;
-  }).join('');
 }
 function openCfg(){
   document.getElementById('cfg-pin-current').value='';
@@ -868,7 +843,6 @@ function openCfg(){
 
 document.getElementById('btn-add-room').addEventListener('click',()=>{cfg.rooms.push({name:'Nova sala',email:'',floor:'Andar 1'});buildRoomList();buildThisRoomSelect();});
 document.getElementById('btn-close-cfg').addEventListener('click',()=>hideModal('modal-cfg'));
-});
 document.getElementById('btn-save-cfg').addEventListener('click',()=>{
   const al=document.getElementById('cfg-alert');
   document.querySelectorAll('#room-list-edit .room-row').forEach((row,i)=>{if(cfg.rooms[i]){cfg.rooms[i].name=row.querySelector('.rn').value.trim();cfg.rooms[i].email=row.querySelector('.re').value.trim();cfg.rooms[i].floor=row.querySelector('.rf').value;}});
