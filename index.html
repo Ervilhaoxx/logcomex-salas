@@ -873,21 +873,12 @@ function openCfg(){
   document.getElementById('cfg-pin-new').value='';
   document.getElementById('cfg-alert').innerHTML='';
   document.getElementById('cfg-auto-cancel').checked=cfg.autoCancel;
-  buildRoomList();buildThisRoomSelect();buildVipList();buildReport();showModal('modal-cfg');
+  buildRoomList();buildThisRoomSelect();buildVipList();showModal('modal-cfg');
 }
 
 document.getElementById('btn-add-room').addEventListener('click',()=>{cfg.rooms.push({name:'Nova sala',email:'',floor:'Andar 1'});buildRoomList();buildThisRoomSelect();});
 document.getElementById('btn-close-cfg').addEventListener('click',()=>hideModal('modal-cfg'));
-document.getElementById('btn-clear-report').addEventListener('click',()=>{if(confirm('Limpar todo o histórico de uso deste tablet?')){localStorage.removeItem('lcx_hist');buildReport();}});
-document.getElementById('btn-export-report').addEventListener('click',()=>{
-  const hist=JSON.parse(localStorage.getItem('lcx_hist')||'[]');
-  if(!hist.length){alert('Nenhum registro para exportar.');return;}
-  const sep=';';
-  const header=['E-mail','Sala','Data','Hora','Check-in'].join(sep);
-  const rows=hist.map(h=>{
-    const d=new Date(h.ts);
-    const data=d.toLocaleDateString('pt-BR');
-    const hora=d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
+buildReport();}});
     const checkin=h.checkin?'Sim':'Nao';
     return [h.email,h.room,data,hora,checkin].join(sep);
   });
@@ -900,15 +891,9 @@ document.getElementById('btn-export-report').addEventListener('click',()=>{
   a.click();
   URL.revokeObjectURL(url);
 });
-document.getElementById('btn-clear-report').addEventListener('click',()=>{
-  if(confirm('Limpar todo o histórico de uso deste tablet?')){
-    localStorage.removeItem('lcx_hist');
     buildReport();
   }
 });
-document.getElementById('btn-clear-report').addEventListener('click',()=>{
-  if(confirm('Limpar todo o histórico de uso deste tablet?')){
-    localStorage.removeItem('lcx_hist');
     buildReport();
   }
 });
