@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Relatório · Salas Logcomex</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #05040f;
+    --surface: #0d0a1e;
+    --card: #130d2a;
+    --border: rgba(124,58,237,0.2);
+    --orange: #FF6B2B;
+    --orange-l: #ff8c57;
+    --purple: #7c3aed;
+    --purple-l: #a855f7;
+    --text: #f1f5f9;
+    --muted: #64748b;
+    --green: #22c55e;
+    --red: #ef4444;
+    --font: 'Sora', sans-serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: var(--font); background: var(--bg); color: var(--text); min-height: 100vh; }
+
+  /* HEADER */
+  .header {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 16px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .header-left { display: flex; flex-direction: column; gap: 2px; }
+  .header-tag { font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--orange); }
+  .header-title { font-size: 18px; font-weight: 700; color: var(--text); }
+  .btn-refresh {
+    background: var(--orange);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 8px 18px;
+    font-family: var(--font);
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity .2s;
+  }
+  .btn-refresh:hover { opacity: .85; }
+
+  /* PIN SCREEN */
+  #pin-screen {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: calc(100vh - 61px);
+  }
+  .pin-box {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 36px 40px;
+    text-align: center;
+    width: 320px;
+  }
+  .pin-box h2 { font-size: 18px; margin-bottom: 6px; }
+  .pin-box p { font-size: 13px; color: var(--muted); margin-bottom: 24px; }
+  .pin-dots { display: flex; justify-content: center; gap: 10px; margin-bottom: 24px; }
+  .pin-dot { width: 12px; height: 12px; border-radius: 50%; border: 2px solid var(--border); transition: background .2s; }
+  .pin-dot.filled { background: var(--orange); border-color: var(--orange); }
+  .pin-keypad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+  .pin-key {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px;
+    font-size: 18px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: var(--font);
+    color: var(--text);
+    transition: background .15s;
+  }
+  .pin-key:hover { background: rgba(124,58,237,0.15); }
+  .pin-error { color: var(--red); font-size: 12px; margin-top: 12px; min-height: 18px; }
+
+  /* MAIN */
+  #main { display: none; padding: 32px; max-width: 1100px; margin: 0 auto; }
+
+  /* CARDS TOPO */
+  .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 32px; }
+  .stat-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 20px 24px;
+  }
+  .stat-label { font-size: 11px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; }
+  .stat-value { font-size: 32px; font-weight: 800; letter-spacing: -.02em; }
+  .stat-sub { font-size: 12px; color: var(--muted); margin-top: 4px; }
+  .stat-card.orange .stat-value { color: var(--orange); }
+  .stat-card.green .stat-value { color: var(--green); }
+  .stat-card.red .stat-value { color: var(--red); }
+  .stat-card.purple .stat-value { color: var(--purple-l); }
+
+  /* BARRAS */
+  .section-title {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--purple-l);
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .section-title::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+  .charts-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 32px; }
+  .chart-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 20px 24px;
+  }
+  .chart-title { font-size: 13px; font-weight: 600; margin-bottom: 16px; color: var(--text); }
+
+  .bar-row { margin-bottom: 12px; }
+  .bar-label { display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 5px; }
+  .bar-label span:first-child { color: var(--text); }
+  .bar-label span:last-child { color: var(--muted); }
+  .bar-track { background: rgba(255,255,255,0.06); border-radius: 99px; height: 8px; overflow: hidden; }
+  .bar-fill { height: 100%; border-radius: 99px; transition: width .6s ease; }
+  .bar-fill.orange { background: var(--orange); }
+  .bar-fill.green { background: var(--green); }
+  .bar-fill.red { background: var(--red); }
+  .bar-fill.purple { background: var(--purple-l); }
+
+  /* TABELA */
+  .table-section { margin-bottom: 32px; }
+  .table-filters { display: flex; gap: 10px; margin-bottom: 16px; flex-wrap: wrap; }
+  .filter-btn {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 6px 14px;
+    font-size: 12px;
+    font-family: var(--font);
+    color: var(--muted);
+    cursor: pointer;
+    transition: all .2s;
+  }
+  .filter-btn.active { background: rgba(255,107,43,0.15); border-color: var(--orange); color: var(--orange); }
+  .search-input {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 6px 14px;
+    font-size: 12px;
+    font-family: var(--font);
+    color: var(--text);
+    width: 220px;
+    margin-left: auto;
+  }
+  .search-input:focus { outline: none; border-color: var(--orange); }
+  table { width: 100%; border-collapse: collapse; }
+  thead th {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: var(--muted);
+    padding: 10px 14px;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+  }
+  tbody tr { border-bottom: 1px solid rgba(255,255,255,0.04); transition: background .15s; }
+  tbody tr:hover { background: rgba(124,58,237,0.05); }
+  tbody td { padding: 11px 14px; font-size: 13px; color: var(--text); }
+  td.muted { color: var(--muted); font-size: 12px; }
+  .badge {
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 10px;
+    border-radius: 99px;
+    letter-spacing: .06em;
+  }
+  .badge.yes { background: rgba(34,197,94,.12); color: var(--green); border: 1px solid rgba(34,197,94,.25); }
+  .badge.no  { background: rgba(239,68,68,.12);  color: var(--red);   border: 1px solid rgba(239,68,68,.25); }
+
+  .loading { text-align: center; padding: 60px; color: var(--muted); font-size: 14px; }
+  .empty { text-align: center; padding: 40px; color: var(--muted); font-size: 13px; }
+
+  @media (max-width: 768px) {
+    .stats-grid { grid-template-columns: repeat(2, 1fr); }
+    .charts-grid { grid-template-columns: 1fr; }
+    #main { padding: 16px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-left">
+    <div class="header-tag">Facilities · Logcomex</div>
+    <div class="header-title">Relatório de Salas</div>
+  </div>
+  <button class="btn-refresh" onclick="loadData()">↻ Atualizar</button>
+</div>
+
+<!-- PIN -->
+<div id="pin-screen">
+  <div class="pin-box">
+    <h2>🔒 Acesso restrito</h2>
+    <p>Digite o PIN para acessar o relatório</p>
+    <div class="pin-dots">
+      <div class="pin-dot" id="d0"></div>
+      <div class="pin-dot" id="d1"></div>
+      <div class="pin-dot" id="d2"></div>
+      <div class="pin-dot" id="d3"></div>
+    </div>
+    <div class="pin-keypad">
+      <button class="pin-key" onclick="pressPin('1')">1</button>
+      <button class="pin-key" onclick="pressPin('2')">2</button>
+      <button class="pin-key" onclick="pressPin('3')">3</button>
+      <button class="pin-key" onclick="pressPin('4')">4</button>
+      <button class="pin-key" onclick="pressPin('5')">5</button>
+      <button class="pin-key" onclick="pressPin('6')">6</button>
+      <button class="pin-key" onclick="pressPin('7')">7</button>
+      <button class="pin-key" onclick="pressPin('8')">8</button>
+      <button class="pin-key" onclick="pressPin('9')">9</button>
+      <button class="pin-key" onclick="pressPin('del')" style="font-size:14px">⌫</button>
+      <button class="pin-key" onclick="pressPin('0')">0</button>
+      <button class="pin-key" onclick="pressPin('ok')" style="background:var(--orange);border-color:var(--orange)">OK</button>
+    </div>
+    <div class="pin-error" id="pin-error"></div>
+  </div>
+</div>
+
+<!-- MAIN DASHBOARD -->
+<div id="main">
+  <div id="loading" class="loading">Carregando dados...</div>
+  <div id="dashboard" style="display:none">
+
+    <!-- STATS -->
+    <div class="section-title">Resumo geral</div>
+    <div class="stats-grid">
+      <div class="stat-card orange">
+        <div class="stat-label">Total de reservas</div>
+        <div class="stat-value" id="stat-total">—</div>
+        <div class="stat-sub">registros no período</div>
+      </div>
+      <div class="stat-card green">
+        <div class="stat-label">Com check-in</div>
+        <div class="stat-value" id="stat-checkin">—</div>
+        <div class="stat-sub" id="stat-checkin-pct">—</div>
+      </div>
+      <div class="stat-card red">
+        <div class="stat-label">Sem check-in</div>
+        <div class="stat-value" id="stat-no-checkin">—</div>
+        <div class="stat-sub" id="stat-no-checkin-pct">—</div>
+      </div>
+      <div class="stat-card purple">
+        <div class="stat-label">Usuários únicos</div>
+        <div class="stat-value" id="stat-users">—</div>
+        <div class="stat-sub">e-mails distintos</div>
+      </div>
+    </div>
+
+    <!-- GRÁFICOS -->
+    <div class="section-title">Por sala e status</div>
+    <div class="charts-grid">
+      <div class="chart-card">
+        <div class="chart-title">Reservas por sala</div>
+        <div id="chart-rooms"></div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-title">Taxa de check-in por sala</div>
+        <div id="chart-checkin"></div>
+      </div>
+    </div>
+
+    <!-- TABELA -->
+    <div class="table-section">
+      <div class="section-title">Todos os registros</div>
+      <div class="table-filters">
+        <button class="filter-btn active" onclick="setFilter('all',this)">Todos</button>
+        <button class="filter-btn" onclick="setFilter('yes',this)">✅ Check-in</button>
+        <button class="filter-btn" onclick="setFilter('no',this)">❌ Sem check-in</button>
+        <input class="search-input" id="search-input" placeholder="🔍 Buscar por e-mail..." oninput="renderTable()">
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>E-mail</th>
+            <th>Sala</th>
+            <th>Data</th>
+            <th>Horário</th>
+            <th>Check-in</th>
+          </tr>
+        </thead>
+        <tbody id="table-body"></tbody>
+      </table>
+      <div id="table-empty" class="empty" style="display:none">Nenhum registro encontrado.</div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+const BACKEND_URL = 'https://script.google.com/macros/s/AKfycbyDgucsB17Z1Al0_15ZJ1WaPvJHkapmyxITLDHE9WBGl3DHmXNnMJET9xRNLzn-aov7/exec';
+const PIN_KEY = 'lcx_g';
+let allData = [];
+let currentFilter = 'all';
+let pinBuffer = '';
+
+// ── PIN ──
+function getPin() {
+  try { const g = localStorage.getItem(PIN_KEY); if(g){const p=JSON.parse(g);return p.pin||'1234';} } catch(e){}
+  return '1234';
+}
+
+function pressPin(k) {
+  if (k === 'del') { pinBuffer = pinBuffer.slice(0,-1); updateDots(); return; }
+  if (k === 'ok') { checkPin(); return; }
+  if (pinBuffer.length >= 4) return;
+  pinBuffer += k;
+  updateDots();
+  if (pinBuffer.length === 4) setTimeout(checkPin, 200);
+}
+
+function updateDots() {
+  for (let i = 0; i < 4; i++) {
+    document.getElementById('d'+i).className = 'pin-dot' + (i < pinBuffer.length ? ' filled' : '');
+  }
+}
+
+function checkPin() {
+  if (pinBuffer === getPin()) {
+    document.getElementById('pin-screen').style.display = 'none';
+    document.getElementById('main').style.display = 'block';
+    loadData();
+  } else {
+    document.getElementById('pin-error').textContent = 'PIN incorreto. Tente novamente.';
+    pinBuffer = '';
+    updateDots();
+    setTimeout(() => { document.getElementById('pin-error').textContent = ''; }, 2000);
+  }
+}
+
+// ── DADOS ──
+async function loadData() {
+  document.getElementById('loading').style.display = 'block';
+  document.getElementById('dashboard').style.display = 'none';
+  try {
+    const r = await fetch(`${BACKEND_URL}?action=relatorio`);
+    const d = await r.json();
+    allData = d.registros || [];
+    renderDashboard();
+    document.getElementById('loading').style.display = 'none';
+    document.getElementById('dashboard').style.display = 'block';
+  } catch(e) {
+    document.getElementById('loading').textContent = 'Erro ao carregar dados. Tente novamente.';
+  }
+}
+
+// ── RENDER ──
+function renderDashboard() {
+  const total = allData.length;
+  const comCheckin = allData.filter(r => r.checkin).length;
+  const semCheckin = total - comCheckin;
+  const users = new Set(allData.map(r => r.email)).size;
+
+  document.getElementById('stat-total').textContent = total;
+  document.getElementById('stat-checkin').textContent = comCheckin;
+  document.getElementById('stat-checkin-pct').textContent = total ? Math.round(comCheckin/total*100)+'% das reservas' : '—';
+  document.getElementById('stat-no-checkin').textContent = semCheckin;
+  document.getElementById('stat-no-checkin-pct').textContent = total ? Math.round(semCheckin/total*100)+'% das reservas' : '—';
+  document.getElementById('stat-users').textContent = users;
+
+  renderCharts();
+  renderTable();
+}
+
+function renderCharts() {
+  // Por sala
+  const bySala = {};
+  allData.forEach(r => { if(!bySala[r.room]) bySala[r.room]={total:0,checkin:0}; bySala[r.room].total++; if(r.checkin)bySala[r.room].checkin++; });
+  const salas = Object.entries(bySala).sort((a,b)=>b[1].total-a[1].total);
+  const maxTotal = Math.max(...salas.map(s=>s[1].total), 1);
+
+  const colors = ['orange','purple','green','red'];
+  document.getElementById('chart-rooms').innerHTML = salas.map((s,i) =>
+    `<div class="bar-row">
+      <div class="bar-label"><span>${s[0]}</span><span>${s[1].total} reservas</span></div>
+      <div class="bar-track"><div class="bar-fill ${colors[i%colors.length]}" style="width:${Math.round(s[1].total/maxTotal*100)}%"></div></div>
+    </div>`
+  ).join('') || '<div class="empty">Sem dados</div>';
+
+  document.getElementById('chart-checkin').innerHTML = salas.map((s,i) => {
+    const pct = s[1].total ? Math.round(s[1].checkin/s[1].total*100) : 0;
+    return `<div class="bar-row">
+      <div class="bar-label"><span>${s[0]}</span><span>${pct}% check-in</span></div>
+      <div class="bar-track"><div class="bar-fill ${pct>=70?'green':pct>=40?'orange':'red'}" style="width:${pct}%"></div></div>
+    </div>`;
+  }).join('') || '<div class="empty">Sem dados</div>';
+}
+
+function setFilter(f, btn) {
+  currentFilter = f;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderTable();
+}
+
+function renderTable() {
+  const search = (document.getElementById('search-input').value || '').toLowerCase();
+  let data = allData;
+  if (currentFilter === 'yes') data = data.filter(r => r.checkin);
+  if (currentFilter === 'no')  data = data.filter(r => !r.checkin);
+  if (search) data = data.filter(r => r.email.toLowerCase().includes(search) || r.room.toLowerCase().includes(search));
+
+  const tbody = document.getElementById('table-body');
+  const empty = document.getElementById('table-empty');
+
+  if (!data.length) {
+    tbody.innerHTML = '';
+    empty.style.display = 'block';
+    return;
+  }
+  empty.style.display = 'none';
+
+  tbody.innerHTML = data.map(r => {
+    const parts = r.ts ? r.ts.split(' ') : ['—','—'];
+    const data_str = parts[0] || '—';
+    const hora_str = parts[1] ? parts[1].slice(0,5) : '—';
+    const badge = r.checkin
+      ? '<span class="badge yes">CHECK-IN ✓</span>'
+      : '<span class="badge no">SEM CHECK-IN</span>';
+    return `<tr>
+      <td>${r.email}</td>
+      <td>${r.room}</td>
+      <td class="muted">${data_str}</td>
+      <td class="muted">${hora_str}</td>
+      <td>${badge}</td>
+    </tr>`;
+  }).join('');
+}
+
+// Teclado físico para PIN
+document.addEventListener('keydown', e => {
+  if (document.getElementById('pin-screen').style.display === 'none') return;
+  if (e.key >= '0' && e.key <= '9') pressPin(e.key);
+  if (e.key === 'Backspace') pressPin('del');
+  if (e.key === 'Enter') pressPin('ok');
+});
+</script>
+</body>
+</html>
