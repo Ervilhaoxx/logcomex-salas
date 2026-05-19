@@ -754,10 +754,11 @@ function renderMain(cl){
   if(schedBtn)schedBtn.style.display='inline-block';
   if(checkinBtn){
     const hasEvent=status==='busy'||status==='soon';
-    const eventId=status==='busy'?(cl.endsAt?.getTime()+''):status==='soon'?(cl.nextAt?.getTime()+''):null;
+    const eventId=status==='busy'?(cl.current?.start?.dateTime||cl.endsAt?.getTime()+''):status==='soon'?(cl.next?.start?.dateTime||cl.nextAt?.getTime()+''):null;
     state.currentEventId=eventId;
-    if(hasEvent&&eventId&&checkinDoneForEvent!==eventId){checkinBtn.style.display='inline-block';if(status==='busy')startToleranceTimer();}
-    else if(!hasEvent){checkinBtn.style.display='none';resetToleranceTimer();}
+    if(status==='soon'&&eventId&&checkinDoneForEvent!==eventId){checkinBtn.style.display='inline-block';}
+    else if(status==='busy'&&eventId&&checkinDoneForEvent!==eventId){checkinBtn.style.display='inline-block';startToleranceTimer();}
+    else{checkinBtn.style.display='none';if(!hasEvent)resetToleranceTimer();}
   }
   if(status==='busy'){
     info.innerHTML=`Termina às <span class="hl">${fmt(endsAt)}</span>`;
