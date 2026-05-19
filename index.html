@@ -651,7 +651,7 @@ function classify(events){
   const cur=events.find(e=>{const s=new Date(e.start.dateTime||e.start.date),en=new Date(e.end.dateTime||e.end.date);return s<=now&&en>now;});
   if(cur){const s=new Date(cur.start.dateTime),en=new Date(cur.end.dateTime);return{status:'busy',current:cur,progress:Math.min(100,Math.round(((now-s)/(en-s))*100)),countdown:en-now,endsAt:en,responsible:cur.organizer?.email||null};}
   const nxt=events.find(e=>new Date(e.start.dateTime||e.start.date)>now);
-  if(nxt){const st=new Date(nxt.start.dateTime||nxt.start.date),mins=Math.round((st-now)/60000);if(mins<=30)return{status:'soon',next:nxt,progress:Math.max(0,100-(mins/30)*100),countdown:st-now,nextAt:st,responsible:nxt.organizer?.email||null};return{status:'free',next:nxt,progress:0,nextAt:st,responsible:nxt.organizer?.email||null};}
+  if(nxt){const st=new Date(nxt.start.dateTime||nxt.start.date),mins=Math.round((st-now)/60000);if(mins<=15)return{status:'soon',next:nxt,progress:Math.max(0,100-(mins/15)*100),countdown:st-now,nextAt:st,responsible:nxt.organizer?.email||null};return{status:'free',next:nxt,progress:0,nextAt:st,responsible:nxt.organizer?.email||null};}
   return{status:'free',progress:0,responsible:null};
 }
 
