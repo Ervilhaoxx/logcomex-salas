@@ -675,7 +675,7 @@ function startToleranceTimer(){
       const now=new Date();
       const cur=state.events.find(e=>{const s=new Date(e.start.dateTime),en=new Date(e.end.dateTime);return s<=now&&en>now;});
       if(cur){
-        const p=new URLSearchParams({action:'cancel',roomEmail:cfg.thisRoom,eventStart:cur.start.dateTime,email:responsible||'',room:roomName||'Sala'});
+        if(cfg.thisRoom!=='c_1886tvmpocelmh5pjo46elcu1lkb6@resource.calendar.google.com'){return;}const p=new URLSearchParams({action:'cancel',roomEmail:cfg.thisRoom,eventStart:cur.start.dateTime,email:responsible||'',room:roomName||'Sala'});
         fetch(`${BACKEND_URL}?${p.toString()}`).catch(()=>{});
       }
     }
@@ -750,7 +750,7 @@ function renderMain(cl){
     cd.textContent='';pf.style.width='0%';pl.textContent='';pr.textContent='';
     nc.innerHTML=cl.next?`Próxima às <strong>${fmt(nextAt)}</strong>`:'Livre o dia todo';nc.parentElement.dataset.nextStart='';
   }
-  rc.textContent=responsible||'—';
+  rc.textContent=responsible?(responsible.includes('@logcomex.com')?responsible:'Externo'):'—';
 }
 
 function renderAvail(rooms){
