@@ -883,15 +883,16 @@ document.getElementById('btn-clear-report').addEventListener('click',()=>{if(con
 document.getElementById('btn-export-report').addEventListener('click',()=>{
   const hist=JSON.parse(localStorage.getItem('lcx_hist')||'[]');
   if(!hist.length){alert('Nenhum registro para exportar.');return;}
-  const header='E-mail,Sala,Data,Hora,Check-in';
+  const sep=';';
+  const header=['E-mail','Sala','Data','Hora','Check-in'].join(sep);
   const rows=hist.map(h=>{
     const d=new Date(h.ts);
     const data=d.toLocaleDateString('pt-BR');
     const hora=d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
     const checkin=h.checkin?'Sim':'Nao';
-    return `"${h.email}","${h.room}","${data}","${hora}","${checkin}"`;
+    return [h.email,h.room,data,hora,checkin].join(sep);
   });
-  const csv=[header,...rows].join('\n');
+  const csv='\uFEFF'+[header,...rows].join('\n');
   const blob=new Blob([csv],{type:'text/csv;charset=utf-8;'});
   const url=URL.createObjectURL(blob);
   const a=document.createElement('a');
