@@ -5,19 +5,19 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 <meta name="robots" content="noindex, nofollow">
 <title>Salas · Logcomex</title>
-<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Funnel+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root{
-  --purple-dark:#05040f;--purple-mid:#0d0a1e;--purple-card:#130d2a;--purple-border:#3b1f7a;
-  --orange:#FF6B2B;--orange-light:#ff8c57;
+  --purple-dark:#0B0D19;--purple-mid:#2D085D;--purple-card:#3B1472;--purple-border:rgba(226,208,250,0.18);
+  --orange:#FE8F1C;--orange-light:#FE9A33;
   --white:#fff;--white-70:rgba(255,255,255,.7);--white-40:rgba(255,255,255,.4);--white-15:rgba(255,255,255,.08);
   --green:#16db6a;--green-bg:rgba(22,219,106,.1);--green-border:rgba(22,219,106,.28);
   --yellow:#FF6B2B;--yellow-bg:rgba(255,107,43,.12);--yellow-border:rgba(255,107,43,.35);
   --red:#ff1f1f;--red-bg:rgba(255,31,31,.1);--red-border:rgba(255,31,31,.3);
-  --font:'Sora',sans-serif;--radius:20px;--radius-sm:12px;
+  --font:'Poppins',ui-sans-serif,sans-serif;--font-display:'Funnel Display','Poppins',sans-serif;--radius:16px;--radius-sm:8px;--lx-primary-pure:#6613D0;--lx-primary-lightest:#E2D0FA;--lx-gradient-brand:linear-gradient(135deg,#2D085D 0%,#5B11BA 100%);--lx-gradient-deep:linear-gradient(135deg,#0B0D19 0%,#2D085D 100%);
 }
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-html,body{font-family:var(--font);background:var(--purple-dark);color:var(--white);height:100%;width:100%;overflow:hidden}
+html,body{font-family:var(--font);background:var(--lx-gradient-deep);background-attachment:fixed;color:var(--white);height:100%;width:100%;overflow:hidden}
 #app{display:grid;grid-template-columns:1fr 300px;grid-template-rows:auto 1fr auto;height:100vh;width:100vw}
 @media(max-width:900px){
   html,body{overflow-y:auto}
@@ -40,7 +40,7 @@ html,body{font-family:var(--font);background:var(--purple-dark);color:var(--whit
   .field-row{grid-template-columns:1fr}
   .fa-grid{grid-template-columns:repeat(auto-fill,minmax(110px,1fr))}
 }
-#top-bar{grid-column:1/-1;display:flex;align-items:center;justify-content:space-between;padding:14px 24px;background:var(--purple-mid);border-bottom:1px solid var(--purple-border)}
+#top-bar{grid-column:1/-1;display:flex;align-items:center;justify-content:space-between;padding:14px 24px;background:var(--lx-gradient-brand);border-bottom:1px solid var(--purple-border)}
 .logo-area{display:flex;align-items:center;gap:10px}
 .company-name{font-size:13px;font-weight:600;color:var(--white-40);letter-spacing:.3px;white-space:nowrap}
 .logo-img{height:32px;width:auto}
@@ -54,9 +54,9 @@ html,body{font-family:var(--font);background:var(--purple-dark);color:var(--whit
 #btn-open-cfg:hover{color:var(--orange-light)}
 #btn-open-cfg svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 #main-panel{grid-column:1;grid-row:2;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;overflow:hidden;padding:24px;transition:background .6s}
-#main-panel.free{background:linear-gradient(160deg,#05040f 0%,#060d1a 100%)}
-#main-panel.soon{background:linear-gradient(160deg,#05040f 0%,#1a0d00 100%)}
-#main-panel.busy{background:linear-gradient(160deg,#05040f 0%,#1a0520 100%)}
+#main-panel.free{background:linear-gradient(160deg,#0B0D19 0%,#150333 100%)}
+#main-panel.soon{background:linear-gradient(160deg,#0B0D19 0%,#2D085D 100%)}
+#main-panel.busy{background:linear-gradient(160deg,#0B0D19 0%,#3D0505 100%)}
 #bg-glow{position:absolute;width:500px;height:500px;border-radius:50%;top:50%;left:50%;transform:translate(-50%,-50%);pointer-events:none;filter:blur(100px);opacity:.2;transition:background .6s}
 #main-panel.free #bg-glow{background:var(--green)}
 #main-panel.soon #bg-glow{background:var(--yellow)}
@@ -87,7 +87,7 @@ html,body{font-family:var(--font);background:var(--purple-dark);color:var(--whit
 #main-panel.soon #prog-fill{background:var(--yellow)}
 #main-panel.free #prog-fill{background:var(--green);width:0!important}
 .prog-labels{display:flex;justify-content:space-between;font-size:10px;color:var(--white-40);margin-top:5px}
-#bottom-strip{grid-column:1/-1;display:flex;align-items:center;justify-content:center;gap:16px;padding:12px 24px 14px;background:var(--purple-mid);border-top:1px solid var(--purple-border);flex-wrap:wrap;overflow-x:auto}
+#bottom-strip{grid-column:1/-1;display:flex;align-items:center;justify-content:center;gap:16px;padding:12px 24px 14px;background:var(--lx-gradient-brand);border-top:1px solid var(--purple-border);flex-wrap:wrap;overflow-x:auto}
 .info-chip{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--white-70)}
 .info-chip svg{width:15px;height:15px;stroke:var(--white-40);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
 .info-chip strong{color:var(--white);font-weight:600}
@@ -148,8 +148,8 @@ html,body{font-family:var(--font);background:var(--purple-dark);color:var(--whit
 .field textarea{resize:vertical;min-height:100px}
 .field-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .modal-btns{display:flex;gap:10px;margin-top:20px}
-.btn-primary{flex:1;padding:13px;background:var(--orange);border:none;border-radius:var(--radius-sm);color:var(--white);font-family:var(--font);font-size:14px;font-weight:600;cursor:pointer;transition:background .2s}
-.btn-primary:hover{background:var(--orange-light)}
+.btn-primary{flex:1;padding:13px;background:var(--lx-primary-pure);border:none;border-radius:var(--radius-sm);color:var(--white);font-family:var(--font);font-size:14px;font-weight:600;cursor:pointer;transition:background .2s}
+.btn-primary:hover{background:#5B11BA}
 .btn-secondary{padding:13px 20px;background:transparent;border:1px solid var(--purple-border);border-radius:var(--radius-sm);color:var(--white-70);font-family:var(--font);font-size:14px;cursor:pointer;transition:all .2s}
 .btn-secondary:hover{border-color:var(--white-40);color:var(--white)}
 .alert{padding:10px 14px;border-radius:var(--radius-sm);font-size:12px;line-height:1.5;margin-bottom:12px}
@@ -265,7 +265,7 @@ html,body{font-family:var(--font);background:var(--purple-dark);color:var(--whit
   <div id="top-bar">
     <div class="logo-area">
       
-      <span class="company-name">Meeting Rooms</span>
+      <span class="company-name" style="font-family:var(--font-display);letter-spacing:-0.02em">Meeting Rooms</span>
     </div>
     <div class="top-center">
       <div id="top-clock">--:--</div>
