@@ -649,6 +649,9 @@ function loadCfg(){
   try{
     const g=localStorage.getItem('lcx_g');
     if(g){const p=JSON.parse(g);cfg.pin=p.pin||DEFAULT_PIN;if(p.rooms&&p.rooms.length)cfg.rooms=p.rooms;cfg.autoCancel=!!p.autoCancel;if(p.vipEmails&&p.vipEmails.length)cfg.vipEmails=p.vipEmails;}
+    // Sempre aplica capacidades do código (não dependem do localStorage)
+    const CAP_MAP={'1. PHP':5,'2. Javascript':5,'3. Python':1,'4. Container':8,'7. Cloud':1,'8. HTML':2,'9. Cron':1,'10. Linux':1,'11. Bot':2,'12. Git':3,'14. Fullstack':10,'15. War Room':20,'16. XGH':6,'17. IA':6,'18. Deploy':6,'19. Root':4};
+    cfg.rooms.forEach(r=>{if(CAP_MAP[r.name])r.capacity=CAP_MAP[r.name];});
     const l=localStorage.getItem('lcx_l');
     if(l){const p=JSON.parse(l);if(p.thisRoom)cfg.thisRoom=p.thisRoom;}
   }catch(e){}
