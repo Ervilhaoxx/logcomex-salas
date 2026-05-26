@@ -58,9 +58,9 @@ html,body{font-family:var(--font);background:var(--lx-off-white);color:var(--lx-
 #main-panel.soon{background:linear-gradient(160deg,#F5F0FF 0%,#E8D5FF 100%)}
 #main-panel.busy{background:linear-gradient(160deg,#FFF5F5 0%,#FFE0E0 100%)}
 #bg-glow{position:absolute;width:500px;height:500px;border-radius:50%;top:50%;left:50%;transform:translate(-50%,-50%);pointer-events:none;filter:blur(100px);opacity:.2;transition:background .6s}
-#main-panel.free #bg-glow{background:var(--green)}
-#main-panel.soon #bg-glow{background:var(--yellow)}
-#main-panel.busy #bg-glow{background:var(--red)}
+#main-panel.free #bg-glow{background:#1FAC66}
+#main-panel.soon #bg-glow{background:#6613D0}
+#main-panel.busy #bg-glow{background:#C70404}
 .status-badge{display:flex;align-items:center;gap:8px;padding:7px 20px;border-radius:30px;font-size:12px;font-weight:700;letter-spacing:1px;text-transform:uppercase;border:1px solid;margin-bottom:16px;transition:all .4s}
 .status-badge.free{background:rgba(31,172,102,0.1);border-color:rgba(31,172,102,0.25);color:#1FAC66}
 .status-badge.soon{background:rgba(102,19,208,0.1);border-color:rgba(102,19,208,0.25);color:#6613D0}
@@ -77,9 +77,9 @@ html,body{font-family:var(--font);background:var(--lx-off-white);color:var(--lx-
 #main-panel.soon #status-info .hl{color:var(--yellow)}
 #main-panel.busy #status-info .hl{color:var(--red)}
 #countdown{font-size:clamp(52px,9vw,100px);font-weight:800;letter-spacing:-3px;line-height:1;font-variant-numeric:tabular-nums;text-align:center;min-height:1em;position:relative;z-index:1;transition:color .4s}
-#main-panel.free #countdown{color:var(--green);opacity:.1}
-#main-panel.soon #countdown{color:var(--yellow)}
-#main-panel.busy #countdown{color:var(--red)}
+#main-panel.free #countdown{color:rgba(11,13,25,0.15)}
+#main-panel.soon #countdown{color:#0B0D19}
+#main-panel.busy #countdown{color:#0B0D19}
 #prog-wrap{width:min(400px,75%);margin-top:16px;position:relative;z-index:1}
 .prog-track{height:5px;background:var(--white-15);border-radius:5px;overflow:hidden}
 #prog-fill{height:100%;border-radius:5px;transition:width 1s ease,background .4s}
