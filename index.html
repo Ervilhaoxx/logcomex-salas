@@ -805,7 +805,7 @@ function renderMain(cl){
     cd.textContent='';pf.style.width='0%';pl.textContent='';pr.textContent='';
     nc.innerHTML=cl.next?`Próxima às <strong>${fmt(nextAt)}</strong>`:'Livre o dia todo';nc.parentElement.dataset.nextStart='';
   }
-  rc.textContent=responsible?(responsible.includes('@logcomex.com')?responsible:'E-mail Externo'):'—';
+  rc.textContent=responsible||'—';
 }
 
 function renderAvail(rooms){
