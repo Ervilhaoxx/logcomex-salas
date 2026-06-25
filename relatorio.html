@@ -447,11 +447,11 @@ function renderDashboard() {
   document.getElementById('stat-no-checkin-pct').textContent = total ? Math.round(semCheckin/total*100)+'% das reservas' : '—';
   document.getElementById('stat-users').textContent = users;
 
-  renderCharts();
+  renderCharts(src);
   renderTable();
 }
 
-function renderCharts() {
+function renderCharts(src) {
   // Por sala
   const bySala = {};
   src.forEach(r => { if(!bySala[r.room]) bySala[r.room]={total:0,checkin:0}; bySala[r.room].total++; if(r.checkin)bySala[r.room].checkin++; });
