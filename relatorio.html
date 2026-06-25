@@ -475,7 +475,10 @@ function renderTable() {
   tbody.innerHTML = data.map(r => {
     const parts = r.ts ? r.ts.split(' ') : ['—','—'];
     const data_str = parts[0] || '—';
-    const hora_str = parts[1] ? parts[1].slice(0,5) : '—';
+    // Exibe horário da reunião (inicio-fim) se disponível, senão hora do registro
+    const hora_str = (r.horaInicio && r.horaInicio !== '—' && r.horaFim && r.horaFim !== '—')
+      ? r.horaInicio + ' – ' + r.horaFim
+      : (parts[1] ? parts[1].slice(0,5) : '—');
     const badge = r.checkin
       ? '<span class="badge yes">CHECK-IN ✓</span>'
       : '<span class="badge no">SEM CHECK-IN</span>';
