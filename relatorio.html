@@ -422,6 +422,7 @@ async function loadData() {
       }
     });
     allData = Array.from(seen.values());
+    filteredByPeriod = [...allData];
     buildYearOptions();
     applyPeriodFilter();
     document.getElementById('loading').style.display = 'none';
