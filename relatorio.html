@@ -309,6 +309,31 @@
     <!-- TABELA -->
     <div class="table-section">
       <div class="section-title">Todos os registros</div>
+      <!-- Filtros de período -->
+      <div style="display:flex;gap:10px;margin-bottom:12px;flex-wrap:wrap;align-items:center">
+        <select id="filter-year" onchange="applyPeriodFilter()" style="background:rgba(45,8,93,0.5);border:1px solid var(--border);border-radius:8px;padding:7px 14px;font-size:13px;color:var(--text);font-family:var(--font);cursor:pointer;outline:none">
+          <option value="">Todos os anos</option>
+        </select>
+        <select id="filter-month" onchange="applyPeriodFilter()" style="background:rgba(45,8,93,0.5);border:1px solid var(--border);border-radius:8px;padding:7px 14px;font-size:13px;color:var(--text);font-family:var(--font);cursor:pointer;outline:none">
+          <option value="">Todos os meses</option>
+          <option value="01">Janeiro</option>
+          <option value="02">Fevereiro</option>
+          <option value="03">Março</option>
+          <option value="04">Abril</option>
+          <option value="05">Maio</option>
+          <option value="06">Junho</option>
+          <option value="07">Julho</option>
+          <option value="08">Agosto</option>
+          <option value="09">Setembro</option>
+          <option value="10">Outubro</option>
+          <option value="11">Novembro</option>
+          <option value="12">Dezembro</option>
+        </select>
+        <span id="period-summary" style="font-size:12px;color:var(--muted)"></span>
+      </div>
+      <!-- Cards resumo do período -->
+      <div id="period-stats" style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px"></div>
+      <!-- Filtros de check-in -->
       <div class="table-filters">
         <button class="filter-btn active" onclick="setFilter('all',this)">Todos</button>
         <button class="filter-btn" onclick="setFilter('yes',this)">✅ Check-in</button>
@@ -337,6 +362,7 @@
 const BACKEND_URL = 'https://script.google.com/macros/s/AKfycbyDgucsB17Z1Al0_15ZJ1WaPvJHkapmyxITLDHE9WBGl3DHmXNnMJET9xRNLzn-aov7/exec';
 const PIN_KEY = 'lcx_g';
 let allData = [];
+let filteredByPeriod = [];
 let currentFilter = 'all';
 let pinBuffer = '';
 
@@ -396,7 +422,8 @@ async function loadData() {
       }
     });
     allData = Array.from(seen.values());
-    renderDashboard();
+    buildYearOptions();
+    applyPeriodFilter();
     document.getElementById('loading').style.display = 'none';
     document.getElementById('dashboard').style.display = 'block';
   } catch(e) {
@@ -426,7 +453,7 @@ function renderDashboard() {
 function renderCharts() {
   // Por sala
   const bySala = {};
-  allData.forEach(r => { if(!bySala[r.room]) bySala[r.room]={total:0,checkin:0}; bySala[r.room].total++; if(r.checkin)bySala[r.room].checkin++; });
+  src.forEach(r => { if(!bySala[r.room]) bySala[r.room]={total:0,checkin:0}; bySala[r.room].total++; if(r.checkin)bySala[r.room].checkin++; });
   const salas = Object.entries(bySala).sort((a,b)=>b[1].total-a[1].total);
   const maxTotal = Math.max(...salas.map(s=>s[1].total), 1);
 
@@ -445,6 +472,88 @@ function renderCharts() {
       <div class="bar-track"><div class="bar-fill ${pct>=70?'green':pct>=40?'orange':'red'}" style="width:${pct}%"></div></div>
     </div>`;
   }).join('') || '<div class="empty">Sem dados</div>';
+}
+
+function buildYearOptions() {
+  const years = [...new Set(allData.map(r => {
+    const ts = r.ts || '';
+    // Suporta formato "DD/MM/YYYY" e "YYYY-MM-DD"
+    const match = ts.match(/(\d{4})/);
+    return match ? match[1] : null;
+  }).filter(Boolean))].sort().reverse();
+  const sel = document.getElementById('filter-year');
+  // Mantém a opção "Todos os anos"
+  while (sel.options.length > 1) sel.remove(1);
+  years.forEach(y => {
+    const opt = document.createElement('option');
+    opt.value = y; opt.textContent = y;
+    sel.appendChild(opt);
+  });
+  // Seleciona o ano atual por padrão
+  const currentYear = new Date().getFullYear().toString();
+  if (years.includes(currentYear)) sel.value = currentYear;
+}
+
+function applyPeriodFilter() {
+  const year = document.getElementById('filter-year').value;
+  const month = document.getElementById('filter-month').value;
+
+  filteredByPeriod = allData.filter(r => {
+    const ts = r.ts || '';
+    // Suporta "DD/MM/YYYY, HH:mm" e "YYYY-MM-DDTHH:mm"
+    let d;
+    if (ts.includes('/')) {
+      const parts = ts.split(/[\s,]+/);
+      const dateParts = parts[0].split('/');
+      d = { day: dateParts[0], month: dateParts[1], year: dateParts[2] };
+    } else {
+      const parts = ts.split('T')[0].split('-');
+      d = { day: parts[2], month: parts[1], year: parts[0] };
+    }
+    if (year && d.year !== year) return false;
+    if (month && d.month !== month) return false;
+    return true;
+  });
+
+  // Atualiza resumo do período
+  const summary = document.getElementById('period-summary');
+  const monthNames = ['','Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+  const label = [month ? monthNames[parseInt(month)] : '', year].filter(Boolean).join(' de ') || 'Todo o período';
+  summary.textContent = `${filteredByPeriod.length} registros em: ${label}`;
+
+  renderPeriodStats();
+  renderDashboard();
+  renderTable();
+}
+
+function renderPeriodStats() {
+  const data = filteredByPeriod;
+  const total = data.length;
+  const comCheckin = data.filter(r => r.checkin).length;
+  const semCheckin = total - comCheckin;
+  const users = new Set(data.map(r => r.email)).size;
+  const pct = total ? Math.round(comCheckin/total*100) : 0;
+
+  document.getElementById('period-stats').innerHTML = `
+    <div style="background:rgba(45,8,93,0.4);border:1px solid var(--border);border-radius:12px;padding:16px">
+      <div style="font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:6px">Total</div>
+      <div style="font-size:28px;font-weight:800;color:var(--orange);font-family:var(--font-display)">${total}</div>
+    </div>
+    <div style="background:rgba(45,8,93,0.4);border:1px solid var(--border);border-radius:12px;padding:16px">
+      <div style="font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:6px">Com check-in</div>
+      <div style="font-size:28px;font-weight:800;color:var(--green);font-family:var(--font-display)">${comCheckin}</div>
+      <div style="font-size:11px;color:var(--muted)">${pct}% das reservas</div>
+    </div>
+    <div style="background:rgba(45,8,93,0.4);border:1px solid var(--border);border-radius:12px;padding:16px">
+      <div style="font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:6px">Sem check-in</div>
+      <div style="font-size:28px;font-weight:800;color:var(--red);font-family:var(--font-display)">${semCheckin}</div>
+      <div style="font-size:11px;color:var(--muted)">${total ? Math.round(semCheckin/total*100) : 0}% das reservas</div>
+    </div>
+    <div style="background:rgba(45,8,93,0.4);border:1px solid var(--border);border-radius:12px;padding:16px">
+      <div style="font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:6px">Usuários únicos</div>
+      <div style="font-size:28px;font-weight:800;color:var(--purple-l);font-family:var(--font-display)">${users}</div>
+    </div>
+  `;
 }
 
 function setFilter(f, btn) {
