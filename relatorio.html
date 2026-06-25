@@ -99,7 +99,7 @@
   #main { display: none; padding: 32px; max-width: 1100px; margin: 0 auto; }
 
   /* CARDS TOPO */
-  .stats-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 16px; margin-bottom: 32px; }
+  .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 32px; }
   .stat-card {
     background: rgba(45,8,93,0.5);
     border: 1px solid var(--border);
@@ -285,11 +285,7 @@
         <div class="stat-value" id="stat-no-checkin">—</div>
         <div class="stat-sub" id="stat-no-checkin-pct">—</div>
       </div>
-      <div class="stat-card" style="background:rgba(199,4,4,0.15);border-color:rgba(199,4,4,0.3)">
-        <div class="stat-label">Agendas canceladas</div>
-        <div class="stat-value" id="stat-cancelled" style="color:#FA3737;font-family:var(--font-display)">—</div>
-        <div class="stat-sub" id="stat-cancelled-pct">—</div>
-      </div>
+
       <div class="stat-card purple">
         <div class="stat-label">Usuários únicos</div>
         <div class="stat-value" id="stat-users">—</div>
@@ -317,7 +313,6 @@
         <button class="filter-btn active" onclick="setFilter('all',this)">Todos</button>
         <button class="filter-btn" onclick="setFilter('yes',this)">✅ Check-in</button>
         <button class="filter-btn" onclick="setFilter('no',this)">❌ Sem check-in</button>
-        <button class="filter-btn" onclick="setFilter('cancelled',this)">🚫 Canceladas</button>
         <input class="search-input" id="search-input" placeholder="🔍 Buscar por e-mail..." oninput="renderTable()">
       </div>
       <table>
@@ -422,8 +417,6 @@ function renderDashboard() {
   document.getElementById('stat-checkin-pct').textContent = total ? Math.round(comCheckin/total*100)+'% das reservas' : '—';
   document.getElementById('stat-no-checkin').textContent = semCheckin;
   document.getElementById('stat-no-checkin-pct').textContent = total ? Math.round(semCheckin/total*100)+'% das reservas' : '—';
-  document.getElementById('stat-cancelled').textContent = canceladas;
-  document.getElementById('stat-cancelled-pct').textContent = total ? Math.round(canceladas/total*100)+'% das reservas' : '—';
   document.getElementById('stat-users').textContent = users;
 
   renderCharts();
