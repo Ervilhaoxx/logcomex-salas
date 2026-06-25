@@ -434,11 +434,11 @@ async function loadData() {
 
 // ── RENDER ──
 function renderDashboard() {
-  const total = allData.length;
-  const comCheckin = allData.filter(r => r.checkin).length;
+  const src = filteredByPeriod && filteredByPeriod.length >= 0 ? filteredByPeriod : allData;
+  const total = src.length;
+  const comCheckin = src.filter(r => r.checkin).length;
   const semCheckin = total - comCheckin;
-  const canceladas = semCheckin; // sem check-in = canceladas ou não compareceu
-  const users = new Set(allData.map(r => r.email)).size;
+  const users = new Set(src.map(r => r.email)).size;
 
   document.getElementById('stat-total').textContent = total;
   document.getElementById('stat-checkin').textContent = comCheckin;
