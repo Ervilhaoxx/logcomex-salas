@@ -643,7 +643,7 @@ let cfg={
     {name:'24. Mesa Ext-Dataset',email:'c_1880d4ibnjevmg1qidnmi5lhn6m9m@resource.calendar.google.com',floor:'Andar 2'},
   ]
 };
-let state={events:[],allRoomData:[],refreshTimer:null,bookingTarget:null,_bookingEvents:[],currentEventId:null,lastStatus:null,lastResponsible:null};
+let state={events:[],allRoomData:[],refreshTimer:null,bookingTarget:null,_bookingEvents:[],currentEventId:null,lastStatus:null,lastResponsible:null,lastEventTimes:null};
 
 function saveCfg(){
   try{
@@ -750,7 +750,7 @@ function doCheckin(){
   const responsible=document.getElementById('responsible-chip')?.textContent?.trim();
   const roomName=document.getElementById('room-name')?.textContent?.trim();
   const endsAt=document.getElementById('pl-right')?.textContent?.replace('Libera ','')?.trim();
-  if(responsible&&responsible.includes('@')){const p=new URLSearchParams({action:'checkin',email:responsible,room:roomName||'Sala',endsAt:endsAt||'',roomEmail:cfg.thisRoom||''});fetch(`${BACKEND_URL}?${p.toString()}`).catch(()=>{});
+  if(responsible&&responsible.includes('@')){const curEv=state.events.find(e=>e.status==='busy')||state.events[0];const hiIni=curEv?new Date(curEv.start.dateTime).toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}):'';const hiFim=curEv?new Date(curEv.end.dateTime).toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}):'';const p=new URLSearchParams({action:'checkin',email:responsible,room:roomName||'Sala',endsAt:endsAt||'',roomEmail:cfg.thisRoom||'',horaInicio:hiIni,horaFim:hiFim});fetch(`${BACKEND_URL}?${p.toString()}`).catch(()=>{});
   // Registra no histórico local
   const hist=JSON.parse(localStorage.getItem('lcx_hist')||'[]');
   hist.unshift({email:responsible,room:roomName||'Sala',checkin:true,ts:new Date().toISOString()});
@@ -767,12 +767,12 @@ function renderMain(cl){
   const mp=document.getElementById('main-panel'),bd=document.getElementById('status-badge');
   // Detecta fim de reuniao: era busy, agora virou free -> envia NPS
   if(state.lastStatus==='busy'&&status==='free'&&state.lastResponsible&&cfg.thisRoom){
-    const p=new URLSearchParams({action:'reuniao_encerrada',email:state.lastResponsible,room:roomByEmail(cfg.thisRoom)?.name||cfg.thisRoom,roomEmail:cfg.thisRoom});
+    const curEv2=state.lastEventTimes||{};const p=new URLSearchParams({action:'reuniao_encerrada',email:state.lastResponsible,room:roomByEmail(cfg.thisRoom)?.name||cfg.thisRoom,roomEmail:cfg.thisRoom,horaInicio:curEv2.ini||'',horaFim:curEv2.fim||''});
     fetch(BACKEND_URL+'?'+p.toString()).catch(()=>{});
     state.lastResponsible=null;
   }
   state.lastStatus=status;
-  if(status==='busy'&&responsible)state.lastResponsible=responsible;
+  if(status==='busy'&&responsible){state.lastResponsible=responsible;if(cl.current){state.lastEventTimes={ini:new Date(cl.current.start.dateTime).toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}),fim:new Date(cl.current.end.dateTime).toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})};}}else if(status==='soon'&&cl.next){state.lastEventTimes={ini:new Date(cl.next.start.dateTime).toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}),fim:new Date(cl.next.end.dateTime).toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})};};
   mp.className=status;bd.className=`status-badge ${status}`;
   document.getElementById('status-text').textContent={free:'Disponível',soon:'Em breve',busy:'Ocupada'}[status];
   const info=document.getElementById('status-info'),cd=document.getElementById('countdown');
