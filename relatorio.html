@@ -338,6 +338,9 @@
         <button class="filter-btn active" onclick="setFilter('all',this)">Todos</button>
         <button class="filter-btn" onclick="setFilter('yes',this)">✅ Check-in</button>
         <button class="filter-btn" onclick="setFilter('no',this)">❌ Sem check-in</button>
+        <button id="btn-sort" onclick="toggleSort(this)" style="background:rgba(45,8,93,0.5);border:1px solid var(--border);border-radius:8px;padding:7px 14px;font-size:12px;color:var(--text);font-family:var(--font);cursor:pointer;display:flex;align-items:center;gap:6px">
+          ↓ Mais antigos primeiro
+        </button>
         <input class="search-input" id="search-input" placeholder="🔍 Buscar por e-mail..." oninput="renderTable()">
       </div>
       <table>
@@ -364,6 +367,7 @@ const PIN_KEY = 'lcx_g';
 let allData = [];
 let filteredByPeriod = [];
 let currentFilter = 'all';
+let sortDesc = false; // false = mais antigos primeiro, true = mais recentes primeiro
 let pinBuffer = '';
 
 // ── PIN ──
@@ -557,6 +561,12 @@ function renderPeriodStats() {
   `;
 }
 
+function toggleSort(btn) {
+  sortDesc = !sortDesc;
+  btn.innerHTML = sortDesc ? '↑ Mais recentes primeiro' : '↓ Mais antigos primeiro';
+  renderTable();
+}
+
 function setFilter(f, btn) {
   currentFilter = f;
   document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
@@ -571,6 +581,12 @@ function renderTable() {
   if (currentFilter === 'no')        data = data.filter(r => !r.checkin);
   if (currentFilter === 'cancelled') data = data.filter(r => !r.checkin);
   if (search) data = data.filter(r => r.email.toLowerCase().includes(search) || r.room.toLowerCase().includes(search));
+  // Ordena por data
+  data = [...data].sort((a, b) => {
+    const ta = a.ts ? new Date(a.ts.includes('T') ? a.ts : a.ts.split('/').reverse().join('-')).getTime() : 0;
+    const tb = b.ts ? new Date(b.ts.includes('T') ? b.ts : b.ts.split('/').reverse().join('-')).getTime() : 0;
+    return sortDesc ? tb - ta : ta - tb;
+  });
 
   const tbody = document.getElementById('table-body');
   const empty = document.getElementById('table-empty');
