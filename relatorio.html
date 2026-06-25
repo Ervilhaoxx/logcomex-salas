@@ -583,12 +583,25 @@ function renderTable() {
   empty.style.display = 'none';
 
   tbody.innerHTML = data.map(r => {
-    const parts = r.ts ? r.ts.split(' ') : ['—','—'];
-    const data_str = parts[0] || '—';
-    // Exibe horário da reunião (inicio-fim) se disponível, senão hora do registro
+    // Formata data — suporta ISO (2026-05-19T17:06:36.000Z) e BR (19/05/2026, 17:06:36)
+    let data_str = '—', hora_reg = '—';
+    if (r.ts) {
+      if (r.ts.includes('T')) {
+        // Formato ISO
+        const d = new Date(r.ts);
+        data_str = d.toLocaleDateString('pt-BR');
+        hora_reg = d.toLocaleTimeString('pt-BR', {hour:'2-digit', minute:'2-digit'});
+      } else {
+        // Formato BR: "19/05/2026, 17:06:36"
+        const parts = r.ts.split(/[,\s]+/);
+        data_str = parts[0] || '—';
+        hora_reg = parts[1] ? parts[1].slice(0,5) : '—';
+      }
+    }
+    // Horário da reunião (inicio-fim) se disponível, senão hora do registro
     const hora_str = (r.horaInicio && r.horaInicio !== '—' && r.horaFim && r.horaFim !== '—')
       ? r.horaInicio + ' – ' + r.horaFim
-      : (parts[1] ? parts[1].slice(0,5) : '—');
+      : hora_reg;
     const badge = r.checkin
       ? '<span class="badge yes">CHECK-IN ✓</span>'
       : '<span class="badge no">SEM CHECK-IN</span>';
