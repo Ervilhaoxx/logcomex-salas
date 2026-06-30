@@ -350,7 +350,61 @@
     color: var(--purple-lightest);
     font-weight: 600;
   }
-  /* Botão de ordenação */
+  /* Botão exportar CSV */
+  .btn-export {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(45,8,93,0.5);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 8px 14px;
+    font-size: 12px;
+    font-weight: 500;
+    font-family: var(--font);
+    color: var(--muted);
+    cursor: pointer;
+    transition: background 120ms var(--ease-out), color 120ms var(--ease-out);
+    white-space: nowrap;
+    text-decoration: none;
+  }
+  .btn-export:hover { background: rgba(254,143,28,0.1); color: var(--orange); border-color: rgba(254,143,28,0.3); }
+  .btn-export svg { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 1.75; stroke-linecap: round; stroke-linejoin: round; }
+
+/* Tooltip nas barras dos gráficos */
+  .bar-row { position: relative; }
+  .bar-track { cursor: pointer; }
+  .bar-track:hover .bar-tooltip { opacity: 1; transform: translateY(0); }
+  .bar-tooltip {
+    position: absolute;
+    right: 0;
+    top: -32px;
+    background: rgba(11,13,25,0.92);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 4px 10px;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text);
+    white-space: nowrap;
+    pointer-events: none;
+    opacity: 0;
+    transform: translateY(4px);
+    transition: opacity 150ms var(--ease-out), transform 150ms var(--ease-out);
+    z-index: 10;
+  }
+  .bar-tooltip::after {
+    content: '';
+    position: absolute;
+    bottom: -5px; right: 12px;
+    width: 8px; height: 8px;
+    background: rgba(11,13,25,0.92);
+    border-right: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    transform: rotate(45deg);
+  }
+
+/* Botão de ordenação */
   .btn-sort {
     display: flex;
     align-items: center;
@@ -669,6 +723,18 @@
         <!-- Resumo do período -->
         <span class="period-summary" id="period-summary" style="display:none"></span>
 
+        <!-- Exportar CSV -->
+        <button class="btn-export" id="btn-export" onclick="exportCSV()">
+          <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Exportar CSV
+        </button>
+
+        <!-- Exportar CSV -->
+        <button class="btn-export" onclick="exportCSV()">
+          <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Exportar CSV
+        </button>
+
         <!-- Busca -->
         <div class="search-wrap">
           <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
@@ -957,6 +1023,41 @@ function renderPeriodStats() {
       <div style="font-size:28px;font-weight:800;color:var(--purple-l);font-family:var(--font-display)">${users}</div>
     </div>
   `;
+}
+
+function exportCSV() {
+  var data = filteredByPeriod.length >= 0 ? filteredByPeriod : allData;
+  if (!data.length) return;
+  var headers = ['E-mail','Sala','Data','Horário','Check-in','VIP'];
+  var lines = [headers.join(',')];
+  data.forEach(function(r) {
+    var data_str = '—', hora_reg = '—';
+    if (r.ts) {
+      if (r.ts.indexOf('T') >= 0) {
+        var d = new Date(r.ts);
+        data_str = d.toLocaleDateString('pt-BR');
+        hora_reg = d.toLocaleTimeString('pt-BR', {hour:'2-digit',minute:'2-digit'});
+      } else {
+        var parts = r.ts.split(/[, ]+/);
+        data_str = parts[0] || '—';
+        hora_reg = parts[1] ? parts[1].slice(0,5) : '—';
+      }
+    }
+    var hi = fixHora(r.horaInicio), hf = fixHora(r.horaFim);
+    var horario = (hi && hf) ? (hi + ' – ' + hf) : hora_reg;
+    var isVip = VIP_EMAILS.indexOf(r.email.toLowerCase()) >= 0;
+    var row = [r.email, r.room, data_str, horario, r.checkin?'Sim':'Não', isVip?'Sim':'Não']
+      .map(function(v){ return '"' + String(v).replace(/"/g,'""') + '"'; }).join(',');
+    lines.push(row);
+  });
+  var csv = lines.join('\n');
+  var blob = new Blob(['\uFEFF' + csv], {type:'text/csv;charset=utf-8;'});
+  var url = URL.createObjectURL(blob);
+  var a = document.createElement('a');
+  a.href = url;
+  a.download = 'relatorio-salas-' + new Date().toISOString().slice(0,10) + '.csv';
+  a.click();
+  URL.revokeObjectURL(url);
 }
 
 function toggleSort(btn) {
