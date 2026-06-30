@@ -357,21 +357,43 @@
     border-radius: 999px;
     white-space: nowrap;
   }
+  /* ── Tabela ── */
+  .table-wrap { border: 1px solid var(--border); border-radius: 14px; overflow: hidden; }
   table { width: 100%; border-collapse: collapse; font-family: var(--font); }
+  thead { position: sticky; top: 0; z-index: 2; }
   thead th {
     font-size: 10px;
-    font-weight: 700;
-    letter-spacing: .08em;
+    font-weight: 600;
+    letter-spacing: .12em;
     text-transform: uppercase;
     color: var(--muted);
-    padding: 10px 14px;
+    padding: 11px 16px;
     text-align: left;
+    background: rgba(45,8,93,0.95);
     border-bottom: 1px solid var(--border);
+    white-space: nowrap;
   }
-  tbody tr { border-bottom: 1px solid rgba(255,255,255,0.04); transition: background .15s; }
-  tbody tr:hover { background: rgba(226,208,250,0.06); }
-  tbody td { padding: 11px 14px; font-size: 13px; color: var(--text); }
+  /* Zebra stripes */
+  tbody tr { border-bottom: 1px solid rgba(226,208,250,0.05); transition: background 120ms var(--ease-out); }
+  tbody tr:nth-child(even) { background: rgba(226,208,250,0.03); }
+  tbody tr:hover { background: rgba(102,19,208,0.12) !important; }
+  tbody tr.is-vip:nth-child(even) { background: rgba(254,143,28,0.05); }
+  tbody tr.is-vip { border-left: 2px solid var(--orange); }
+  tbody td { padding: 11px 16px; font-size: 13px; color: var(--text); }
   td.muted { color: var(--muted); font-size: 12px; }
+  /* Separador de data */
+  tr.date-separator td {
+    background: rgba(45,8,93,0.6) !important;
+    padding: 5px 16px;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--purple-l);
+    border-bottom: 1px solid var(--border);
+    border-top: 1px solid var(--border);
+  }
+  tr.date-separator:hover { background: rgba(45,8,93,0.6) !important; }
   .badge {
     font-size: 10px;
     font-weight: 700;
@@ -592,18 +614,20 @@
       <!-- Mini cards de resumo do período -->
       <div id="period-stats" style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px"></div>
 
-      <table>
-        <thead>
-          <tr>
-            <th>E-mail</th>
-            <th>Sala</th>
-            <th>Data</th>
-            <th>Horário</th>
-            <th>Check-in</th>
-          </tr>
-        </thead>
-        <tbody id="table-body"></tbody>
-      </table>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>E-mail</th>
+              <th>Sala</th>
+              <th>Data</th>
+              <th>Horário</th>
+              <th>Check-in</th>
+            </tr>
+          </thead>
+          <tbody id="table-body"></tbody>
+        </table>
+      </div>
       <div id="table-empty" class="empty" style="display:none">Nenhum registro encontrado.</div>
     </div>
 
