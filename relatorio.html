@@ -7,27 +7,34 @@
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Funnel+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #0B0D19;
-    --surface: #2D085D;
-    --card: #3B1472;
-    --border: rgba(226,208,250,0.18);
-    --border-strong: rgba(226,208,250,0.32);
-    --orange: #FE8F1C;
-    --orange-l: #FE9A33;
-    --purple: #6613D0;
-    --purple-l: #8E44ED;
-    --purple-lightest: #E2D0FA;
-    --text: #E2D0FA;
-    --muted: rgba(226,208,250,0.72);
-    --green: #1FAC66;
-    --red: #C70404;
-    --font: 'Poppins', ui-sans-serif, sans-serif;
-    --font-display: 'Funnel Display', 'Poppins', sans-serif;
-    --gradient-deep: linear-gradient(135deg, #0B0D19 0%, #2D085D 100%);
+    /* ── Logcomex Design System tokens ── */
+    --bg:             #0B0D19;
+    --surface:        #2D085D;
+    --card:           #3B1472;
+    --border:         rgba(226,208,250,0.18);
+    --border-strong:  rgba(226,208,250,0.32);
+    --orange:         #FE8F1C;
+    --orange-l:       #FE9A33;
+    --purple-dark:    #2D085D;
+    --purple:         #6613D0;
+    --purple-l:       #8E44ED;
+    --purple-lightest:#E2D0FA;
+    --text:           #E2D0FA;
+    --muted:          rgba(226,208,250,0.72);
+    --subtle:         rgba(226,208,250,0.48);
+    --green:          #1FAC66;
+    --red:            #C70404;
+    --font:           'Poppins', ui-sans-serif, sans-serif;
+    --font-display:   'Funnel Display', 'Poppins', sans-serif;
+    --gradient-deep:  linear-gradient(135deg, #0B0D19 0%, #2D085D 100%);
     --gradient-brand: linear-gradient(135deg, #2D085D 0%, #5B11BA 100%);
-    --gradient-glow: linear-gradient(135deg, #2D085D 0%, #5B11BA 50%, #8E44ED 100%);
-    --shadow-lg: 0 16px 40px rgba(45,8,93,0.25), 0 4px 8px rgba(11,13,25,0.12);
-    --shadow-purple: 0 8px 32px rgba(102,19,208,0.35);
+    --gradient-glow:  linear-gradient(135deg, #2D085D 0%, #5B11BA 50%, #8E44ED 100%);
+    --shadow-sm:      0 2px 4px rgba(11,13,25,0.06), 0 1px 2px rgba(11,13,25,0.04);
+    --shadow-md:      0 6px 16px rgba(11,13,25,0.08), 0 2px 4px rgba(11,13,25,0.04);
+    --shadow-lg:      0 16px 40px rgba(45,8,93,0.12), 0 4px 8px rgba(11,13,25,0.06);
+    --shadow-purple:  0 8px 32px rgba(102,19,208,0.25);
+    --ease-out:       cubic-bezier(0.2, 0.8, 0.2, 1);
+    --ease-in-out:    cubic-bezier(0.65, 0, 0.35, 1);
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { font-family: var(--font); background: var(--gradient-deep); background-attachment: fixed; min-height: 100vh; color: var(--text); }
@@ -104,69 +111,79 @@
   .stat-card {
     background: rgba(45,8,93,0.45);
     border: 1px solid var(--border);
-    border-radius: 18px;
+    border-radius: 16px;
     padding: 20px 22px 18px;
     backdrop-filter: blur(10px);
-    transition: transform 0.2s, box-shadow 0.2s;
+    transition: transform 200ms var(--ease-out), box-shadow 200ms var(--ease-out);
     position: relative;
     overflow: hidden;
   }
+  /* Barra de acento no topo — só roxo/preto por regra da skill */
   .stat-card::before {
     content: '';
     position: absolute;
     top: 0; left: 0; right: 0;
     height: 3px;
-    border-radius: 18px 18px 0 0;
+    border-radius: 16px 16px 0 0;
   }
-  .stat-card.orange::before { background: linear-gradient(90deg, var(--orange), var(--orange-l)); }
-  .stat-card.green::before  { background: linear-gradient(90deg, var(--green), #34d888); }
-  .stat-card.red::before    { background: linear-gradient(90deg, var(--red), #ff6b6b); }
-  .stat-card.purple::before { background: linear-gradient(90deg, var(--purple), var(--purple-l)); }
-  .stat-card.teal::before   { background: linear-gradient(90deg, #06b6d4, #22d3ee); }
+  .stat-card.c-purple::before { background: var(--gradient-brand); }
+  .stat-card.c-orange::before { background: var(--orange); }
+  .stat-card.c-green::before  { background: var(--green); }
+  .stat-card.c-red::before    { background: var(--red); }
+  .stat-card.c-light::before  { background: var(--purple-l); }
   .stat-card:hover {
-    transform: translateY(-3px);
+    transform: translateY(-2px);
     box-shadow: var(--shadow-lg);
   }
+  /* Ícone Lucide SVG dentro de um círculo sutil */
   .stat-icon {
     width: 36px; height: 36px;
     border-radius: 10px;
     display: flex; align-items: center; justify-content: center;
     margin-bottom: 14px;
-    font-size: 17px;
+    background: rgba(226,208,250,0.08);
+    border: 1px solid var(--border);
   }
-  .stat-card.orange .stat-icon { background: rgba(254,143,28,.15); }
-  .stat-card.green  .stat-icon { background: rgba(31,172,102,.15); }
-  .stat-card.red    .stat-icon { background: rgba(199,4,4,.15); }
-  .stat-card.purple .stat-icon { background: rgba(142,68,237,.15); }
-  .stat-card.teal   .stat-icon { background: rgba(6,182,212,.15); }
-  .stat-label { font-size: 10px; font-weight: 700; letter-spacing: .10em; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; }
+  .stat-icon svg {
+    width: 18px; height: 18px;
+    stroke-width: 1.75;
+    fill: none;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .stat-card.c-purple .stat-icon svg { stroke: var(--purple-l); }
+  .stat-card.c-orange .stat-icon svg { stroke: var(--orange); }
+  .stat-card.c-green  .stat-icon svg { stroke: var(--green); }
+  .stat-card.c-red    .stat-icon svg { stroke: var(--red); }
+  .stat-card.c-light  .stat-icon svg { stroke: var(--purple-lightest); }
+  .stat-label { font-size: 10px; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; }
   .stat-value { font-size: 34px; font-weight: 800; letter-spacing: -.03em; font-family: var(--font-display); line-height: 1; }
   .stat-sub { font-size: 11px; color: var(--muted); margin-top: 6px; }
-  .stat-card.orange .stat-value { color: var(--orange); }
-  .stat-card.green  .stat-value { color: var(--green); }
-  .stat-card.red    .stat-value { color: var(--red); }
-  .stat-card.purple .stat-value { color: var(--purple-l); }
-  .stat-card.teal   .stat-value { color: #22d3ee; }
-  /* Mini barra de progresso no card */
+  .stat-card.c-purple .stat-value { color: var(--purple-l); }
+  .stat-card.c-orange .stat-value { color: var(--orange); }
+  .stat-card.c-green  .stat-value { color: var(--green); }
+  .stat-card.c-red    .stat-value { color: var(--red); }
+  .stat-card.c-light  .stat-value { color: var(--purple-lightest); }
+  /* Mini barra de progresso */
   .stat-prog-track {
-    height: 4px;
-    background: rgba(255,255,255,.07);
+    height: 3px;
+    background: rgba(226,208,250,0.08);
     border-radius: 99px;
-    margin-top: 12px;
+    margin-top: 14px;
     overflow: hidden;
   }
   .stat-prog-fill {
     height: 100%;
     border-radius: 99px;
-    transition: width 1s cubic-bezier(.4,0,.2,1);
+    transition: width 1s var(--ease-out);
   }
-  .stat-card.orange .stat-prog-fill { background: var(--orange); }
-  .stat-card.green  .stat-prog-fill { background: var(--green); }
-  .stat-card.red    .stat-prog-fill { background: var(--red); }
-  .stat-card.purple .stat-prog-fill { background: var(--purple-l); }
-  .stat-card.teal   .stat-prog-fill { background: #22d3ee; }
-  @media (max-width: 900px) { .stats-grid { grid-template-columns: repeat(2, 1fr); } }
-  @media (max-width: 500px) { .stats-grid { grid-template-columns: 1fr; } }
+  .stat-card.c-purple .stat-prog-fill { background: var(--purple-l); }
+  .stat-card.c-orange .stat-prog-fill { background: var(--orange); }
+  .stat-card.c-green  .stat-prog-fill { background: var(--green); }
+  .stat-card.c-red    .stat-prog-fill { background: var(--red); }
+  .stat-card.c-light  .stat-prog-fill { background: var(--purple-lightest); }
+  @media (max-width: 1024px) { .stats-grid { grid-template-columns: repeat(3, 1fr); } }
+  @media (max-width: 640px)  { .stats-grid { grid-template-columns: repeat(2, 1fr); } }
 
   /* BARRAS */
   .section-title {
@@ -345,44 +362,54 @@
     <div class="section-title">Resumo geral</div>
     <div class="stats-grid">
 
-      <div class="stat-card orange">
-        <div class="stat-icon">📋</div>
+      <div class="stat-card c-orange">
+        <div class="stat-icon">
+          <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        </div>
         <div class="stat-label">Total de reservas</div>
         <div class="stat-value" id="stat-total">—</div>
         <div class="stat-sub">registros no período</div>
         <div class="stat-prog-track"><div class="stat-prog-fill" id="prog-total" style="width:100%"></div></div>
       </div>
 
-      <div class="stat-card green">
-        <div class="stat-icon">✅</div>
+      <div class="stat-card c-green">
+        <div class="stat-icon">
+          <svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+        </div>
         <div class="stat-label">Com check-in</div>
         <div class="stat-value" id="stat-checkin">—</div>
         <div class="stat-sub" id="stat-checkin-pct">—</div>
         <div class="stat-prog-track"><div class="stat-prog-fill" id="prog-checkin" style="width:0%"></div></div>
       </div>
 
-      <div class="stat-card red">
-        <div class="stat-icon">❌</div>
+      <div class="stat-card c-red">
+        <div class="stat-icon">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+        </div>
         <div class="stat-label">Sem check-in</div>
         <div class="stat-value" id="stat-no-checkin">—</div>
         <div class="stat-sub" id="stat-no-checkin-pct">—</div>
         <div class="stat-prog-track"><div class="stat-prog-fill" id="prog-no-checkin" style="width:0%"></div></div>
       </div>
 
-      <div class="stat-card teal">
-        <div class="stat-icon">📊</div>
+      <div class="stat-card c-purple">
+        <div class="stat-icon">
+          <svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+        </div>
         <div class="stat-label">Taxa de check-in</div>
         <div class="stat-value" id="stat-taxa">—</div>
         <div class="stat-sub" id="stat-taxa-sub">do total de reservas</div>
         <div class="stat-prog-track"><div class="stat-prog-fill" id="prog-taxa" style="width:0%"></div></div>
       </div>
 
-      <div class="stat-card purple">
-        <div class="stat-icon">👥</div>
+      <div class="stat-card c-light">
+        <div class="stat-icon">
+          <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        </div>
         <div class="stat-label">Usuários únicos</div>
         <div class="stat-value" id="stat-users">—</div>
         <div class="stat-sub">e-mails distintos</div>
-        <div class="stat-prog-track"><div class="stat-prog-fill" id="prog-users" style="width:100%"></div></div>
+        <div class="stat-prog-track"><div class="stat-prog-fill" id="prog-users" style="width:0%"></div></div>
       </div>
 
     </div>
