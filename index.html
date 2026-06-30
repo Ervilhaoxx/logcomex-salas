@@ -82,7 +82,23 @@ html,body{font-family:var(--font);background:#0B0D19;color:var(--white);height:1
 #btn-open-cfg{background:transparent;border:none;cursor:pointer;padding:10px;border-radius:var(--radius-sm);color:var(--white-40);transition:color .2s;display:flex;align-items:center;justify-content:center}
 #btn-open-cfg:hover{color:#6613D0}
 #btn-open-cfg svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
-#main-panel{grid-column:1;grid-row:2;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;overflow:hidden;padding:24px;transition:background .6s;color:#fff}
+#main-panel{grid-column:1;grid-row:2;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;overflow:hidden;padding:24px;transition:background .6s cubic-bezier(0.65,0,0.35,1);color:#fff}
+/* Fade-through nos elementos centrais ao mudar estado */
+#room-name,#room-type,#room-capacity,#status-info,#countdown,#prog-wrap,.status-badge{
+  transition-property:opacity,transform,color,background,border-color,box-shadow;
+  transition-duration:360ms;
+  transition-timing-function:cubic-bezier(0.65,0,0.35,1);
+}
+/* Classe de fade-out aplicada via JS antes de mudar estado */
+#main-panel.state-changing #room-name,
+#main-panel.state-changing #room-type,
+#main-panel.state-changing #room-capacity,
+#main-panel.state-changing #status-info,
+#main-panel.state-changing #countdown,
+#main-panel.state-changing #prog-wrap{
+  opacity:0;
+  transform:translateY(6px);
+}
 #main-panel.free{background:linear-gradient(160deg,#0B0D19 0%,#051a0d 100%)}
 #main-panel.soon{background:linear-gradient(160deg,#0B0D19 0%,#2D085D 100%)}
 #main-panel.busy{background:linear-gradient(160deg,#0B0D19 0%,#2D085D 100%)}
@@ -852,8 +868,24 @@ function renderMain(cl){
   }
   state.lastStatus=status;
   if(status==='busy'&&responsible){state.lastResponsible=responsible;if(cl.current){state.lastEventTimes={ini:new Date(cl.current.start.dateTime).toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}),fim:new Date(cl.current.end.dateTime).toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})};}}else if(status==='soon'&&cl.next){state.lastEventTimes={ini:new Date(cl.next.start.dateTime).toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}),fim:new Date(cl.next.end.dateTime).toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})};};
-  mp.className=status;bd.className=`status-badge ${status}`;
-  document.getElementById('status-text').textContent={free:'Disponível',soon:'Em breve',busy:'Ocupada'}[status];
+  // Fade-through ao mudar estado
+  const prevStatus = mp.dataset.lastState;
+  if(prevStatus && prevStatus !== status){
+    mp.classList.add('state-changing');
+    setTimeout(()=>{
+      mp.className=status;
+      mp.dataset.lastState=status;
+      bd.className=`status-badge ${status}`;
+      document.getElementById('status-text').textContent={free:'Disponível',soon:'Em breve',busy:'Ocupada'}[status];
+      // Remove a classe após o fade-in
+      requestAnimationFrame(()=>requestAnimationFrame(()=>mp.classList.remove('state-changing')));
+    }, 200);
+  } else {
+    mp.className=status;
+    mp.dataset.lastState=status;
+    bd.className=`status-badge ${status}`;
+    document.getElementById('status-text').textContent={free:'Disponível',soon:'Em breve',busy:'Ocupada'}[status];
+  }
   const info=document.getElementById('status-info'),cd=document.getElementById('countdown');
   const pf=document.getElementById('prog-fill'),pl=document.getElementById('pl-left'),pr=document.getElementById('pl-right');
   const nc=document.getElementById('next-chip'),rc=document.getElementById('responsible-chip');
