@@ -206,6 +206,32 @@
   }
   .badge.yes { background: rgba(34,197,94,.12); color: var(--green); border: 1px solid rgba(34,197,94,.25); }
   .badge.no  { background: rgba(239,68,68,.12);  color: var(--red);   border: 1px solid rgba(239,68,68,.25); }
+  .badge.vip {
+    background: rgba(254,143,28,.13);
+    color: var(--orange);
+    border: 1px solid rgba(254,143,28,.35);
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 99px;
+    letter-spacing: .06em;
+    margin-left: 6px;
+    vertical-align: middle;
+  }
+  tbody tr.is-vip td:first-child { color: var(--orange-l); font-weight: 500; }
+  .badge.vip {
+    background: rgba(254,143,28,.13);
+    color: var(--orange);
+    border: 1px solid rgba(254,143,28,.35);
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 99px;
+    letter-spacing: .06em;
+    margin-left: 6px;
+    vertical-align: middle;
+  }
+  tbody tr.is-vip td:first-child { color: var(--orange-l); font-weight: 500; }
 
   .loading { text-align: center; padding: 60px; color: var(--muted); font-size: 14px; }
   .empty { text-align: center; padding: 40px; color: var(--muted); font-size: 13px; }
@@ -574,6 +600,24 @@ function setFilter(f, btn) {
   renderTable();
 }
 
+// ── Lista VIP (mesma do Apps Script) ──
+const VIP_EMAILS = [
+  'cruz','helmuth','carlos','michela.cantarini','allan.schmitt',
+  'castelli','daniel.alle','adriano.martins','ramon.paludo','evelyn',
+  'aline.lenhart','milena','rafael.mercatelli','monica.gabriella',
+  'marcelo.neves','leonardo.prado','patricia.rifiski','nayana.rogal',
+  'amadeo','raphael.batta'
+].map(u => u + '@logcomex.com');
+
+// ── Lista VIP (mesma do Apps Script) ──
+const VIP_EMAILS = [
+  'cruz','helmuth','carlos','michela.cantarini','allan.schmitt',
+  'castelli','daniel.alle','adriano.martins','ramon.paludo','evelyn',
+  'aline.lenhart','milena','rafael.mercatelli','monica.gabriella',
+  'marcelo.neves','leonardo.prado','patricia.rifiski','nayana.rogal',
+  'amadeo','raphael.batta'
+].map(u => u + '@logcomex.com');
+
 function renderTable() {
   const search = (document.getElementById('search-input').value || '').toLowerCase();
   let data = filteredByPeriod.length >= 0 ? [...filteredByPeriod] : [...allData];
@@ -630,11 +674,13 @@ function renderTable() {
     const hora_str = (hi && hf)
       ? hi + ' – ' + hf
       : hora_reg;
+    const isVip = VIP_EMAILS.includes(r.email.toLowerCase());
+    const vipBadge = isVip ? '<span class="badge vip">⭐ VIP</span>' : '';
     const badge = r.checkin
       ? '<span class="badge yes">CHECK-IN ✓</span>'
       : '<span class="badge no">SEM CHECK-IN</span>';
-    return `<tr>
-      <td>${r.email}</td>
+    return `<tr class="${isVip ? 'is-vip' : ''}">
+      <td>${r.email}${vipBadge}</td>
       <td>${r.room}</td>
       <td class="muted">${data_str}</td>
       <td class="muted">${hora_str}</td>
