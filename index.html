@@ -50,6 +50,8 @@ html,body{font-family:var(--font);background:#0B0D19;color:var(--white);height:1
 .sync-pill{display:flex;align-items:center;gap:7px;background:#F1E9FD;border:1px solid #C4A8F5;border-radius:20px;padding:5px 13px;font-size:12px;color:#6613D0;font-weight:500}
 .sync-dot{width:7px;height:7px;border-radius:50%;background:var(--green);animation:blink 2.5s ease-in-out infinite}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
+@keyframes pulse-ring{0%{transform:scale(1);opacity:.7}70%{transform:scale(1.22);opacity:0}100%{transform:scale(1.22);opacity:0}}
+@keyframes pulse-dot{0%,100%{transform:scale(1)}50%{transform:scale(0.94)}}
 #btn-open-cfg{background:transparent;border:none;cursor:pointer;padding:10px;border-radius:var(--radius-sm);color:var(--white-40);transition:color .2s;display:flex;align-items:center;justify-content:center}
 #btn-open-cfg:hover{color:#6613D0}
 #btn-open-cfg svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
@@ -57,10 +59,17 @@ html,body{font-family:var(--font);background:#0B0D19;color:var(--white);height:1
 #main-panel.free{background:linear-gradient(160deg,#0B0D19 0%,#051a0d 100%)}
 #main-panel.soon{background:linear-gradient(160deg,#0B0D19 0%,#2D085D 100%)}
 #main-panel.busy{background:linear-gradient(160deg,#0B0D19 0%,#2D085D 100%)}
-#bg-glow{position:absolute;width:500px;height:500px;border-radius:50%;top:50%;left:50%;transform:translate(-50%,-50%);pointer-events:none;filter:blur(100px);opacity:.2;transition:background .6s}
-#main-panel.free #bg-glow{background:#1FAC66;opacity:.10}
-#main-panel.soon #bg-glow{background:#FCC502;opacity:.10}
-#main-panel.busy #bg-glow{background:#C70404;opacity:.20}
+#bg-glow{position:absolute;width:650px;height:650px;border-radius:50%;top:50%;left:50%;transform:translate(-50%,-50%);pointer-events:none;filter:blur(130px);opacity:.18;transition:background .6s,opacity .6s}
+#bg-glow-2{position:absolute;width:320px;height:320px;border-radius:50%;top:35%;left:58%;transform:translate(-50%,-50%);pointer-events:none;filter:blur(80px);opacity:.10;transition:background .6s,opacity .6s}
+#main-panel.free #bg-glow{background:#1FAC66;opacity:.20}
+#main-panel.soon #bg-glow{background:#FCC502;opacity:.25}
+#main-panel.busy #bg-glow{background:#C70404;opacity:.32}
+#main-panel.free #bg-glow-2{background:#27D780;opacity:.12}
+#main-panel.soon #bg-glow-2{background:#FCC502;opacity:.15}
+#main-panel.busy #bg-glow-2{background:#FA3737;opacity:.20}
+#btn-checkin{position:relative}
+#btn-checkin::before{content:'';position:absolute;inset:-5px;border-radius:35px;border:2px solid var(--green);animation:pulse-ring 2s ease-out infinite;pointer-events:none;opacity:0}
+#btn-checkin[style*='inline']::before,#btn-checkin[style*='flex']::before{opacity:1}
 .status-badge{display:flex;align-items:center;gap:8px;padding:7px 20px;border-radius:30px;font-size:12px;font-weight:700;letter-spacing:1px;text-transform:uppercase;border:1px solid;margin-bottom:16px;transition:all .4s}
 .status-badge.free{background:rgba(39,215,128,0.12);border:1px solid rgba(39,215,128,0.35);color:#27D780}
 .status-badge.soon{background:rgba(252,197,2,0.15);border-color:rgba(252,197,2,0.5);color:#FCC502}
@@ -86,9 +95,9 @@ html,body{font-family:var(--font);background:#0B0D19;color:var(--white);height:1
 #main-panel.free #countdown{color:rgba(11,13,25,0.15)}
 #main-panel.soon #countdown{color:#FCC502}
 #main-panel.busy #countdown{color:#fff}
-#prog-wrap{width:min(400px,75%);margin-top:16px;position:relative;z-index:1}
-.prog-track{height:5px;background:rgba(226,208,250,0.15);border-radius:5px;overflow:hidden}
-#prog-fill{height:100%;border-radius:5px;transition:width 1s ease,background .4s}
+#prog-wrap{width:min(420px,78%);margin-top:20px;position:relative;z-index:1}
+.prog-track{height:8px;background:rgba(226,208,250,0.10);border-radius:8px;overflow:hidden;box-shadow:inset 0 1px 3px rgba(0,0,0,0.25)}
+#prog-fill{height:100%;border-radius:8px;transition:width 1s cubic-bezier(0.2,0.8,0.2,1),background .4s;box-shadow:0 0 10px rgba(255,255,255,0.12)}
 #main-panel.busy #prog-fill{background:var(--red)}
 #main-panel.soon #prog-fill{background:var(--yellow)}
 #main-panel.free #prog-fill{background:var(--green);width:0!important}
@@ -114,6 +123,8 @@ html,body{font-family:var(--font);background:#0B0D19;color:var(--white);height:1
 .avail-name,.avail-rname{color:#0B0D19!important;font-weight:600}
 .avail-floor,.avail-rfloat{background:#F5F6FC!important;border:1px solid #E0E1EB!important}
 .avail-item{border:1px solid transparent!important}
+.floor-divider{display:flex;align-items:center;gap:8px;padding:10px 12px 4px;font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#9ca3af}
+.floor-divider::after{content:'';flex:1;height:1px;background:#E0E1EB}
 .avail-item:hover{background:#6613D0!important}
 .avail-item:hover .avail-name,.avail-item:hover .avail-sub,.avail-item:hover .avail-floor,.avail-item:hover .avail-rtime{color:#fff!important}
 .avail-item:hover .avail-floor{background:rgba(255,255,255,0.2)!important;border-color:transparent!important}
@@ -306,7 +317,7 @@ html,body{font-family:var(--font);background:#0B0D19;color:var(--white);height:1
   </div>
 
   <div id="main-panel" class="free">
-    <div id="bg-glow"></div>
+    <div id="bg-glow"></div><div id="bg-glow-2"></div>
     <div class="status-badge free" id="status-badge"><div class="st-dot"></div><span id="status-text">Disponível</span></div>
     <div id="room-name">—</div>
     <div id="room-type">—</div>
@@ -319,7 +330,7 @@ html,body{font-family:var(--font);background:#0B0D19;color:var(--white);height:1
       <div class="prog-labels"><span id="pl-left"></span><span id="pl-right"></span></div>
     </div>
     <div style="display:flex;gap:12px;margin-top:20px;position:relative;z-index:1;flex-wrap:wrap;justify-content:center">
-      <button id="btn-checkin" style="display:none;padding:10px 28px;background:var(--green-bg);border:1px solid var(--green-border);border-radius:30px;color:var(--green);font-family:var(--font);font-size:13px;font-weight:700;cursor:pointer;transition:all .3s;letter-spacing:.3px">✓ Check-in</button>
+      <button id="btn-checkin" style="display:none;position:relative;padding:10px 28px;background:var(--green-bg);border:1px solid var(--green-border);border-radius:30px;color:var(--green);font-family:var(--font);font-size:13px;font-weight:700;cursor:pointer;transition:all .3s;letter-spacing:.3px;animation:pulse-dot 2s ease-in-out infinite">✓ Check-in</button>
       <button id="btn-show-schedule" onclick="openScheduleModal()" style="display:none;padding:10px 28px;background:var(--green-bg);border:1px solid var(--green-border);border-radius:30px;color:var(--green);font-family:var(--font);font-size:13px;font-weight:700;cursor:pointer;transition:all .2s;letter-spacing:.3px">🗓 Ver horários disponíveis</button>
     </div>
   </div>
@@ -829,7 +840,15 @@ function renderAvail(rooms){
   const list=document.getElementById('avail-list');
   if(!avail.length){list.innerHTML='<div class="avail-empty">Nenhuma sala disponível agora.</div>';return;}
   const sorted=[...avail].sort((a,b)=>a.cl.status==='free'&&b.cl.status!=='free'?-1:1);
-  list.innerHTML=sorted.map(r=>{const isThis=r.email.toLowerCase()===cfg.thisRoom.toLowerCase();const isSoon=r.cl.status==='soon';const sub=isSoon?`Ocupada em ${fmtDur(r.cl.countdown)}`:(r.cl.nextAt?`Próxima às ${fmt(r.cl.nextAt)}`:'Livre o dia todo');const capStr=r.capacity?`<span style="font-size:10px;display:flex;align-items:center;gap:2px;margin-top:2px;color:#999"><svg viewBox="0 0 24 24" width="10" height="10" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>${r.capacity}</span>`:'';return`<div class="avail-item${isThis?' is-this':''}" data-email="${r.email}" data-name="${r.name}" data-floor="${r.floor}"><div class="avail-dot${isSoon?' soon':''}"></div><div class="avail-info"><div class="avail-name">${r.name}</div><div class="avail-sub">${sub}</div></div><div style="display:flex;flex-direction:column;align-items:flex-end;gap:2px;flex-shrink:0"><div class="avail-floor">${r.floor}</div>${capStr}</div></div>`;}).join('');
+  // Agrupar por andar
+  const byFloor={};sorted.forEach(r=>{const f=r.floor||'Outros';if(!byFloor[f])byFloor[f]=[];byFloor[f].push(r);});
+  const floorOrder=['Andar 1','Andar 2','Outros'];
+  const floors=floorOrder.filter(f=>byFloor[f]&&byFloor[f].length);
+  list.innerHTML=floors.flatMap(floor=>{
+    const divider=`<div class="floor-divider">${floor}</div>`;
+    const items=byFloor[floor].map(r=>{const isThis=r.email.toLowerCase()===cfg.thisRoom.toLowerCase();const isSoon=r.cl.status==='soon';const sub=isSoon?`Ocupada em ${fmtDur(r.cl.countdown)}`:(r.cl.nextAt?`Próxima às ${fmt(r.cl.nextAt)}`:'Livre o dia todo');const capStr=r.capacity?`<span style="font-size:10px;display:flex;align-items:center;gap:2px;margin-top:2px;color:#999"><svg viewBox="0 0 24 24" width="10" height="10" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>${r.capacity}</span>`:'';return`<div class="avail-item${isThis?' is-this':''}" data-email="${r.email}" data-name="${r.name}" data-floor="${r.floor}"><div class="avail-dot${isSoon?' soon':''}"></div><div class="avail-info"><div class="avail-name">${r.name}</div><div class="avail-sub">${sub}</div></div><div style="display:flex;flex-direction:column;align-items:flex-end;gap:2px;flex-shrink:0"><div class="avail-floor">${r.floor}</div>${capStr}</div></div>`;});
+    return [divider, ...items];
+  }).join('');
   list.querySelectorAll('.avail-item:not(.is-this)').forEach(item=>{item.addEventListener('click',()=>openBooking({email:item.dataset.email,name:item.dataset.name,floor:item.dataset.floor}));});
 }
 
