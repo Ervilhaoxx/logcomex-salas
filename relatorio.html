@@ -405,6 +405,7 @@ const VIP_EMAILS = [
   'amadeo','raphael.batta'
 ].map(u => u + '@logcomex.com');
 
+
 // ── PIN ──
 function getPin() {
   try { const g = localStorage.getItem(PIN_KEY); if(g){const p=JSON.parse(g);return p.pin||'1234';} } catch(e){}
@@ -609,14 +610,6 @@ function setFilter(f, btn) {
   renderTable();
 }
 
-// ── Lista VIP (mesma do Apps Script) ──
-const VIP_EMAILS = [
-  'cruz','helmuth','carlos','michela.cantarini','allan.schmitt',
-  'castelli','daniel.alle','adriano.martins','ramon.paludo','evelyn',
-  'aline.lenhart','milena','rafael.mercatelli','monica.gabriella',
-  'marcelo.neves','leonardo.prado','patricia.rifiski','nayana.rogal',
-  'amadeo','raphael.batta'
-].map(u => u + '@logcomex.com');
 
 function renderTable() {
   const search = (document.getElementById('search-input').value || '').toLowerCase();
