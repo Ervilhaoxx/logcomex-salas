@@ -200,25 +200,85 @@
   .section-title::after { content: ''; flex: 1; height: 1px; background: var(--border); }
 
   .charts-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 32px; }
+  /* ── Gráficos ── */
+  .charts-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 32px; }
   .chart-card {
-    background: rgba(45,8,93,0.5);
+    background: rgba(45,8,93,0.45);
     border: 1px solid var(--border);
     border-radius: 16px;
-    padding: 20px 24px;
-    backdrop-filter: blur(8px);
+    padding: 22px 24px 20px;
+    backdrop-filter: blur(10px);
+    position: relative;
+    overflow: hidden;
+    transition: transform 200ms var(--ease-out), box-shadow 200ms var(--ease-out);
   }
-  .chart-title { font-size: 13px; font-weight: 600; margin-bottom: 16px; color: var(--text); }
-
-  .bar-row { margin-bottom: 12px; }
-  .bar-label { display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 5px; }
-  .bar-label span:first-child { color: var(--text); }
-  .bar-label span:last-child { color: var(--muted); }
-  .bar-track { background: rgba(255,255,255,0.06); border-radius: 99px; height: 8px; overflow: hidden; }
-  .bar-fill { height: 100%; border-radius: 99px; transition: width .6s ease; }
-  .bar-fill.orange { background: var(--orange); }
-  .bar-fill.green { background: var(--green); }
-  .bar-fill.red { background: var(--red); }
-  .bar-fill.purple { background: var(--purple-l); }
+  .chart-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    border-radius: 16px 16px 0 0;
+    background: var(--gradient-brand);
+  }
+  .chart-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+  }
+  .chart-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+  }
+  .chart-title {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .chart-total {
+    font-size: 11px;
+    color: var(--subtle);
+    background: rgba(226,208,250,0.07);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: 2px 10px;
+  }
+  .bar-row { margin-bottom: 14px; }
+  .bar-row:last-child { margin-bottom: 0; }
+  .bar-label {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    font-size: 12px;
+    margin-bottom: 6px;
+  }
+  .bar-label-name { color: var(--text); font-weight: 500; }
+  .bar-label-val  { color: var(--muted); font-size: 11px; font-variant-numeric: tabular-nums; }
+  .bar-track {
+    background: rgba(226,208,250,0.07);
+    border-radius: 99px;
+    height: 10px;
+    overflow: hidden;
+    position: relative;
+  }
+  .bar-fill {
+    height: 100%;
+    border-radius: 99px;
+    width: 0%;                          /* começa em 0 — animado via JS */
+    transition: width 700ms var(--ease-out);
+  }
+  .bar-fill.c-orange { background: var(--orange); }
+  .bar-fill.c-green  { background: var(--green); }
+  .bar-fill.c-red    { background: var(--red); }
+  .bar-fill.c-purple { background: var(--purple-l); }
+  .bar-fill.c-light  { background: var(--purple-lightest); }
+  /* Cor dinâmica por taxa */
+  .bar-fill.rate-high { background: var(--green); }
+  .bar-fill.rate-mid  { background: var(--orange); }
+  .bar-fill.rate-low  { background: var(--red); }
+  @media (max-width: 768px) { .charts-grid { grid-template-columns: 1fr; } }
 
   /* TABELA */
   .table-section { margin-bottom: 32px; }
@@ -550,11 +610,17 @@
     <div class="section-title">Por sala e status</div>
     <div class="charts-grid">
       <div class="chart-card">
-        <div class="chart-title">Reservas por sala</div>
+        <div class="chart-header">
+          <span class="chart-title">Reservas por sala</span>
+          <span class="chart-total" id="chart-rooms-total"></span>
+        </div>
         <div id="chart-rooms"></div>
       </div>
       <div class="chart-card">
-        <div class="chart-title">Taxa de check-in por sala</div>
+        <div class="chart-header">
+          <span class="chart-title">Taxa de check-in por sala</span>
+          <span class="chart-total" id="chart-checkin-total"></span>
+        </div>
         <div id="chart-checkin"></div>
       </div>
     </div>
@@ -751,27 +817,64 @@ function renderDashboard() {
 }
 
 function renderCharts(src) {
-  // Por sala
   const bySala = {};
-  src.forEach(r => { if(!bySala[r.room]) bySala[r.room]={total:0,checkin:0}; bySala[r.room].total++; if(r.checkin)bySala[r.room].checkin++; });
-  const salas = Object.entries(bySala).sort((a,b)=>b[1].total-a[1].total);
-  const maxTotal = Math.max(...salas.map(s=>s[1].total), 1);
+  src.forEach(r => {
+    if (!bySala[r.room]) bySala[r.room] = { total: 0, checkin: 0 };
+    bySala[r.room].total++;
+    if (r.checkin) bySala[r.room].checkin++;
+  });
+  const salas = Object.entries(bySala).sort((a, b) => b[1].total - a[1].total);
+  const maxTotal = Math.max(...salas.map(s => s[1].total), 1);
+  const paletteColors = ['c-orange', 'c-purple', 'c-green', 'c-light'];
 
-  const colors = ['orange','purple','green','red'];
-  document.getElementById('chart-rooms').innerHTML = salas.map((s,i) =>
-    `<div class="bar-row">
-      <div class="bar-label"><span>${s[0]}</span><span>${s[1].total} reservas</span></div>
-      <div class="bar-track"><div class="bar-fill ${colors[i%colors.length]}" style="width:${Math.round(s[1].total/maxTotal*100)}%"></div></div>
-    </div>`
-  ).join('') || '<div class="empty">Sem dados</div>';
+  // ── Gráfico 1: Reservas por sala ──
+  const totalGeral = salas.reduce((acc, s) => acc + s[1].total, 0);
+  const roomsEl = document.getElementById('chart-rooms');
+  const roomsTotalEl = document.getElementById('chart-rooms-total');
+  if (roomsTotalEl) roomsTotalEl.textContent = totalGeral + ' reservas';
 
-  document.getElementById('chart-checkin').innerHTML = salas.map((s,i) => {
-    const pct = s[1].total ? Math.round(s[1].checkin/s[1].total*100) : 0;
+  roomsEl.innerHTML = salas.map((s, i) => {
+    const pct = Math.round(s[1].total / maxTotal * 100);
+    const cor = paletteColors[i % paletteColors.length];
     return `<div class="bar-row">
-      <div class="bar-label"><span>${s[0]}</span><span>${pct}% check-in</span></div>
-      <div class="bar-track"><div class="bar-fill ${pct>=70?'green':pct>=40?'orange':'red'}" style="width:${pct}%"></div></div>
+      <div class="bar-label">
+        <span class="bar-label-name">${s[0]}</span>
+        <span class="bar-label-val">${s[1].total} reservas</span>
+      </div>
+      <div class="bar-track">
+        <div class="bar-fill ${cor}" data-width="${pct}"></div>
+      </div>
     </div>`;
   }).join('') || '<div class="empty">Sem dados</div>';
+
+  // ── Gráfico 2: Taxa de check-in por sala ──
+  const checkinEl = document.getElementById('chart-checkin');
+  const checkinTotalEl = document.getElementById('chart-checkin-total');
+  const mediaGeral = totalGeral ? Math.round(src.filter(r => r.checkin).length / totalGeral * 100) : 0;
+  if (checkinTotalEl) checkinTotalEl.textContent = 'média ' + mediaGeral + '%';
+
+  checkinEl.innerHTML = salas.map(s => {
+    const pct = s[1].total ? Math.round(s[1].checkin / s[1].total * 100) : 0;
+    const rateClass = pct >= 70 ? 'rate-high' : pct >= 40 ? 'rate-mid' : 'rate-low';
+    return `<div class="bar-row">
+      <div class="bar-label">
+        <span class="bar-label-name">${s[0]}</span>
+        <span class="bar-label-val">${pct}%</span>
+      </div>
+      <div class="bar-track">
+        <div class="bar-fill ${rateClass}" data-width="${pct}"></div>
+      </div>
+    </div>`;
+  }).join('') || '<div class="empty">Sem dados</div>';
+
+  // ── Animação: dispara após render (width parte de 0 → valor real) ──
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      document.querySelectorAll('.bar-fill[data-width]').forEach(el => {
+        el.style.width = el.dataset.width + '%';
+      });
+    });
+  });
 }
 
 function buildYearOptions() {
