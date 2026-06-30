@@ -1020,7 +1020,7 @@ function renderPeriodStats() {
 }
 
 function exportCSV() {
-  var data = filteredByPeriod.length >= 0 ? filteredByPeriod : allData;
+  var data = (filteredByPeriod && filteredByPeriod.length > 0) ? filteredByPeriod : allData;
   if (!data.length) return;
   var headers = ['E-mail','Sala','Data','Horário','Check-in','VIP'];
   var lines = [headers.join(',')];
@@ -1073,6 +1073,16 @@ function setFilter(f, btn) {
 }
 
 
+// ── fixHora: converte qualquer formato de hora para HH:MM ──
+function fixHora(h) {
+  if (!h || h === '—' || h === '') return null;
+  const m = h.match(/(\d{1,2}):(\d{2}):\d{2}\s+GMT/);
+  if (m) return m[1].padStart(2,'0') + ':' + m[2];
+  const m2 = h.match(/^(\d{1,2}):(\d{2})/);
+  if (m2) return m2[1].padStart(2,'0') + ':' + m2[2];
+  return null;
+}
+
 function renderTable() {
   const search = (document.getElementById('search-input').value || '').toLowerCase();
   let data = filteredByPeriod.length >= 0 ? [...filteredByPeriod] : [...allData];
@@ -1112,17 +1122,7 @@ function renderTable() {
         hora_reg = parts[1] ? parts[1].slice(0,5) : '—';
       }
     }
-    // Extrai HH:MM mesmo se vier como objeto Date serializado (bug do Sheets)
-    function fixHora(h) {
-      if (!h || h === '—' || h === '') return null;
-      // Formato bugado: 'Sat Dec 30 1899 11:15:00 GMT-0306 ...'
-      const m = h.match(/(\d{1,2}):(\d{2}):\d{2}\s+GMT/);
-      if (m) return m[1].padStart(2,'0') + ':' + m[2];
-      // Formato correto: '11:15' ou '11:15:00'
-      const m2 = h.match(/^(\d{1,2}):(\d{2})/);
-      if (m2) return m2[1].padStart(2,'0') + ':' + m2[2];
-      return null;
-    }
+
     const hi = fixHora(r.horaInicio);
     const hf = fixHora(r.horaFim);
     // Horário da reunião (inicio-fim) se disponível, senão hora do registro
