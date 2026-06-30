@@ -413,9 +413,9 @@ html,body{font-family:var(--font);background:#0B0D19;color:var(--white);height:1
   </div>
 
   <div id="bottom-strip">
-    <div class="info-chip">
+    <div class="info-chip" id="responsible-wrap">
       <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-      <span>Responsável: <strong id="responsible-chip">—</strong></span>
+      <span><strong id="responsible-chip">—</strong><span id="responsible-horario" style="font-weight:400;color:#5F616A;margin-left:6px;font-size:12px"></span></span>
     </div>
     <div class="chip-sep"></div>
     <button class="chip-btn" id="next-avail-chip" onclick="openNextAvail()">
@@ -867,6 +867,18 @@ function renderMain(cl){
     nc.innerHTML=cl.next?`Próxima às <strong>${fmt(nextAt)}</strong>`:'Livre o dia todo';nc.parentElement.dataset.nextStart='';
   }
   rc.textContent=responsible||'—';
+  // Mostrar horário da reunião ao lado do responsável
+  const rhEl=document.getElementById('responsible-horario');
+  if(rhEl){
+    const et=state.lastEventTimes||{};
+    if(status==='busy'&&et.ini&&et.fim){
+      rhEl.textContent=`· ${et.ini} – ${et.fim}`;
+    }else if(status==='soon'&&et.ini&&et.fim){
+      rhEl.textContent=`· ${et.ini} – ${et.fim}`;
+    }else{
+      rhEl.textContent='';
+    }
+  }
 }
 
 function renderAvail(rooms){
