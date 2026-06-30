@@ -222,31 +222,141 @@
 
   /* TABELA */
   .table-section { margin-bottom: 32px; }
-  .table-filters { display: flex; gap: 10px; margin-bottom: 16px; flex-wrap: wrap; }
-  .filter-btn {
-    background: var(--surface);
+  /* ── Toolbar de filtros ── */
+  .filters-toolbar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+  }
+  /* Grupo de selects (ano + mês) */
+  .filter-period-group {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    background: rgba(45,8,93,0.5);
     border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 6px 14px;
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  .filter-period-group select {
+    background: transparent;
+    border: none;
+    border-right: 1px solid var(--border);
+    padding: 8px 14px;
     font-size: 12px;
+    font-weight: 500;
+    color: var(--text);
+    font-family: var(--font);
+    cursor: pointer;
+    outline: none;
+    appearance: none;
+    -webkit-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='rgba(226,208,250,0.5)' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    padding-right: 28px;
+  }
+  .filter-period-group select:last-child { border-right: none; }
+  .filter-period-group select:focus { background-color: rgba(102,19,208,0.15); }
+  /* Pill-group de status */
+  .filter-pill-group {
+    display: flex;
+    align-items: center;
+    background: rgba(45,8,93,0.5);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    gap: 0;
+  }
+  .filter-btn {
+    background: transparent;
+    border: none;
+    border-right: 1px solid var(--border);
+    padding: 8px 16px;
+    font-size: 12px;
+    font-weight: 500;
     font-family: var(--font);
     color: var(--muted);
     cursor: pointer;
-    transition: all .2s;
+    transition: background 120ms var(--ease-out), color 120ms var(--ease-out);
+    white-space: nowrap;
   }
-  .filter-btn.active { background: rgba(102,19,208,0.2); border-color: var(--purple); color: var(--purple-lightest); }
+  .filter-btn:last-child { border-right: none; }
+  .filter-btn:hover { background: rgba(226,208,250,0.07); color: var(--text); }
+  .filter-btn.active {
+    background: rgba(102,19,208,0.25);
+    color: var(--purple-lightest);
+    font-weight: 600;
+  }
+  /* Botão de ordenação */
+  .btn-sort {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(45,8,93,0.5);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 8px 14px;
+    font-size: 12px;
+    font-weight: 500;
+    font-family: var(--font);
+    color: var(--muted);
+    cursor: pointer;
+    transition: background 120ms var(--ease-out), color 120ms var(--ease-out);
+    white-space: nowrap;
+  }
+  .btn-sort:hover { background: rgba(226,208,250,0.07); color: var(--text); }
+  .btn-sort svg {
+    width: 14px; height: 14px;
+    stroke: currentColor; fill: none;
+    stroke-width: 1.75;
+    stroke-linecap: round; stroke-linejoin: round;
+    transition: transform 200ms var(--ease-out);
+  }
+  /* Campo de busca */
+  .search-wrap {
+    margin-left: auto;
+    position: relative;
+  }
+  .search-wrap svg {
+    position: absolute;
+    left: 11px; top: 50%;
+    transform: translateY(-50%);
+    width: 14px; height: 14px;
+    stroke: var(--muted); fill: none;
+    stroke-width: 1.75;
+    stroke-linecap: round; stroke-linejoin: round;
+    pointer-events: none;
+  }
   .search-input {
     background: rgba(226,208,250,0.06);
     border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 6px 14px;
+    border-radius: 10px;
+    padding: 8px 14px 8px 34px;
     font-size: 12px;
     font-family: var(--font);
     color: var(--text);
     width: 220px;
-    margin-left: auto;
+    transition: border-color 120ms var(--ease-out), background 120ms var(--ease-out);
   }
-  .search-input:focus { outline: none; border-color: var(--purple-l); }
+  .search-input::placeholder { color: var(--muted); }
+  .search-input:focus {
+    outline: none;
+    border-color: var(--purple);
+    background: rgba(102,19,208,0.1);
+  }
+  /* Linha de resumo do período */
+  .period-summary {
+    font-size: 11px;
+    color: var(--muted);
+    padding: 4px 10px;
+    background: rgba(226,208,250,0.05);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    white-space: nowrap;
+  }
   table { width: 100%; border-collapse: collapse; font-family: var(--font); }
   thead th {
     font-size: 10px;
@@ -430,39 +540,53 @@
     <!-- TABELA -->
     <div class="table-section">
       <div class="section-title">Todos os registros</div>
-      <!-- Filtros de período v2 -->
-      <div style="display:flex;gap:10px;margin-bottom:12px;flex-wrap:wrap;align-items:center">
-        <select id="filter-year" onchange="applyPeriodFilter()" style="background:rgba(45,8,93,0.5);border:1px solid var(--border);border-radius:8px;padding:7px 14px;font-size:13px;color:var(--text);font-family:var(--font);cursor:pointer;outline:none">
-          <option value="">Todos os anos</option>
-        </select>
-        <select id="filter-month" onchange="applyPeriodFilter()" style="background:rgba(45,8,93,0.5);border:1px solid var(--border);border-radius:8px;padding:7px 14px;font-size:13px;color:var(--text);font-family:var(--font);cursor:pointer;outline:none">
-          <option value="">Todos os meses</option>
-          <option value="01">Janeiro</option>
-          <option value="02">Fevereiro</option>
-          <option value="03">Março</option>
-          <option value="04">Abril</option>
-          <option value="05">Maio</option>
-          <option value="06">Junho</option>
-          <option value="07">Julho</option>
-          <option value="08">Agosto</option>
-          <option value="09">Setembro</option>
-          <option value="10">Outubro</option>
-          <option value="11">Novembro</option>
-          <option value="12">Dezembro</option>
-        </select>
-        <span id="period-summary" style="font-size:12px;color:var(--muted)"></span>
-      </div>
-      <!-- Cards resumo do período -->
-      <div id="period-stats" style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px"></div>
-      <!-- Filtros de check-in -->
-      <div class="table-filters">
-        <button class="filter-btn active" onclick="setFilter('all',this)">Todos</button>
-        <button class="filter-btn" onclick="setFilter('yes',this)">✅ Check-in</button>
-        <button class="filter-btn" onclick="setFilter('no',this)">❌ Sem check-in</button>
-        <button id="btn-sort" onclick="toggleSort(this)" style="background:rgba(45,8,93,0.5);border:1px solid var(--border);border-radius:8px;padding:7px 14px;font-size:12px;color:var(--text);font-family:var(--font);cursor:pointer;display:flex;align-items:center;gap:6px">
-          ↑ Mais recentes primeiro
+      <!-- Toolbar de filtros unificada -->
+      <div class="filters-toolbar">
+
+        <!-- Grupo período: Ano + Mês -->
+        <div class="filter-period-group">
+          <select id="filter-year" onchange="applyPeriodFilter()">
+            <option value="">Todos os anos</option>
+          </select>
+          <select id="filter-month" onchange="applyPeriodFilter()">
+            <option value="">Todos os meses</option>
+            <option value="01">Janeiro</option>
+            <option value="02">Fevereiro</option>
+            <option value="03">Março</option>
+            <option value="04">Abril</option>
+            <option value="05">Maio</option>
+            <option value="06">Junho</option>
+            <option value="07">Julho</option>
+            <option value="08">Agosto</option>
+            <option value="09">Setembro</option>
+            <option value="10">Outubro</option>
+            <option value="11">Novembro</option>
+            <option value="12">Dezembro</option>
+          </select>
+        </div>
+
+        <!-- Pill-group status -->
+        <div class="filter-pill-group">
+          <button class="filter-btn active" onclick="setFilter('all',this)">Todos</button>
+          <button class="filter-btn" onclick="setFilter('yes',this)">Com check-in</button>
+          <button class="filter-btn" onclick="setFilter('no',this)">Sem check-in</button>
+        </div>
+
+        <!-- Ordenação -->
+        <button class="btn-sort" id="btn-sort" onclick="toggleSort(this)">
+          <svg id="sort-icon" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg>
+          Mais recentes
         </button>
-        <input class="search-input" id="search-input" placeholder="🔍 Buscar por e-mail..." oninput="renderTable()">
+
+        <!-- Resumo do período -->
+        <span class="period-summary" id="period-summary" style="display:none"></span>
+
+        <!-- Busca -->
+        <div class="search-wrap">
+          <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input class="search-input" id="search-input" placeholder="Buscar por e-mail ou sala..." oninput="renderTable()">
+        </div>
+
       </div>
       <table>
         <thead>
@@ -706,7 +830,12 @@ function renderPeriodStats() {
 
 function toggleSort(btn) {
   sortDesc = !sortDesc;
-  btn.innerHTML = sortDesc ? '↑ Mais recentes primeiro' : '↓ Mais antigos primeiro';
+  const icon = document.getElementById('sort-icon');
+  if (icon) icon.style.transform = sortDesc ? 'rotate(0deg)' : 'rotate(180deg)';
+  btn.querySelector('svg') && (btn.querySelector('svg').style.transform = sortDesc ? '' : 'rotate(180deg)');
+  // Atualiza só o texto, mantém o SVG
+  const textNode = [...btn.childNodes].find(n => n.nodeType === 3 && n.textContent.trim());
+  if (textNode) textNode.textContent = sortDesc ? ' Mais recentes' : ' Mais antigos';
   renderTable();
 }
 
