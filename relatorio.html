@@ -99,26 +99,74 @@
   #main { display: none; padding: 32px; max-width: 1100px; margin: 0 auto; }
 
   /* CARDS TOPO */
-  .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 32px; }
+
+  .stats-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 16px; margin-bottom: 32px; }
   .stat-card {
-    background: rgba(45,8,93,0.5);
+    background: rgba(45,8,93,0.45);
     border: 1px solid var(--border);
-    border-radius: 16px;
-    padding: 20px 24px;
-    backdrop-filter: blur(8px);
+    border-radius: 18px;
+    padding: 20px 22px 18px;
+    backdrop-filter: blur(10px);
     transition: transform 0.2s, box-shadow 0.2s;
+    position: relative;
+    overflow: hidden;
   }
+  .stat-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    border-radius: 18px 18px 0 0;
+  }
+  .stat-card.orange::before { background: linear-gradient(90deg, var(--orange), var(--orange-l)); }
+  .stat-card.green::before  { background: linear-gradient(90deg, var(--green), #34d888); }
+  .stat-card.red::before    { background: linear-gradient(90deg, var(--red), #ff6b6b); }
+  .stat-card.purple::before { background: linear-gradient(90deg, var(--purple), var(--purple-l)); }
+  .stat-card.teal::before   { background: linear-gradient(90deg, #06b6d4, #22d3ee); }
   .stat-card:hover {
-    transform: translateY(-2px);
+    transform: translateY(-3px);
     box-shadow: var(--shadow-lg);
   }
-  .stat-label { font-size: 11px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; }
-  .stat-value { font-size: 32px; font-weight: 800; letter-spacing: -.02em; }
-  .stat-sub { font-size: 12px; color: var(--muted); margin-top: 4px; }
-  .stat-card.orange .stat-value { color: var(--orange); font-family: var(--font-display); }
-  .stat-card.green .stat-value { color: var(--green); font-family: var(--font-display); }
-  .stat-card.red .stat-value { color: var(--red); font-family: var(--font-display); }
-  .stat-card.purple .stat-value { color: var(--purple-l); font-family: var(--font-display); }
+  .stat-icon {
+    width: 36px; height: 36px;
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: 14px;
+    font-size: 17px;
+  }
+  .stat-card.orange .stat-icon { background: rgba(254,143,28,.15); }
+  .stat-card.green  .stat-icon { background: rgba(31,172,102,.15); }
+  .stat-card.red    .stat-icon { background: rgba(199,4,4,.15); }
+  .stat-card.purple .stat-icon { background: rgba(142,68,237,.15); }
+  .stat-card.teal   .stat-icon { background: rgba(6,182,212,.15); }
+  .stat-label { font-size: 10px; font-weight: 700; letter-spacing: .10em; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; }
+  .stat-value { font-size: 34px; font-weight: 800; letter-spacing: -.03em; font-family: var(--font-display); line-height: 1; }
+  .stat-sub { font-size: 11px; color: var(--muted); margin-top: 6px; }
+  .stat-card.orange .stat-value { color: var(--orange); }
+  .stat-card.green  .stat-value { color: var(--green); }
+  .stat-card.red    .stat-value { color: var(--red); }
+  .stat-card.purple .stat-value { color: var(--purple-l); }
+  .stat-card.teal   .stat-value { color: #22d3ee; }
+  /* Mini barra de progresso no card */
+  .stat-prog-track {
+    height: 4px;
+    background: rgba(255,255,255,.07);
+    border-radius: 99px;
+    margin-top: 12px;
+    overflow: hidden;
+  }
+  .stat-prog-fill {
+    height: 100%;
+    border-radius: 99px;
+    transition: width 1s cubic-bezier(.4,0,.2,1);
+  }
+  .stat-card.orange .stat-prog-fill { background: var(--orange); }
+  .stat-card.green  .stat-prog-fill { background: var(--green); }
+  .stat-card.red    .stat-prog-fill { background: var(--red); }
+  .stat-card.purple .stat-prog-fill { background: var(--purple-l); }
+  .stat-card.teal   .stat-prog-fill { background: #22d3ee; }
+  @media (max-width: 900px) { .stats-grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 500px) { .stats-grid { grid-template-columns: 1fr; } }
 
   /* BARRAS */
   .section-title {
@@ -296,27 +344,47 @@
     <!-- STATS -->
     <div class="section-title">Resumo geral</div>
     <div class="stats-grid">
+
       <div class="stat-card orange">
+        <div class="stat-icon">📋</div>
         <div class="stat-label">Total de reservas</div>
         <div class="stat-value" id="stat-total">—</div>
         <div class="stat-sub">registros no período</div>
+        <div class="stat-prog-track"><div class="stat-prog-fill" id="prog-total" style="width:100%"></div></div>
       </div>
+
       <div class="stat-card green">
+        <div class="stat-icon">✅</div>
         <div class="stat-label">Com check-in</div>
         <div class="stat-value" id="stat-checkin">—</div>
         <div class="stat-sub" id="stat-checkin-pct">—</div>
+        <div class="stat-prog-track"><div class="stat-prog-fill" id="prog-checkin" style="width:0%"></div></div>
       </div>
+
       <div class="stat-card red">
+        <div class="stat-icon">❌</div>
         <div class="stat-label">Sem check-in</div>
         <div class="stat-value" id="stat-no-checkin">—</div>
         <div class="stat-sub" id="stat-no-checkin-pct">—</div>
+        <div class="stat-prog-track"><div class="stat-prog-fill" id="prog-no-checkin" style="width:0%"></div></div>
+      </div>
+
+      <div class="stat-card teal">
+        <div class="stat-icon">📊</div>
+        <div class="stat-label">Taxa de check-in</div>
+        <div class="stat-value" id="stat-taxa">—</div>
+        <div class="stat-sub" id="stat-taxa-sub">do total de reservas</div>
+        <div class="stat-prog-track"><div class="stat-prog-fill" id="prog-taxa" style="width:0%"></div></div>
       </div>
 
       <div class="stat-card purple">
+        <div class="stat-icon">👥</div>
         <div class="stat-label">Usuários únicos</div>
         <div class="stat-value" id="stat-users">—</div>
         <div class="stat-sub">e-mails distintos</div>
+        <div class="stat-prog-track"><div class="stat-prog-fill" id="prog-users" style="width:100%"></div></div>
       </div>
+
     </div>
 
     <!-- GRÁFICOS -->
@@ -480,12 +548,24 @@ function renderDashboard() {
   const semCheckin = total - comCheckin;
   const users = new Set(src.map(r => r.email)).size;
 
+  const taxa = total ? Math.round(comCheckin / total * 100) : 0;
+
   document.getElementById('stat-total').textContent = total;
   document.getElementById('stat-checkin').textContent = comCheckin;
   document.getElementById('stat-checkin-pct').textContent = total ? Math.round(comCheckin/total*100)+'% das reservas' : '—';
   document.getElementById('stat-no-checkin').textContent = semCheckin;
   document.getElementById('stat-no-checkin-pct').textContent = total ? Math.round(semCheckin/total*100)+'% das reservas' : '—';
+  document.getElementById('stat-taxa').textContent = total ? taxa + '%' : '—';
+  document.getElementById('stat-taxa-sub').textContent = taxa >= 70 ? '🔥 Ótimo engajamento' : taxa >= 40 ? 'Engajamento moderado' : total ? 'Engajamento baixo' : 'sem dados';
   document.getElementById('stat-users').textContent = users;
+
+  // Animar barras de progresso
+  setTimeout(() => {
+    document.getElementById('prog-checkin').style.width    = total ? (comCheckin/total*100)+'%' : '0%';
+    document.getElementById('prog-no-checkin').style.width = total ? (semCheckin/total*100)+'%' : '0%';
+    document.getElementById('prog-taxa').style.width       = taxa + '%';
+    document.getElementById('prog-users').style.width      = users > 0 ? Math.min(users * 5, 100) + '%' : '0%';
+  }, 100);
 
   renderCharts(src);
   renderTable();
