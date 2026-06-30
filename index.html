@@ -40,14 +40,41 @@ html,body{font-family:var(--font);background:#0B0D19;color:var(--white);height:1
   .field-row{grid-template-columns:1fr}
   .fa-grid{grid-template-columns:repeat(auto-fill,minmax(110px,1fr))}
 }
-#top-bar{grid-column:1/-1;display:flex;align-items:center;justify-content:space-between;padding:14px 24px;background:#fff;border-bottom:1px solid #E0E1EB}
-.logo-area{display:flex;align-items:center;gap:10px}
+#top-bar{
+  grid-column:1/-1;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:12px 24px;
+  background:#fff;
+  border-bottom:1px solid #E0E1EB;
+  box-shadow:0 1px 4px rgba(45,8,93,0.06);
+}
+.logo-area{display:flex;align-items:center;gap:12px}
+.logo-divider{width:1px;height:28px;background:#E0E1EB;flex-shrink:0}
+.logo-meta{display:flex;flex-direction:column;gap:1px}
+.logo-meta-tag{font-size:9px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:#9ca3af}
+.logo-meta-name{font-size:13px;font-weight:600;color:#2D085D;letter-spacing:-.01em;font-family:'Funnel Display','Poppins',sans-serif;line-height:1}
 .company-name{font-size:13px;font-weight:600;color:#2D085D;letter-spacing:.3px;white-space:nowrap}
-.logo-img{height:32px;width:auto}
-.top-center{display:flex;flex-direction:column;align-items:center;gap:1px}
-#top-clock{font-size:22px;font-weight:700;letter-spacing:2px;font-variant-numeric:tabular-nums;color:#0B0D19;line-height:1}
-#top-date{font-size:11px;color:#5F616A;letter-spacing:.3px;font-weight:500}
-.sync-pill{display:flex;align-items:center;gap:7px;background:#F1E9FD;border:1px solid #C4A8F5;border-radius:20px;padding:5px 13px;font-size:12px;color:#6613D0;font-weight:500}
+.logo-img{height:28px;width:auto}
+.top-center{display:flex;flex-direction:column;align-items:center;gap:2px}
+#top-clock{
+  font-size:24px;font-weight:700;
+  letter-spacing:.08em;
+  font-variant-numeric:tabular-nums;
+  color:#0B0D19;line-height:1;
+  font-family:'Funnel Display','Poppins',sans-serif;
+}
+#top-date{font-size:11px;color:#9ca3af;letter-spacing:.04em;font-weight:500;text-transform:capitalize}
+.sync-pill{
+  display:flex;align-items:center;gap:7px;
+  background:#F1E9FD;
+  border:1px solid #C4A8F5;
+  border-radius:999px;
+  padding:5px 14px;
+  font-size:11px;font-weight:600;
+  color:#6613D0;
+  letter-spacing:.02em;
+  box-shadow:0 1px 3px rgba(102,19,208,0.1);
+}
 .sync-dot{width:7px;height:7px;border-radius:50%;background:var(--green);animation:blink 2.5s ease-in-out infinite}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
 @keyframes pulse-ring{0%{transform:scale(1);opacity:.7}70%{transform:scale(1.22);opacity:0}100%{transform:scale(1.22);opacity:0}}
@@ -337,8 +364,12 @@ html,body{font-family:var(--font);background:#0B0D19;color:var(--white);height:1
 <div id="app">
   <div id="top-bar">
     <div class="logo-area">
-      
-      <span class="company-name" style="font-family:var(--font-display);letter-spacing:-0.02em">Meeting Rooms</span>
+      <img class="logo-img" src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTk3IiBoZWlnaHQ9IjMwIiB2aWV3Qm94PSIwIDAgMTk3IDMwIiBmaWxsPSJub25lIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxwYXRoIGQ9Ik0xNy4yMzExIDYuMDEyODlWMTcuNDM0M0wyMi4zMzY0IDEyLjM1ODlWMC45Mzc1SDEwLjg1MTNMNS43NDYgNi4wMTI4OUgxNy4yMzExWiIgZmlsbD0iIzJEMDg1RCIvPjxwYXRoIGQ9Ik01LjEwNTI5IDYuNjQ2NDNMMCAXMS43MjU0VjE4LjA4OTFDMCAyMC44ODE2IDIuMjc4NTEgMjMuMTQ2NyA1LjA4NzQ5IDIzLjE0NjdIMTEuNDg4N0wxNi41OTQgMTguMDcxNEg1LjEwNTI5VjYuNjQ2NDNaIiBmaWxsPSIjMkQwODVEIi8+PHBhdGggZD0iTTIyLjM0MDUgMTguMDY3NUgxNy4yMzUyVjIzLjE0MjlIMjIuMzQwNVYxOC4wNjc1WiIgZmlsbD0iIzZFMTNEMCIvPjwvc3ZnPg==" alt="Logcomex">
+      <div class="logo-divider"></div>
+      <div class="logo-meta">
+        <span class="logo-meta-tag">Facilities</span>
+        <span class="logo-meta-name">Salas de Reunião</span>
+      </div>
     </div>
     <div class="top-center">
       <div id="top-clock">--:--</div>
