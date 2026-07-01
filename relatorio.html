@@ -220,6 +220,53 @@
   body.tema-claro .pin-dot.filled { background: #6613D0 !important; }
   body.tema-claro .pin-key    { background: #ffffff !important; border-color: rgba(102,19,208,0.2) !important; color: #1e1b4b !important; }
   body.tema-claro .pin-key:hover { background: rgba(102,19,208,0.06) !important; }
+  /* Dropdown customizado — cross-browser */
+  .custom-select { position: relative; }
+  .custom-select-btn {
+    display: flex; align-items: center; gap: 6px;
+    padding: 8px 28px 8px 14px;
+    background: transparent; border: none;
+    font-size: 12px; font-weight: 500;
+    font-family: var(--font); color: var(--text);
+    cursor: pointer; white-space: nowrap; min-width: 100px;
+    position: relative;
+  }
+  .custom-select-btn::after {
+    content: '';
+    position: absolute; right: 10px; top: 50%;
+    transform: translateY(-50%);
+    border-left: 4px solid transparent;
+    border-right: 4px solid transparent;
+    border-top: 5px solid var(--muted);
+  }
+  .custom-dropdown {
+    display: none; position: absolute;
+    top: calc(100% + 4px); left: 0;
+    min-width: 160px;
+    background: var(--surface);
+    border: 1px solid var(--border-strong);
+    border-radius: 10px;
+    box-shadow: 0 8px 24px rgba(11,13,25,0.3);
+    z-index: 200; overflow: hidden;
+    max-height: 260px; overflow-y: auto;
+  }
+  .custom-dropdown.open { display: block; }
+  .custom-dropdown-item {
+    padding: 9px 16px;
+    font-size: 12px; font-weight: 500;
+    font-family: var(--font); color: var(--text);
+    cursor: pointer; transition: background 100ms;
+  }
+  .custom-dropdown-item:hover { background: rgba(226,208,250,0.1); }
+  .custom-dropdown-item.selected { background: rgba(102,19,208,0.25); color: var(--purple-lightest); font-weight: 600; }
+  /* Tema claro */
+  body.tema-claro .custom-dropdown { background: #ffffff; border-color: rgba(102,19,208,0.2); box-shadow: 0 8px 24px rgba(102,19,208,0.12); }
+  body.tema-claro .custom-dropdown-item { color: #1e1b4b; }
+  body.tema-claro .custom-dropdown-item:hover { background: rgba(102,19,208,0.06); }
+  body.tema-claro .custom-dropdown-item.selected { background: rgba(102,19,208,0.1); color: #6613D0; }
+  body.tema-claro .custom-select-btn { color: #1e1b4b; }
+  body.tema-claro .custom-select-btn::after { border-top-color: #9ca3af; }
+
   body { font-family: var(--font); background: var(--gradient-deep); background-attachment: fixed; min-height: 100vh; color: var(--text); }
 
   /* HEADER */
@@ -900,26 +947,32 @@
       <!-- Toolbar de filtros unificada -->
       <div class="filters-toolbar">
 
-        <!-- Grupo período: Ano + Mês -->
+        <!-- Grupo período: Ano + Mês (dropdown customizado) -->
         <div class="filter-period-group">
-          <select id="filter-year" onchange="applyPeriodFilter()">
-            <option value="">Todos os anos</option>
-          </select>
-          <select id="filter-month" onchange="applyPeriodFilter()">
-            <option value="">Todos os meses</option>
-            <option value="01">Janeiro</option>
-            <option value="02">Fevereiro</option>
-            <option value="03">Março</option>
-            <option value="04">Abril</option>
-            <option value="05">Maio</option>
-            <option value="06">Junho</option>
-            <option value="07">Julho</option>
-            <option value="08">Agosto</option>
-            <option value="09">Setembro</option>
-            <option value="10">Outubro</option>
-            <option value="11">Novembro</option>
-            <option value="12">Dezembro</option>
-          </select>
+          <div class="custom-select" id="dd-year-wrap">
+            <button class="custom-select-btn" id="dd-year-btn" onclick="toggleDropdown('dd-year')">Todos os anos</button>
+            <div class="custom-dropdown" id="dd-year">
+              <div class="custom-dropdown-item selected" data-value="" onclick="selectDropdown('year','','Todos os anos')">Todos os anos</div>
+            </div>
+          </div>
+          <div class="custom-select" id="dd-month-wrap">
+            <button class="custom-select-btn" id="dd-month-btn" onclick="toggleDropdown('dd-month')">Todos os meses</button>
+            <div class="custom-dropdown" id="dd-month">
+              <div class="custom-dropdown-item selected" data-value="" onclick="selectDropdown('month','','Todos os meses')">Todos os meses</div>
+              <div class="custom-dropdown-item" data-value="01" onclick="selectDropdown('month','01','Janeiro')">Janeiro</div>
+              <div class="custom-dropdown-item" data-value="02" onclick="selectDropdown('month','02','Fevereiro')">Fevereiro</div>
+              <div class="custom-dropdown-item" data-value="03" onclick="selectDropdown('month','03','Março')">Março</div>
+              <div class="custom-dropdown-item" data-value="04" onclick="selectDropdown('month','04','Abril')">Abril</div>
+              <div class="custom-dropdown-item" data-value="05" onclick="selectDropdown('month','05','Maio')">Maio</div>
+              <div class="custom-dropdown-item" data-value="06" onclick="selectDropdown('month','06','Junho')">Junho</div>
+              <div class="custom-dropdown-item" data-value="07" onclick="selectDropdown('month','07','Julho')">Julho</div>
+              <div class="custom-dropdown-item" data-value="08" onclick="selectDropdown('month','08','Agosto')">Agosto</div>
+              <div class="custom-dropdown-item" data-value="09" onclick="selectDropdown('month','09','Setembro')">Setembro</div>
+              <div class="custom-dropdown-item" data-value="10" onclick="selectDropdown('month','10','Outubro')">Outubro</div>
+              <div class="custom-dropdown-item" data-value="11" onclick="selectDropdown('month','11','Novembro')">Novembro</div>
+              <div class="custom-dropdown-item" data-value="12" onclick="selectDropdown('month','12','Dezembro')">Dezembro</div>
+            </div>
+          </div>
         </div>
 
         <!-- Pill-group status -->
@@ -997,6 +1050,8 @@ let filteredByPeriod = [];
 let currentFilter = 'all';
 let sortDesc = true; // true = mais recentes primeiro (padrão)
 let pinBuffer = '';
+let _ddYear = '';
+let _ddMonth = '';
 
 // ── Lista VIP (mesma do Apps Script) ──
 const VIP_EMAILS = [
@@ -1289,26 +1344,26 @@ function renderCharts(src) {
 function buildYearOptions() {
   const years = [...new Set(allData.map(r => {
     const ts = r.ts || '';
-    // Suporta formato "DD/MM/YYYY" e "YYYY-MM-DD"
     const match = ts.match(/(\d{4})/);
     return match ? match[1] : null;
   }).filter(Boolean))].sort().reverse();
-  const sel = document.getElementById('filter-year');
-  // Mantém a opção "Todos os anos"
-  while (sel.options.length > 1) sel.remove(1);
-  years.forEach(y => {
-    const opt = document.createElement('option');
-    opt.value = y; opt.textContent = y;
-    sel.appendChild(opt);
+  const dd = document.getElementById('dd-year');
+  // Manter o "Todos os anos"
+  const existing = dd.querySelectorAll('.custom-dropdown-item:not([data-value=""])');
+  existing.forEach(function(el) { el.remove(); });
+  years.forEach(function(y) {
+    const item = document.createElement('div');
+    item.className = 'custom-dropdown-item';
+    item.dataset.value = y;
+    item.textContent = y;
+    item.onclick = function() { selectDropdown('year', y, y); };
+    dd.appendChild(item);
   });
-  // Seleciona o ano atual por padrão
-  const currentYear = new Date().getFullYear().toString();
-  if (years.includes(currentYear)) sel.value = currentYear;
 }
 
 function applyPeriodFilter() {
-  const year = document.getElementById('filter-year').value;
-  const month = document.getElementById('filter-month').value;
+  const year = _ddYear || '';
+  const month = _ddMonth || '';
 
   filteredByPeriod = allData.filter(r => {
     const ts = r.ts || '';
@@ -1472,6 +1527,38 @@ function toggleTheme() {
 }
 if (localStorage.getItem('relatorio_theme') === 'light') {
   document.body.classList.add('tema-claro');
+}
+
+function toggleDropdown(id) {
+  var dd = document.getElementById(id);
+  var isOpen = dd.classList.contains('open');
+  // Fechar todos
+  document.querySelectorAll('.custom-dropdown').forEach(function(d) { d.classList.remove('open'); });
+  if (!isOpen) dd.classList.add('open');
+}
+// Fechar ao clicar fora
+document.addEventListener('click', function(e) {
+  if (!e.target.closest('.custom-select')) {
+    document.querySelectorAll('.custom-dropdown').forEach(function(d) { d.classList.remove('open'); });
+  }
+});
+function selectDropdown(type, value, label) {
+  if (type === 'year') {
+    _ddYear = value;
+    document.getElementById('dd-year-btn').textContent = label;
+    document.querySelectorAll('#dd-year .custom-dropdown-item').forEach(function(el) {
+      el.classList.toggle('selected', el.dataset.value === value);
+    });
+    document.getElementById('dd-year').classList.remove('open');
+  } else {
+    _ddMonth = value;
+    document.getElementById('dd-month-btn').textContent = label;
+    document.querySelectorAll('#dd-month .custom-dropdown-item').forEach(function(el) {
+      el.classList.toggle('selected', el.dataset.value === value);
+    });
+    document.getElementById('dd-month').classList.remove('open');
+  }
+  applyPeriodFilter();
 }
 
 function toggleSort(btn) {
