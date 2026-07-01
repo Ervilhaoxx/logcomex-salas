@@ -140,38 +140,81 @@
 
   /* ── Tema claro ── */
   body.tema-claro { background: #f8f7ff !important; color: #1e1b4b !important; }
+  body.tema-claro * { color: inherit; }
+
+  /* Header */
   body.tema-claro .rpt-header { background: #ffffff !important; border-bottom-color: rgba(102,19,208,0.12) !important; }
-  body.tema-claro .stat-card  { background: #ffffff !important; backdrop-filter: none !important; border-color: rgba(102,19,208,0.15) !important; }
-  body.tema-claro .chart-card { background: #ffffff !important; backdrop-filter: none !important; border-color: rgba(102,19,208,0.15) !important; }
-  body.tema-claro .table-wrap { background: #ffffff !important; border-color: rgba(102,19,208,0.15) !important; }
-  body.tema-claro .stat-label { color: #6b7280 !important; }
-  body.tema-claro .stat-sub   { color: #9ca3af !important; }
-  body.tema-claro .stat-value { }
-  body.tema-claro .muted      { color: #6b7280 !important; }
-  body.tema-claro tbody td    { color: #1e1b4b !important; }
-  body.tema-claro thead th    { background: #f5f3ff !important; color: #6b7280 !important; }
-  body.tema-claro tbody tr:nth-child(even) { background: rgba(102,19,208,0.03) !important; }
-  body.tema-claro tbody tr:hover { background: rgba(102,19,208,0.07) !important; }
-  body.tema-claro tr.date-separator td { background: rgba(102,19,208,0.06) !important; color: #6613D0 !important; }
+  body.tema-claro .rpt-logo-text { color: #2D085D !important; }
+  body.tema-claro .rpt-logo-tag  { color: #6613D0 !important; }
+  body.tema-claro .btn-refresh   { background: rgba(102,19,208,0.08) !important; border-color: rgba(102,19,208,0.2) !important; color: #6613D0 !important; }
+  body.tema-claro .btn-theme     { background: rgba(102,19,208,0.08) !important; border-color: rgba(102,19,208,0.2) !important; color: #1e1b4b !important; }
+
+  /* Section title */
   body.tema-claro .section-title { color: #6613D0 !important; }
   body.tema-claro .section-title::after { background: rgba(102,19,208,0.15) !important; }
-  body.tema-claro .filter-period-group,
-  body.tema-claro .filter-pill-group,
-  body.tema-claro .btn-sort,
-  body.tema-claro .btn-export { background: #ffffff !important; border-color: rgba(102,19,208,0.15) !important; color: #1e1b4b !important; }
-  body.tema-claro .filter-btn { color: #1e1b4b !important; }
-  body.tema-claro .filter-btn.active { background: rgba(102,19,208,0.1) !important; color: #6613D0 !important; }
-  body.tema-claro .search-input { background: #ffffff !important; color: #1e1b4b !important; border-color: rgba(102,19,208,0.15) !important; }
-  body.tema-claro .search-wrap svg { stroke: #9ca3af !important; }
-  body.tema-claro .chart-title { color: #6b7280 !important; }
-  body.tema-claro .chart-total { color: #9ca3af !important; background: rgba(102,19,208,0.06) !important; }
+
+  /* Cards */
+  body.tema-claro .stat-card  { background: #ffffff !important; backdrop-filter: none !important; border-color: rgba(102,19,208,0.15) !important; box-shadow: 0 2px 12px rgba(102,19,208,0.08) !important; }
+  body.tema-claro .chart-card { background: #ffffff !important; backdrop-filter: none !important; border-color: rgba(102,19,208,0.15) !important; box-shadow: 0 2px 12px rgba(102,19,208,0.08) !important; }
+  body.tema-claro .stat-label { color: #6b7280 !important; }
+  body.tema-claro .stat-sub   { color: #9ca3af !important; }
+  body.tema-claro .stat-value { color: inherit !important; }
+  body.tema-claro .stat-prog-track { background: rgba(102,19,208,0.08) !important; }
+  body.tema-claro .stat-icon  { background: rgba(102,19,208,0.06) !important; border-color: rgba(102,19,208,0.12) !important; }
+
+  /* Gráficos de barra */
+  body.tema-claro .chart-title    { color: #6b7280 !important; }
+  body.tema-claro .chart-total    { color: #9ca3af !important; background: rgba(102,19,208,0.06) !important; border-color: rgba(102,19,208,0.12) !important; }
   body.tema-claro .bar-label-name { color: #1e1b4b !important; }
   body.tema-claro .bar-label-val  { color: #6b7280 !important; }
-  body.tema-claro .bar-track { background: rgba(102,19,208,0.08) !important; }
+  body.tema-claro .bar-track      { background: rgba(102,19,208,0.08) !important; }
+  body.tema-claro .bar-tooltip    { background: #1e1b4b !important; color: #ffffff !important; }
+
+  /* Gráfico de linha SVG — eixos e labels */
+  body.tema-claro .line-axis-label  { fill: #6b7280 !important; }
+  body.tema-claro .line-value-label { fill: #1e1b4b !important; }
+  body.tema-claro .line-legend-item { color: #6b7280 !important; }
+  body.tema-claro .line-chart-wrap svg text { fill: #1e1b4b !important; }
+
+  /* Filtros */
+  body.tema-claro .filter-period-group,
+  body.tema-claro .filter-pill-group { background: #ffffff !important; border-color: rgba(102,19,208,0.15) !important; }
+  body.tema-claro .filter-period-group select { color: #1e1b4b !important; background: transparent !important; }
+  body.tema-claro .filter-btn        { color: #1e1b4b !important; border-color: rgba(102,19,208,0.12) !important; }
+  body.tema-claro .filter-btn:hover  { background: rgba(102,19,208,0.06) !important; }
+  body.tema-claro .filter-btn.active { background: rgba(102,19,208,0.1) !important; color: #6613D0 !important; }
+  body.tema-claro .btn-sort   { background: #ffffff !important; border-color: rgba(102,19,208,0.15) !important; color: #1e1b4b !important; }
+  body.tema-claro .btn-export { background: #ffffff !important; border-color: rgba(102,19,208,0.15) !important; color: #1e1b4b !important; }
+  body.tema-claro .btn-export:hover { background: rgba(254,143,28,0.08) !important; color: #ea6c00 !important; }
+  body.tema-claro .search-input { background: #ffffff !important; color: #1e1b4b !important; border-color: rgba(102,19,208,0.15) !important; }
+  body.tema-claro .search-input::placeholder { color: #9ca3af !important; }
+  body.tema-claro .search-wrap svg { stroke: #9ca3af !important; }
   body.tema-claro .period-summary { background: rgba(102,19,208,0.06) !important; color: #6b7280 !important; }
-  body.tema-claro .btn-theme { background: rgba(102,19,208,0.08) !important; border-color: rgba(102,19,208,0.2) !important; color: #1e1b4b !important; }
-  body.tema-claro .pin-box { background: #ffffff !important; }
-  body.tema-claro .is-vip td:first-child { color: #ea6c00 !important; }
+
+  /* Tabela */
+  body.tema-claro .table-wrap { background: #ffffff !important; border-color: rgba(102,19,208,0.15) !important; }
+  body.tema-claro thead th    { background: #f5f3ff !important; color: #6b7280 !important; border-color: rgba(102,19,208,0.12) !important; }
+  body.tema-claro tbody td    { color: #1e1b4b !important; border-color: rgba(102,19,208,0.06) !important; }
+  body.tema-claro td.muted    { color: #6b7280 !important; }
+  body.tema-claro tbody tr:nth-child(even) { background: rgba(102,19,208,0.03) !important; }
+  body.tema-claro tbody tr:hover           { background: rgba(102,19,208,0.07) !important; }
+  body.tema-claro tbody tr.is-vip          { border-left-color: #ea6c00 !important; }
+  body.tema-claro tbody tr.is-vip td:first-child { color: #ea6c00 !important; font-weight: 500 !important; }
+  body.tema-claro tr.date-separator td { background: rgba(102,19,208,0.06) !important; color: #6613D0 !important; border-color: rgba(102,19,208,0.1) !important; }
+
+  /* Badges */
+  body.tema-claro .badge.yes { background: rgba(21,128,61,0.1) !important; color: #15803d !important; border-color: rgba(21,128,61,0.25) !important; }
+  body.tema-claro .badge.no  { background: rgba(185,28,28,0.1) !important; color: #b91c1c !important; border-color: rgba(185,28,28,0.25) !important; }
+  body.tema-claro .badge.vip { background: rgba(234,108,0,0.1) !important; color: #ea6c00 !important; border-color: rgba(234,108,0,0.25) !important; }
+
+  /* PIN */
+  body.tema-claro .pin-box { background: #ffffff !important; color: #1e1b4b !important; }
+  body.tema-claro .pin-box h2 { color: #1e1b4b !important; }
+  body.tema-claro .pin-box p  { color: #6b7280 !important; }
+  body.tema-claro .pin-dot    { background: rgba(102,19,208,0.15) !important; border-color: rgba(102,19,208,0.3) !important; }
+  body.tema-claro .pin-dot.filled { background: #6613D0 !important; }
+  body.tema-claro .pin-key    { background: #ffffff !important; border-color: rgba(102,19,208,0.2) !important; color: #1e1b4b !important; }
+  body.tema-claro .pin-key:hover { background: rgba(102,19,208,0.06) !important; }
   body { font-family: var(--font); background: var(--gradient-deep); background-attachment: fixed; min-height: 100vh; color: var(--text); }
 
   /* HEADER */
