@@ -1017,6 +1017,13 @@ function renderDashboard() {
     document.getElementById('prog-taxa').style.width       = taxa + '%';
     document.getElementById('prog-users').style.width      = users > 0 ? Math.min(users * 5, 100) + '%' : '0%';
     document.getElementById('prog-top-sala').style.width   = topSala ? '100%' : '0%';
+    // Aplicar tema nos cards logo após render
+    var t = localStorage.getItem('relatorio_theme') || 'dark';
+    var bg = t === 'light' ? '#ffffff' : '#1e0d42';
+    document.querySelectorAll('.stat-card, .chart-card').forEach(function(el) {
+      el.style.setProperty('background', bg, 'important');
+      el.style.setProperty('backdrop-filter', t === 'light' ? 'none' : '', 'important');
+    });
   }, 100);
 
   renderCharts(src);
