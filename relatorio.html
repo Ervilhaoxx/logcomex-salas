@@ -4,12 +4,14 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Relatório · Salas Logcomex</title>
+<!-- v2 -->
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Funnel+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root {
     /* ── Logcomex Design System tokens ── */
     --bg:             #0B0D19;
     --surface:        #2D085D;
+    --card-blur:      blur(10px);
     --card:           rgba(45,8,93,0.45);
     --border:         rgba(226,208,250,0.18);
     --border-strong:  rgba(226,208,250,0.32);
@@ -81,6 +83,9 @@
     box-shadow:0 2px 12px rgba(102,19,208,0.10) !important;
     border-color:rgba(102,19,208,0.14) !important;
   }
+  /* Blur só no tema escuro */
+  :root:not([data-theme]) .stat-card,
+  :root:not([data-theme]) .chart-card { backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px); }
   [data-theme="light"] .stat-prog-track { background:rgba(102,19,208,0.08); }
   [data-theme="light"] .table-wrap { background:#ffffff !important; border-color:rgba(102,19,208,0.14) !important; }
   [data-theme="light"] .filter-period-group,
@@ -205,7 +210,6 @@
     border: 1px solid var(--border);
     border-radius: 16px;
     padding: 20px 22px 18px;
-    backdrop-filter: blur(10px);
     transition: transform 200ms var(--ease-out), box-shadow 200ms var(--ease-out);
     position: relative;
     overflow: hidden;
@@ -299,7 +303,6 @@
     border: 1px solid var(--border);
     border-radius: 16px;
     padding: 22px 24px 20px;
-    backdrop-filter: blur(10px);
     position: relative;
     overflow: hidden;
     transition: transform 200ms var(--ease-out), box-shadow 200ms var(--ease-out);
