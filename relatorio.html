@@ -774,8 +774,8 @@
       </div>
       <div class="line-chart-wrap" id="chart-line"></div>
       <div class="line-legend">
-        <div class="line-legend-item"><div class="line-legend-dot" style="background:var(--purple-l)"></div>Total de reservas</div>
-        <div class="line-legend-item"><div class="line-legend-dot" style="background:var(--green)"></div>Com check-in</div>
+        <div class="line-legend-item"><div class="line-legend-dot" style="background:#8E44ED"></div>Total de reservas</div>
+        <div class="line-legend-item"><div class="line-legend-dot" style="background:#1FAC66"></div>Com check-in</div>
       </div>
     </div>
 
@@ -1006,18 +1006,18 @@ function renderLineChart(src) {
 
   // Pontos interativos
   const dotsTotal = dias.map((d, i) =>
-    '<circle class="line-dot" cx="' + x(i).toFixed(1) + '" cy="' + y(byDay[d].total).toFixed(1) + '" r="4" fill="var(--purple-l)" stroke="var(--bg)" stroke-width="2"><title>' + d + ': ' + byDay[d].total + ' reservas, ' + byDay[d].checkin + ' check-ins</title></circle>'
+    '<circle class="line-dot" cx="' + x(i).toFixed(1) + '" cy="' + y(byDay[d].total).toFixed(1) + '" r="4" fill="#8E44ED" stroke="#05040f" stroke-width="2"><title>' + d + ': ' + byDay[d].total + ' reservas, ' + byDay[d].checkin + ' check-ins</title></circle>'
   ).join('');
   const dotsCheckin = dias.map((d, i) =>
-    '<circle class="line-dot" cx="' + x(i).toFixed(1) + '" cy="' + y(byDay[d].checkin).toFixed(1) + '" r="3" fill="var(--green)" stroke="var(--bg)" stroke-width="2"><title>' + d + ': ' + byDay[d].checkin + ' check-ins</title></circle>'
+    '<circle class="line-dot" cx="' + x(i).toFixed(1) + '" cy="' + y(byDay[d].checkin).toFixed(1) + '" r="3" fill="#1FAC66" stroke="#05040f" stroke-width="2"><title>' + d + ': ' + byDay[d].checkin + ' check-ins</title></circle>'
   ).join('');
 
   container.innerHTML =
     '<svg viewBox="0 0 ' + W + ' ' + H + '" preserveAspectRatio="xMidYMid meet">' +
     '<defs>' +
     '<linearGradient id="areaGrad" x1="0" y1="0" x2="0" y2="1">' +
-    '<stop offset="0%" stop-color="var(--purple-l)" stop-opacity="0.25"/>' +
-    '<stop offset="100%" stop-color="var(--purple-l)" stop-opacity="0"/>' +
+    '<stop offset="0%" stop-color="#8E44ED" stop-opacity="0.25"/>' +
+    '<stop offset="100%" stop-color="#8E44ED" stop-opacity="0"/>' +
     '</linearGradient>' +
     '</defs>' +
     // Linha de grade
@@ -1029,9 +1029,9 @@ function renderLineChart(src) {
     // Área preenchida
     '<path d="' + areaTotal + '" fill="url(#areaGrad)"/>' +
     // Linha check-in
-    '<polyline points="' + ptCheckin + '" fill="none" stroke="var(--green)" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" stroke-dasharray="4 3" opacity="0.8"/>' +
+    '<polyline points="' + ptCheckin + '" fill="none" stroke="#1FAC66" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" stroke-dasharray="4 3" opacity="0.8"/>' +
     // Linha total
-    '<polyline points="' + ptTotal + '" fill="none" stroke="var(--purple-l)" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>' +
+    '<polyline points="' + ptTotal + '" fill="none" stroke="#8E44ED" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>' +
     valLabels + xLabels + dotsCheckin + dotsTotal +
     '</svg>';
 }
