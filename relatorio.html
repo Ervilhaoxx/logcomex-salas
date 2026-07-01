@@ -57,10 +57,14 @@
     --purple-l:       #7c3aed;
     --purple-lightest:#6d28d9;
   }
-  [data-theme="light"] .rpt-header { background:#fff; border-bottom-color:rgba(102,19,208,0.12); box-shadow:0 1px 4px rgba(102,19,208,0.08); }
-  [data-theme="light"] .rpt-logo-text { color:#2D085D !important; }
+  [data-theme="light"] .rpt-header { background: linear-gradient(135deg, #2D085D 0%, #5B11BA 100%); border-bottom: none; box-shadow: 0 2px 12px rgba(45,8,93,0.3); }
+  [data-theme="light"] .rpt-logo-text { color:#ffffff !important; }
+  .rpt-logo-tag  { color:rgba(226,208,250,0.7) !important; }
+  .logo-meta-tag  { color:rgba(226,208,250,0.7) !important; }
+  .logo-meta-name { color:#ffffff !important; }
+  .logo-divider   { background:rgba(255,255,255,0.2) !important; }
   [data-theme="light"] .rpt-logo-tag { color:#6613D0 !important; }
-  [data-theme="light"] .btn-refresh { background:rgba(102,19,208,0.08); border-color:rgba(102,19,208,0.2); color:#6613D0; }
+  [data-theme="light"] .btn-refresh { background:rgba(255,255,255,0.12); border-color:rgba(255,255,255,0.25); color:#ffffff; }
   [data-theme="light"] .section-title { color:#6613D0; }
   [data-theme="light"] .section-title::after { background:rgba(102,19,208,0.15); }
   [data-theme="light"] thead th { background:#f5f3ff; color:rgba(30,27,75,0.55); }
@@ -127,15 +131,15 @@
   /* Botão de tema */
   .btn-theme {
     display:flex; align-items:center; gap:7px;
-    background:rgba(226,208,250,0.12);
-    border:1px solid rgba(226,208,250,0.25);
+    background:rgba(255,255,255,0.12);
+    border:1px solid rgba(255,255,255,0.25);
     border-radius:999px;
     padding:7px 16px;
     font-size:12px; font-weight:600;
-    font-family:var(--font); color:var(--text);
+    font-family:var(--font); color:#ffffff;
     cursor:pointer; transition:all 180ms; white-space:nowrap;
   }
-  .btn-theme:hover { background:rgba(226,208,250,0.2); }
+  .btn-theme:hover { background:rgba(255,255,255,0.2); }
   .btn-theme svg { width:14px; height:14px; stroke:currentColor; fill:none; stroke-width:1.75; stroke-linecap:round; stroke-linejoin:round; flex-shrink:0; }
 
   /* ── Tema claro ── */
