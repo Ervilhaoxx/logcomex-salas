@@ -11,7 +11,7 @@
     /* ── Logcomex Design System tokens ── */
     --bg:             #0B0D19;
     --surface:        #2D085D;
-    --card:           rgba(45,8,93,0.45);
+    --card:           #1e0d42;
     --border:         rgba(226,208,250,0.18);
     --border-strong:  rgba(226,208,250,0.32);
     --orange:         #FE8F1C;
@@ -76,18 +76,12 @@
   [data-theme="light"] .search-input { background:#fff; color:#1e1b4b; border-color:rgba(102,19,208,0.15); }
   [data-theme="light"] .stat-card,
   [data-theme="light"] .chart-card {
-    background:#ffffff !important;
-    backdrop-filter:none !important;
-    -webkit-backdrop-filter:none !important;
-    box-shadow:0 2px 12px rgba(102,19,208,0.10) !important;
-    border-color:rgba(102,19,208,0.14) !important;
+    box-shadow:0 2px 12px rgba(102,19,208,0.10);
+    border-color:rgba(102,19,208,0.14);
   }
   /* Blur só no tema escuro */
-  :root:not([data-theme]) .stat-card,
-  :root:not([data-theme]) .chart-card { backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px); }
-  /* TEMA CLARO: fundo branco absoluto nos cards */
-  html[data-theme="light"] .stat-card { background:#ffffff !important; backdrop-filter:none !important; -webkit-backdrop-filter:none !important; }
-  html[data-theme="light"] .chart-card { background:#ffffff !important; backdrop-filter:none !important; -webkit-backdrop-filter:none !important; }
+
+
   [data-theme="light"] .stat-prog-track { background:rgba(102,19,208,0.08); }
   [data-theme="light"] .table-wrap { background:#ffffff !important; border-color:rgba(102,19,208,0.14) !important; }
   [data-theme="light"] .filter-period-group,
