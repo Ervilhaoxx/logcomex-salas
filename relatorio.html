@@ -107,7 +107,14 @@
 
   /* CARDS TOPO */
 
-  .stats-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 16px; margin-bottom: 32px; }
+  .stats-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 16px; margin-bottom: 32px; }
+  .stat-card.c-gold::before   { background: linear-gradient(90deg, #b45309, #d97706); }
+  .stat-card.c-gold .stat-icon { background: rgba(180,83,9,0.1); }
+  .stat-card.c-gold .stat-icon svg { stroke: #d97706; }
+  .stat-card.c-gold .stat-value { color: #d97706; }
+  .stat-card.c-gold .stat-prog-fill { background: #d97706; }
+  @media (max-width: 1200px) { .stats-grid { grid-template-columns: repeat(3, 1fr); } }
+  @media (max-width: 640px)  { .stats-grid { grid-template-columns: repeat(2, 1fr); } }
   .stat-card {
     background: rgba(45,8,93,0.45);
     border: 1px solid var(--border);
@@ -658,6 +665,16 @@
         <div class="stat-prog-track"><div class="stat-prog-fill" id="prog-users" style="width:0%"></div></div>
       </div>
 
+      <div class="stat-card c-gold">
+        <div class="stat-icon">
+          <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+        </div>
+        <div class="stat-label">Sala mais usada</div>
+        <div class="stat-value" id="stat-top-sala" style="font-size:18px;letter-spacing:-.01em">—</div>
+        <div class="stat-sub" id="stat-top-sala-sub">—</div>
+        <div class="stat-prog-track"><div class="stat-prog-fill" id="prog-top-sala" style="width:100%"></div></div>
+      </div>
+
     </div>
 
     <!-- GRÁFICOS -->
@@ -847,7 +864,7 @@ async function loadData() {
 
 // ── RENDER ──
 function renderDashboard() {
-  const src = filteredByPeriod && filteredByPeriod.length >= 0 ? filteredByPeriod : allData;
+  const src = (filteredByPeriod && filteredByPeriod.length > 0) ? filteredByPeriod : allData;
   const total = src.length;
   const comCheckin = src.filter(r => r.checkin).length;
   const semCheckin = total - comCheckin;
@@ -864,12 +881,27 @@ function renderDashboard() {
   document.getElementById('stat-taxa-sub').textContent = taxa >= 70 ? '🔥 Ótimo engajamento' : taxa >= 40 ? 'Engajamento moderado' : total ? 'Engajamento baixo' : 'sem dados';
   document.getElementById('stat-users').textContent = users;
 
+  // Sala mais usada
+  const bySala = {};
+  src.forEach(r => { bySala[r.room] = (bySala[r.room] || 0) + 1; });
+  const topSala = Object.entries(bySala).sort((a,b) => b[1]-a[1])[0];
+  if (topSala) {
+    // Abreviar nome da sala se for longo (ex: "16. XGH" → "XGH")
+    const nomeAbrev = topSala[0].replace(/^\d+\.\s*/, '');
+    document.getElementById('stat-top-sala').textContent = nomeAbrev;
+    document.getElementById('stat-top-sala-sub').textContent = topSala[1] + ' reservas no período';
+  } else {
+    document.getElementById('stat-top-sala').textContent = '—';
+    document.getElementById('stat-top-sala-sub').textContent = '—';
+  }
+
   // Animar barras de progresso
   setTimeout(() => {
     document.getElementById('prog-checkin').style.width    = total ? (comCheckin/total*100)+'%' : '0%';
     document.getElementById('prog-no-checkin').style.width = total ? (semCheckin/total*100)+'%' : '0%';
     document.getElementById('prog-taxa').style.width       = taxa + '%';
     document.getElementById('prog-users').style.width      = users > 0 ? Math.min(users * 5, 100) + '%' : '0%';
+    document.getElementById('prog-top-sala').style.width   = topSala ? '100%' : '0%';
   }, 100);
 
   renderCharts(src);
