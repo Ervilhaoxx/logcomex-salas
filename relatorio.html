@@ -1238,6 +1238,11 @@ function applyPeriodFilter() {
   renderPeriodStats();
   renderDashboard();
   renderTable();
+  // Reaplicar tema após os elementos serem criados no DOM
+  var savedTheme = localStorage.getItem('relatorio_theme');
+  if (savedTheme === 'light') {
+    setTimeout(function() { applyTheme('light'); }, 50);
+  }
 }
 
 function renderPeriodStats() {
