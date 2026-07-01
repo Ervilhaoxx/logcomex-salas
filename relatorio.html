@@ -1022,8 +1022,9 @@ function renderPeriodStats() {
 function exportCSV() {
   var data = (filteredByPeriod && filteredByPeriod.length > 0) ? filteredByPeriod : allData;
   if (!data.length) return;
+  var sep = ';'; // Separador ponto-e-vírgula para Excel brasileiro
   var headers = ['E-mail','Sala','Data','Horário','Check-in','VIP'];
-  var lines = [headers.join(',')];
+  var lines = ['sep=;', headers.join(sep)]; // sep=; instrui o Excel a usar ;
   data.forEach(function(r) {
     var data_str = '—', hora_reg = '—';
     if (r.ts) {
@@ -1041,7 +1042,7 @@ function exportCSV() {
     var horario = (hi && hf) ? (hi + ' – ' + hf) : hora_reg;
     var isVip = VIP_EMAILS.indexOf(r.email.toLowerCase()) >= 0;
     var row = [r.email, r.room, data_str, horario, r.checkin?'Sim':'Não', isVip?'Sim':'Não']
-      .map(function(v){ return '"' + String(v).replace(/"/g,'""') + '"'; }).join(',');
+      .map(function(v){ return '"' + String(v).replace(/"/g,'""') + '"'; }).join(sep);
     lines.push(row);
   });
   var csv = lines.join('\n');
