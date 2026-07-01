@@ -743,7 +743,7 @@
         <!-- Exportar CSV -->
         <button class="btn-export" id="btn-export" onclick="exportCSV()">
           <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-          Exportar CSV
+          Exportar Excel
         </button>
 
         <!-- Busca -->
@@ -1054,11 +1054,11 @@ function renderPeriodStats() {
 function exportCSV() {
   var data = (filteredByPeriod && filteredByPeriod.length > 0) ? filteredByPeriod : allData;
   if (!data.length) return;
-  var sep = ';'; // Separador ponto-e-vírgula para Excel brasileiro
-  var headers = ['E-mail','Sala','Data','Horário','Check-in','VIP'];
-  var lines = ['sep=;', headers.join(sep)]; // sep=; instrui o Excel a usar ;
+
+  // Gera XML do Excel (.xls) — abre direto no Excel com colunas, encoding e larguras corretas
+  var rows = [];
   data.forEach(function(r) {
-    var data_str = '—', hora_reg = '—';
+    var data_str = '', hora_reg = '';
     if (r.ts) {
       if (r.ts.indexOf('T') >= 0) {
         var d = new Date(r.ts);
@@ -1066,23 +1066,69 @@ function exportCSV() {
         hora_reg = d.toLocaleTimeString('pt-BR', {hour:'2-digit',minute:'2-digit'});
       } else {
         var parts = r.ts.split(/[, ]+/);
-        data_str = parts[0] || '—';
-        hora_reg = parts[1] ? parts[1].slice(0,5) : '—';
+        data_str = parts[0] || '';
+        hora_reg = parts[1] ? parts[1].slice(0,5) : '';
       }
     }
     var hi = fixHora(r.horaInicio), hf = fixHora(r.horaFim);
-    var horario = (hi && hf) ? (hi + ' – ' + hf) : hora_reg;
+    var horario = (hi && hf) ? (hi + ' - ' + hf) : hora_reg;
     var isVip = VIP_EMAILS.indexOf(r.email.toLowerCase()) >= 0;
-    var row = [r.email, r.room, data_str, horario, r.checkin?'Sim':'Não', isVip?'Sim':'Não']
-      .map(function(v){ return '"' + String(v).replace(/"/g,'""') + '"'; }).join(sep);
-    lines.push(row);
+    rows.push([
+      r.email || '',
+      r.room  || '',
+      data_str,
+      horario,
+      r.checkin ? 'Sim' : 'Nao',
+      isVip    ? 'Sim' : 'Nao'
+    ]);
   });
-  var csv = lines.join('\n');
-  var blob = new Blob(['\uFEFF' + csv], {type:'text/csv;charset=utf-8;'});
-  var url = URL.createObjectURL(blob);
-  var a = document.createElement('a');
-  a.href = url;
-  a.download = 'relatorio-salas-' + new Date().toISOString().slice(0,10) + '.csv';
+
+  function esc(v) { return String(v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+  var xml = '<?xml version="1.0" encoding="UTF-8"?>' +
+    '<?mso-application progid="Excel.Sheet"?>' +
+    '<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet"' +
+    ' xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet">' +
+    '<Styles>' +
+    '<Style ss:ID="header"><Font ss:Bold="1" ss:Color="#FFFFFF"/><Interior ss:Color="#6613D0" ss:Pattern="Solid"/><Alignment ss:Horizontal="Center"/></Style>' +
+    '<Style ss:ID="even"><Interior ss:Color="#F5F3FF" ss:Pattern="Solid"/></Style>' +
+    '<Style ss:ID="sim"><Font ss:Color="#15803D" ss:Bold="1"/></Style>' +
+    '<Style ss:ID="nao"><Font ss:Color="#DC2626" ss:Bold="1"/></Style>' +
+    '<Style ss:ID="vip"><Font ss:Color="#D97706" ss:Bold="1"/></Style>' +
+    '</Styles>' +
+    '<Worksheet ss:Name="Relatório">' +
+    '<Table>' +
+    '<Column ss:Width="220"/>' +  // E-mail
+    '<Column ss:Width="90"/>' +   // Sala
+    '<Column ss:Width="90"/>' +   // Data
+    '<Column ss:Width="100"/>' +  // Horário
+    '<Column ss:Width="80"/>' +   // Check-in
+    '<Column ss:Width="60"/>' +   // VIP
+    '<Row>' +
+    ['E-mail','Sala','Data','Horário','Check-in','VIP'].map(function(h){
+      return '<Cell ss:StyleID="header"><Data ss:Type="String">' + esc(h) + '</Data></Cell>';
+    }).join('') +
+    '</Row>';
+
+  rows.forEach(function(row, i) {
+    var style = (i % 2 === 0) ? '' : ' ss:StyleID="even"';
+    xml += '<Row>';
+    row.forEach(function(val, ci) {
+      var cellStyle = '';
+      if (ci === 4) cellStyle = val === 'Sim' ? ' ss:StyleID="sim"' : ' ss:StyleID="nao"';
+      if (ci === 5) cellStyle = val === 'Sim' ? ' ss:StyleID="vip"' : '';
+      xml += '<Cell' + (cellStyle || style) + '><Data ss:Type="String">' + esc(val) + '</Data></Cell>';
+    });
+    xml += '</Row>';
+  });
+
+  xml += '</Table></Worksheet></Workbook>';
+
+  var blob = new Blob([xml], {type:'application/vnd.ms-excel;charset=utf-8'});
+  var url  = URL.createObjectURL(blob);
+  var a    = document.createElement('a');
+  a.href   = url;
+  a.download = 'relatorio-salas-' + new Date().toISOString().slice(0,10) + '.xls';
   a.click();
   URL.revokeObjectURL(url);
 }
