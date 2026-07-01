@@ -37,6 +37,65 @@
     --ease-in-out:    cubic-bezier(0.65, 0, 0.35, 1);
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
+/* ── Tema claro ── */
+  [data-theme="light"] {
+    --bg:           #f5f3ff;
+    --surface:      #ffffff;
+    --card:         #ffffff;
+    --border:       rgba(102,19,208,0.12);
+    --border-strong:rgba(102,19,208,0.25);
+    --text:         #1e1b4b;
+    --muted:        rgba(30,27,75,0.55);
+    --subtle:       rgba(30,27,75,0.35);
+    --gradient-deep:linear-gradient(135deg,#f5f3ff 0%,#ede9fe 100%);
+    --shadow-lg:    0 16px 40px rgba(102,19,208,0.10),0 4px 8px rgba(30,27,75,0.06);
+  }
+  [data-theme="light"] .rpt-header { background:#fff; border-bottom-color:rgba(102,19,208,0.1); }
+  [data-theme="light"] .section-title { color:#6613D0; }
+  [data-theme="light"] .section-title::after { background:rgba(102,19,208,0.15); }
+  [data-theme="light"] thead th { background:#f5f3ff; color:rgba(30,27,75,0.55); }
+  [data-theme="light"] tbody td { color:#1e1b4b; }
+  [data-theme="light"] td.muted { color:rgba(30,27,75,0.55); }
+  [data-theme="light"] .filter-period-group,
+  [data-theme="light"] .filter-pill-group,
+  [data-theme="light"] .btn-sort,
+  [data-theme="light"] .btn-export { background:#fff; border-color:rgba(102,19,208,0.15); color:rgba(30,27,75,0.7); }
+  [data-theme="light"] .filter-btn { color:rgba(30,27,75,0.7); }
+  [data-theme="light"] .filter-btn.active { background:rgba(102,19,208,0.1); color:#6613D0; }
+  [data-theme="light"] .filter-period-group select { color:#1e1b4b; }
+  [data-theme="light"] .search-input { background:#fff; color:#1e1b4b; border-color:rgba(102,19,208,0.15); }
+  [data-theme="light"] .stat-card,
+  [data-theme="light"] .chart-card { background:#fff; }
+  [data-theme="light"] .bar-track { background:rgba(102,19,208,0.08); }
+  [data-theme="light"] tbody tr:nth-child(even) { background:rgba(102,19,208,0.03); }
+  [data-theme="light"] tbody tr:hover { background:rgba(102,19,208,0.07) !important; }
+  [data-theme="light"] tr.date-separator td { background:rgba(102,19,208,0.06) !important; color:#6613D0; }
+  [data-theme="light"] .table-wrap { background:#fff; }
+  [data-theme="light"] .stat-label { color:rgba(30,27,75,0.55); }
+  [data-theme="light"] .stat-sub { color:rgba(30,27,75,0.5); }
+  [data-theme="light"] .chart-title { color:rgba(30,27,75,0.55); }
+  [data-theme="light"] .chart-total { color:rgba(30,27,75,0.5); background:rgba(102,19,208,0.06); }
+  [data-theme="light"] .bar-label-name { color:#1e1b4b; }
+  [data-theme="light"] .bar-label-val { color:rgba(30,27,75,0.55); }
+  [data-theme="light"] .period-summary { background:rgba(102,19,208,0.06); color:rgba(30,27,75,0.6); }
+  [data-theme="light"] .pin-box { background:#fff; }
+  /* Botão de tema */
+  .btn-theme {
+    display:flex; align-items:center; gap:6px;
+    background:transparent;
+    border:1px solid var(--border);
+    border-radius:999px;
+    padding:6px 14px;
+    font-size:12px; font-weight:500;
+    font-family:var(--font);
+    color:var(--muted);
+    cursor:pointer;
+    transition:all 150ms;
+    white-space:nowrap;
+  }
+  .btn-theme:hover { border-color:var(--purple); color:var(--purple-l); }
+  .btn-theme svg { width:14px; height:14px; stroke:currentColor; fill:none; stroke-width:1.75; stroke-linecap:round; stroke-linejoin:round; }
+
   body { font-family: var(--font); background: var(--gradient-deep); background-attachment: fixed; min-height: 100vh; color: var(--text); }
 
   /* HEADER */
@@ -585,7 +644,13 @@
       </div>
     </div>
   </div>
-  <button class="btn-refresh" onclick="loadData()">↻ Atualizar</button>
+  <div style="display:flex;align-items:center;gap:10px">
+    <button class="btn-theme" id="btn-theme" onclick="toggleTheme()">
+      <svg id="theme-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+      <span id="theme-label">Tema claro</span>
+    </button>
+    <button class="btn-refresh" onclick="loadData()">↻ Atualizar</button>
+  </div>
 </div>
 
 <!-- PIN -->
@@ -1260,6 +1325,37 @@ function exportCSV() {
   a.click();
   URL.revokeObjectURL(url);
 }
+
+function toggleTheme() {
+  const html = document.documentElement;
+  const isLight = html.getAttribute('data-theme') === 'light';
+  if (isLight) {
+    html.removeAttribute('data-theme');
+    localStorage.setItem('relatorio_theme', 'dark');
+    document.getElementById('theme-label').textContent = 'Tema claro';
+    document.getElementById('theme-icon').innerHTML = '<circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>';
+  } else {
+    html.setAttribute('data-theme', 'light');
+    localStorage.setItem('relatorio_theme', 'light');
+    document.getElementById('theme-label').textContent = 'Tema escuro';
+    document.getElementById('theme-icon').innerHTML = '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>';
+  }
+}
+
+// Aplicar tema salvo ao carregar
+(function() {
+  const saved = localStorage.getItem('relatorio_theme');
+  if (saved === 'light') {
+    document.documentElement.setAttribute('data-theme', 'light');
+    // Atualizar label e ícone após DOM carregar
+    document.addEventListener('DOMContentLoaded', function() {
+      const lbl = document.getElementById('theme-label');
+      const ico = document.getElementById('theme-icon');
+      if (lbl) lbl.textContent = 'Tema escuro';
+      if (ico) ico.innerHTML = '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>';
+    });
+  }
+})();
 
 function toggleSort(btn) {
   sortDesc = !sortDesc;
