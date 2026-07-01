@@ -123,6 +123,55 @@
   [data-theme="light"] .btn-theme { background:rgba(102,19,208,0.08); border-color:rgba(102,19,208,0.2); color:#1e1b4b; }
   [data-theme="light"] .btn-theme:hover { background:rgba(102,19,208,0.14); }
 
+
+  /* Botão de tema */
+  .btn-theme {
+    display:flex; align-items:center; gap:7px;
+    background:rgba(226,208,250,0.12);
+    border:1px solid rgba(226,208,250,0.25);
+    border-radius:999px;
+    padding:7px 16px;
+    font-size:12px; font-weight:600;
+    font-family:var(--font); color:var(--text);
+    cursor:pointer; transition:all 180ms; white-space:nowrap;
+  }
+  .btn-theme:hover { background:rgba(226,208,250,0.2); }
+  .btn-theme svg { width:14px; height:14px; stroke:currentColor; fill:none; stroke-width:1.75; stroke-linecap:round; stroke-linejoin:round; flex-shrink:0; }
+
+  /* ── Tema claro ── */
+  body.tema-claro { background: #f8f7ff !important; color: #1e1b4b !important; }
+  body.tema-claro .rpt-header { background: #ffffff !important; border-bottom-color: rgba(102,19,208,0.12) !important; }
+  body.tema-claro .stat-card  { background: #ffffff !important; backdrop-filter: none !important; border-color: rgba(102,19,208,0.15) !important; }
+  body.tema-claro .chart-card { background: #ffffff !important; backdrop-filter: none !important; border-color: rgba(102,19,208,0.15) !important; }
+  body.tema-claro .table-wrap { background: #ffffff !important; border-color: rgba(102,19,208,0.15) !important; }
+  body.tema-claro .stat-label { color: #6b7280 !important; }
+  body.tema-claro .stat-sub   { color: #9ca3af !important; }
+  body.tema-claro .stat-value { }
+  body.tema-claro .muted      { color: #6b7280 !important; }
+  body.tema-claro tbody td    { color: #1e1b4b !important; }
+  body.tema-claro thead th    { background: #f5f3ff !important; color: #6b7280 !important; }
+  body.tema-claro tbody tr:nth-child(even) { background: rgba(102,19,208,0.03) !important; }
+  body.tema-claro tbody tr:hover { background: rgba(102,19,208,0.07) !important; }
+  body.tema-claro tr.date-separator td { background: rgba(102,19,208,0.06) !important; color: #6613D0 !important; }
+  body.tema-claro .section-title { color: #6613D0 !important; }
+  body.tema-claro .section-title::after { background: rgba(102,19,208,0.15) !important; }
+  body.tema-claro .filter-period-group,
+  body.tema-claro .filter-pill-group,
+  body.tema-claro .btn-sort,
+  body.tema-claro .btn-export { background: #ffffff !important; border-color: rgba(102,19,208,0.15) !important; color: #1e1b4b !important; }
+  body.tema-claro .filter-btn { color: #1e1b4b !important; }
+  body.tema-claro .filter-btn.active { background: rgba(102,19,208,0.1) !important; color: #6613D0 !important; }
+  body.tema-claro .search-input { background: #ffffff !important; color: #1e1b4b !important; border-color: rgba(102,19,208,0.15) !important; }
+  body.tema-claro .search-wrap svg { stroke: #9ca3af !important; }
+  body.tema-claro .chart-title { color: #6b7280 !important; }
+  body.tema-claro .chart-total { color: #9ca3af !important; background: rgba(102,19,208,0.06) !important; }
+  body.tema-claro .bar-label-name { color: #1e1b4b !important; }
+  body.tema-claro .bar-label-val  { color: #6b7280 !important; }
+  body.tema-claro .bar-track { background: rgba(102,19,208,0.08) !important; }
+  body.tema-claro .period-summary { background: rgba(102,19,208,0.06) !important; color: #6b7280 !important; }
+  body.tema-claro .btn-theme { background: rgba(102,19,208,0.08) !important; border-color: rgba(102,19,208,0.2) !important; color: #1e1b4b !important; }
+  body.tema-claro .pin-box { background: #ffffff !important; }
+  body.tema-claro .is-vip td:first-child { color: #ea6c00 !important; }
   body { font-family: var(--font); background: var(--gradient-deep); background-attachment: fixed; min-height: 100vh; color: var(--text); }
 
   /* HEADER */
@@ -1023,9 +1072,6 @@ function renderDashboard() {
   renderCharts(src);
   renderLineChart(src);
   renderTable();
-  // Aplicar tema após TUDO renderizado
-  var _t = localStorage.getItem('relatorio_theme') || 'dark';
-  if (_t === 'light') { applyTheme('light'); }
 }
 
 function renderLineChart(src) {
@@ -1357,80 +1403,28 @@ function exportCSV() {
   URL.revokeObjectURL(url);
 }
 
-// ── Sistema de tema via JS (mais confiável que CSS vars) ──
-var THEME_LIGHT = {
-  '--bg':       '#f8f7ff',
-  '--surface':  '#ffffff',
-  '--card':     '#ffffff',
-  '--border':   'rgba(102,19,208,0.12)',
-  '--text':     '#1e1b4b',
-  '--muted':    '#6b7280',
-};
-var THEME_DARK = {
-  '--bg':       '#0B0D19',
-  '--surface':  '#2D085D',
-  '--card':     '#1e0d42',
-  '--border':   'rgba(226,208,250,0.18)',
-  '--text':     '#E2D0FA',
-  '--muted':    'rgba(226,208,250,0.72)',
-};
-
-function applyTheme(theme) {
-  var vars = theme === 'light' ? THEME_LIGHT : THEME_DARK;
-  var root = document.documentElement;
-  Object.keys(vars).forEach(function(k) { root.style.setProperty(k, vars[k]); });
-
-  function _applyCards() {
-    var cards = document.querySelectorAll('.stat-card, .chart-card');
-    cards.forEach(function(el) {
-      if (theme === 'light') {
-        el.setAttribute('style', 'background:#ffffff !important; backdrop-filter:none !important;');
-      } else {
-        el.removeAttribute('style');
-      }
-    });
-    var others = document.querySelectorAll('.table-wrap, .filter-period-group, .filter-pill-group, .btn-sort, .btn-export, .search-input');
-    others.forEach(function(el) {
-      el.style.background = theme === 'light' ? '#ffffff' : '';
-    });
-  }
-  _applyCards();
-  setTimeout(_applyCards, 200); // segunda passagem para elementos criados depois
-
-  // Body
-  document.body.style.background = vars['--bg'];
-
-  // Header
-  var header = document.querySelector('.rpt-header');
-  if (header) header.style.background = theme === 'light' ? '#ffffff' : '';
-
-  // Botão
-  var lbl = document.getElementById('theme-label');
-  var ico = document.getElementById('theme-icon');
-  if (theme === 'light') {
-    if (lbl) lbl.textContent = 'Tema escuro';
-    if (ico) ico.innerHTML = '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>';
-  } else {
-    if (lbl) lbl.textContent = 'Tema claro';
-    if (ico) ico.innerHTML = '<circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>';
-  }
-
-  localStorage.setItem('relatorio_theme', theme);
-  document.documentElement.setAttribute('data-theme', theme === 'light' ? 'light' : '');
-}
-
-function toggleTheme() {
-  var cur = localStorage.getItem('relatorio_theme') || 'dark';
-  applyTheme(cur === 'light' ? 'dark' : 'light');
-  // Re-renderizar cards após troca de tema
-  if (typeof renderDashboard === 'function') renderDashboard();
-}
 
 // Aplicar tema salvo ao carregar — após dados carregarem
-document.addEventListener('DOMContentLoaded', function() {
-  var saved = localStorage.getItem('relatorio_theme');
-  if (saved === 'light') applyTheme('light');
-});
+
+
+// ── Tema claro/escuro ────────────────────────────────────────────────────────
+function toggleTheme() {
+  var isLight = document.body.classList.contains('tema-claro');
+  if (isLight) {
+    document.body.classList.remove('tema-claro');
+    localStorage.setItem('relatorio_theme', 'dark');
+    document.getElementById('theme-label').textContent = 'Tema claro';
+    document.getElementById('theme-icon').innerHTML = '<circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>';
+  } else {
+    document.body.classList.add('tema-claro');
+    localStorage.setItem('relatorio_theme', 'light');
+    document.getElementById('theme-label').textContent = 'Tema escuro';
+    document.getElementById('theme-icon').innerHTML = '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>';
+  }
+}
+if (localStorage.getItem('relatorio_theme') === 'light') {
+  document.body.classList.add('tema-claro');
+}
 
 function toggleSort(btn) {
   sortDesc = !sortDesc;
