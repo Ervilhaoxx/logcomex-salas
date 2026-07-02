@@ -948,7 +948,10 @@
 
     <!-- TABELA -->
     <div class="table-section">
-      <div class="section-title">Todos os registros</div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+      <div class="section-title" style="margin-bottom:0">Todos os registros</div>
+      <span id="table-counter" style="font-size:12px;color:var(--muted);font-family:var(--font)"></span>
+    </div>
       <!-- Toolbar de filtros unificada -->
       <div class="filters-toolbar">
 
@@ -1658,6 +1661,16 @@ function renderTable() {
       <td>${badge}</td>
     </tr>`;
   }).join('');
+
+  // Contador de registros
+  var counter = document.getElementById('table-counter');
+  if (counter) {
+    var total = allData.length;
+    var showing = data.length;
+    counter.textContent = showing === total
+      ? total + ' registros'
+      : 'mostrando ' + showing + ' de ' + total;
+  }
 }
 
 // Teclado físico para PIN
