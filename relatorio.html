@@ -1589,6 +1589,12 @@ function setFilter(f, btn) {
   document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
   renderTable();
+  // Atualizar gráficos com o filtro aplicado
+  var src = (filteredByPeriod && filteredByPeriod.length > 0) ? filteredByPeriod : allData;
+  if (f === 'yes')  src = src.filter(function(r) { return r.checkin; });
+  if (f === 'no')   src = src.filter(function(r) { return !r.checkin; });
+  renderCharts(src);
+  renderLineChart(src);
 }
 
 
