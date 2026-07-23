@@ -830,7 +830,7 @@ function startToleranceTimer(){
       const now=new Date();
       const cur=state.events.find(e=>{const s=new Date(e.start.dateTime),en=new Date(e.end.dateTime);return s<=now&&en>now;});
       if(cur){
-        if(cfg.thisRoom!=='c_1886tvmpocelmh5pjo46elcu1lkb6@resource.calendar.google.com'){return;}const respEmail=(responsible||'').toLowerCase();if(cfg.vipEmails.some(v=>v.toLowerCase()===respEmail)){return;}const p=new URLSearchParams({action:'cancel',roomEmail:cfg.thisRoom,eventStart:cur.start.dateTime,email:responsible||'',room:roomName||'Sala'});
+        const respEmail=(responsible||'').toLowerCase();if(cfg.vipEmails.some(v=>v.toLowerCase()===respEmail)){return;}const p=new URLSearchParams({action:'cancel',roomEmail:cfg.thisRoom,eventStart:cur.start.dateTime,email:responsible||'',room:roomName||'Sala'});
         fetch(`${BACKEND_URL}?${p.toString()}`).catch(()=>{});
         // Registra no histórico local como sem check-in
         const hist=JSON.parse(localStorage.getItem('lcx_hist')||'[]');
